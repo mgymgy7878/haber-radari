@@ -60,3 +60,21 @@ export async function checkHealth(): Promise<boolean> {
     return false;
   }
 }
+
+export interface ConnectorSourceStatus {
+  connectorId: string;
+  displayName: string;
+  mode: "live" | "fallback" | "mock";
+  requiresApiKey: boolean;
+  lastFetchAt: string | null;
+  lastError: string | null;
+  itemCount: number;
+  note?: string;
+}
+
+export async function fetchSourcesStatus(): Promise<ConnectorSourceStatus[]> {
+  const data = await fetchJson<{ sources: ConnectorSourceStatus[] }>(
+    "/api/sources/status"
+  );
+  return data.sources;
+}

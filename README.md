@@ -1,24 +1,36 @@
 # Haber Radarı
 
-Kişisel **önemli gelişme radarı** — reklam, clickbait, 3. sayfa ve ilgisiz yerel haberleri filtreleyen Android odaklı mobil uygulama (MVP-1).
+Kişisel **önemli gelişme radarı** — reklam, clickbait, 3. sayfa ve ilgisiz yerel haberleri filtreleyen Android odaklı mobil uygulama.
 
 ## Yapı
 
 ```
 haber-radari/
-├── apps/mobile      Expo React Native (Android)
+├── apps/mobile      Expo React Native
 ├── apps/api         Fastify API
-├── packages/news-core   Skorlama, politika motoru, örnek veriler
-└── packages/connectors  TRT RSS / GDELT / sosyal mock
+├── packages/news-core   Policy, skorlama, source metadata
+└── packages/connectors  TRT RSS, GDELT, sosyal adapter sınırları
 ```
+
+## Kaynaklar (MVP-2A)
+
+| Kaynak | Durum | API key |
+|--------|--------|---------|
+| TRT RSS | Gerçek fetch + fallback | Hayır |
+| GDELT DOC | Public endpoint + fallback | Hayır |
+| Bluesky | Mock adapter sınırı | Gelecekte evet |
+| YouTube | Mock adapter sınırı | Gelecekte evet |
+| Sample events | Sabit örnek veri | — |
+| X / TikTok / Instagram | Yok | — |
+
+Connector hatası API'yi düşürmez; fallback/mock moduna geçer.
 
 ## Gereksinimler
 
 - Node.js 20+
 - pnpm 9+
-- Android emülatör veya fiziksel cihaz (Expo Go)
 
-## İlk kurulum (bir kez)
+## Kurulum
 
 ```bash
 pnpm install
@@ -26,80 +38,63 @@ pnpm --filter @haber-radari/news-core build
 pnpm --filter @haber-radari/connectors build
 ```
 
-`node_modules` zaten varsa yeniden `pnpm install` gerekmez.
-
 ## Çalıştırma
 
-İki ayrı terminal kullanın. **API kapanırsa** (terminal kapatma, Ctrl+C) mobil veri çekemez — tekrar `pnpm dev:api` çalıştırın. Kod değişikliği olmadan API açık kaldığı sürece yeniden başlatma gerekmez.
-
-**Terminal 1 — API (proje kökü):**
+**Terminal 1 — API:**
 
 ```bash
 pnpm dev:api
 ```
 
-- Adres (bilgisayar): `http://localhost:3001`
-- Sağlık: `GET /health` → `{ "status": "ok" }`
-
-**Terminal 2 — Mobil (proje kökü):**
+**Terminal 2 — Mobil:**
 
 ```bash
 pnpm dev:mobile
 ```
 
-Expo QR ile Expo Go veya emülatörde `a` (Android).
+### API adresi
 
-## API adresi — Android / Expo Go
+| Ortam | URL |
+|--------|-----|
+| PC / curl | `http://localhost:3001` |
+| Android emülatör | `http://10.0.2.2:3001` (otomatik) |
+| Fiziksel Expo Go | `$env:EXPO_PUBLIC_API_URL="http://<LAN-IP>:3001"` |
 
-| Ortam | API adresi |
-|--------|------------|
-| Bilgisayar / curl | `http://localhost:3001` |
-| Android **emülatör** (AVD) | Otomatik `http://10.0.2.2:3001` |
-| **Fiziksel telefon** (Expo Go) | `EXPO_PUBLIC_API_URL` ile LAN IP **zorunlu** |
-
-Fiziksel cihaz örneği (Windows PowerShell, IP'nizi yazın):
-
-```powershell
-$env:EXPO_PUBLIC_API_URL="http://192.168.1.50:3001"
-pnpm dev:mobile
-```
-
-Şablon: `apps/mobile/.env.example` — kopyalayıp `.env` yapabilirsiniz (secret yok).
-
-Ayarlar sekmesinde aktif API URL ve bağlantı profili görünür.
-
-## Hızlı doğrulama (PowerShell)
-
-```powershell
-Invoke-RestMethod http://localhost:3001/health
-(Invoke-RestMethod http://localhost:3001/api/events).count
-(Invoke-RestMethod "http://localhost:3001/api/events?filter=suppressed").count
-```
-
-Beklenen (MVP-1 örnek veri): Radar ≥8, suppress ≥2, notify_candidate ≥2, review ≥2.
+Şablon: `apps/mobile/.env.example`
 
 ## API uçları
 
 | Uç | Açıklama |
 |-----|----------|
-| `GET /health` | Sağlık kontrolü |
+| `GET /health` | Sağlık |
 | `GET /api/events` | Radar akışı |
-| `GET /api/events?filter=flash\|finance\|nearby\|suppressed\|all` | Sekme filtreleri |
-| `GET /api/signals` | Sosyal erken sinyaller (mock) |
-| `GET /api/notification-candidates` | Push adayları (gönderilmez) |
+| `GET /api/signals` | Sosyal sinyaller (sample) |
+| `GET /api/notification-candidates` | Push adayları |
+| `GET /api/sources/status` | Connector modları (live/fallback/mock) |
+| `GET /api/ingest/preview` | Canlı ingest önizlemesi |
 | `POST /api/refresh` | Olay havuzunu yenile |
 
-## MVP-1 kapsamı
+## Doğrulama (PowerShell)
 
-- Policy engine + skorlama
-- 3. sayfa filtresi (yerel şiddet, clickbait)
-- 6 mobil sekme (Türkçe, koyu tema)
-- Mock TRT/GDELT/sosyal veri
-- Bildirim adayı listesi (gerçek push yok)
+```powershell
+Invoke-RestMethod http://localhost:3001/health
+(Invoke-RestMethod http://localhost:3001/api/events).count
+Invoke-RestMethod http://localhost:3001/api/sources/status
+```
 
-## Sonraki fazlar
+## Typecheck
 
-- MVP-2: X, Bluesky, YouTube connector iskeleti
-- MVP-3: Expo Push / FCM
-- MVP-4: Ev + anlık konum
-- MVP-5: Fact-check, dedup, cluster
+```bash
+pnpm --filter @haber-radari/news-core typecheck
+pnpm --filter @haber-radari/connectors typecheck
+pnpm --filter @haber-radari/api typecheck
+pnpm --filter @haber-radari/mobile typecheck
+```
+
+Test script yok (MVP-2A).
+
+## Sonraki faz
+
+- MVP-2B: Bluesky Jetstream / YouTube (API key ile)
+- MVP-3: Push
+- MVP-4: Konum

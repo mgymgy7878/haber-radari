@@ -13,6 +13,8 @@ import {
   checkHealth,
   fetchEventsByFilter,
   fetchNotificationCandidates,
+  fetchSourcesStatus,
+  type ConnectorSourceStatus,
 } from "../../src/api/client";
 import { EventCard } from "../../src/components/EventCard";
 import { colors } from "../../src/theme/colors";
@@ -22,17 +24,20 @@ export default function SettingsScreen() {
   const [healthy, setHealthy] = useState<boolean | null>(null);
   const [candidates, setCandidates] = useState<ProcessedEvent[]>([]);
   const [suppressed, setSuppressed] = useState<ProcessedEvent[]>([]);
+  const [sources, setSources] = useState<ConnectorSourceStatus[]>([]);
   const [loading, setLoading] = useState(true);
 
   const load = useCallback(async () => {
     setHealthy(await checkHealth());
     try {
-      const [c, s] = await Promise.all([
+      const [c, s, src] = await Promise.all([
         fetchNotificationCandidates(),
         fetchEventsByFilter("suppressed"),
+        fetchSourcesStatus().catch(() => []),
       ]);
       setCandidates(c);
       setSuppressed(s);
+      setSources(src);
     } catch {
       /* API offline */
     }
@@ -56,6 +61,26 @@ export default function SettingsScreen() {
           Durum:{" "}
           {healthy === null ? "…" : healthy ? "Çevrimiçi" : "Çevrimdışı"}
         </Text>
+      </View>
+
+      <View style={styles.section}>
+        <Text style={styles.sectionTitle}>Kaynak durumu (MVP-2A)</Text>
+        {sources.length === 0 ? (
+          <Text style={styles.hint}>Kaynak listesi alınamadı — API çevrimdışı olabilir.</Text>
+        ) : (
+          sources.map((s) => (
+            <View key={s.connectorId} style={styles.sourceRow}>
+              <Text style={styles.sourceName}>
+                {s.displayName} · {s.mode.toUpperCase()}
+                {s.requiresApiKey ? " · key gerekir" : ""}
+              </Text>
+              <Text style={styles.hint}>
+                {s.itemCount} kayıt{s.lastError ? ` · ${s.lastError}` : ""}
+                {s.note ? ` — ${s.note}` : ""}
+              </Text>
+            </View>
+          ))
+        )}
       </View>
 
       <View style={styles.section}>
@@ -101,4 +126,6 @@ const styles = StyleSheet.create({
   row: { color: colors.textMuted, fontSize: 13, marginBottom: 4 },
   bullet: { color: colors.textMuted, fontSize: 13, lineHeight: 20 },
   hint: { color: colors.textMuted, fontSize: 12, marginBottom: 10, fontStyle: "italic" },
+  sourceRow: { marginBottom: 10, paddingLeft: 4 },
+  sourceName: { color: colors.text, fontSize: 13, fontWeight: "600" },
 });
