@@ -1,0 +1,25 @@
+{
+  "expo": {
+    "name": "Haber Radarı",
+    "slug": "haber-radari",
+    "version": "0.1.0",
+    "orientation": "portrait",
+    "scheme": "haber-radari",
+    "userInterfaceStyle": "dark",
+    "newArchEnabled": true,
+    "splash": {
+      "resizeMode": "contain",
+      "backgroundColor": "#0a0e14"
+    },
+    "android": {
+      "package": "com.haberradari.app",
+      "adaptiveIcon": {
+        "backgroundColor": "#0a0e14"
+      }
+    },
+    "plugins": ["expo-router"],
+    "experiments": {
+      "typedRoutes": true
+    }
+  }
+}

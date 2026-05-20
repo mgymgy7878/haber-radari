@@ -1,0 +1,15 @@
+{
+  "name": "haber-radari",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Kişisel önemli gelişme radarı — reklam ve sansasyondan arındırılmış haber akışı",
+  "scripts": {
+    "dev:api": "pnpm --filter @haber-radari/api dev",
+    "dev:mobile": "pnpm --filter @haber-radari/mobile start",
+    "build": "pnpm -r build",
+    "typecheck": "pnpm -r typecheck"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
