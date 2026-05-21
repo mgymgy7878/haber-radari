@@ -25,6 +25,14 @@ haber-radari/
 
 Connector hatası API'yi düşürmez; fallback/mock moduna geçer.
 
+## İçerik kalitesi (MVP-2B)
+
+- **Cluster / dedup:** Başlık fingerprint + konu benzerliği; küme tekrarları baskılanır.
+- **Eski haber cezası (saat):** `fresh` ≤6 saat · `recent` 6–24 · `aging` 24–48 · `stale` 48+
+- **Kaynak güven matrisi:** official > market > editorial > aggregator > social
+- **Sosyal-only:** Tek başına `notify_candidate` olamaz
+- **Neden gördüm?:** `reasonBullets` (kartta gösterim MVP-2C)
+
 ## Gereksinimler
 
 - Node.js 20+
@@ -40,27 +48,16 @@ pnpm --filter @haber-radari/connectors build
 
 ## Çalıştırma
 
-**Terminal 1 — API:**
-
-```bash
-pnpm dev:api
-```
-
-**Terminal 2 — Mobil:**
-
-```bash
-pnpm dev:mobile
-```
+**Terminal 1 — API:** `pnpm dev:api`  
+**Terminal 2 — Mobil:** `pnpm dev:mobile`
 
 ### API adresi
 
 | Ortam | URL |
 |--------|-----|
 | PC / curl | `http://localhost:3001` |
-| Android emülatör | `http://10.0.2.2:3001` (otomatik) |
+| Android emülatör | `http://10.0.2.2:3001` |
 | Fiziksel Expo Go | `$env:EXPO_PUBLIC_API_URL="http://<LAN-IP>:3001"` |
-
-Şablon: `apps/mobile/.env.example`
 
 ## API uçları
 
@@ -68,19 +65,11 @@ pnpm dev:mobile
 |-----|----------|
 | `GET /health` | Sağlık |
 | `GET /api/events` | Radar akışı |
-| `GET /api/signals` | Sosyal sinyaller (sample) |
+| `GET /api/signals` | Sosyal sinyaller |
 | `GET /api/notification-candidates` | Push adayları |
-| `GET /api/sources/status` | Connector modları (live/fallback/mock) |
-| `GET /api/ingest/preview` | Canlı ingest önizlemesi |
+| `GET /api/sources/status` | Connector durumu |
+| `GET /api/ingest/preview` | Ingest önizleme + `quality` özeti |
 | `POST /api/refresh` | Olay havuzunu yenile |
-
-## Doğrulama (PowerShell)
-
-```powershell
-Invoke-RestMethod http://localhost:3001/health
-(Invoke-RestMethod http://localhost:3001/api/events).count
-Invoke-RestMethod http://localhost:3001/api/sources/status
-```
 
 ## Typecheck
 
@@ -91,10 +80,8 @@ pnpm --filter @haber-radari/api typecheck
 pnpm --filter @haber-radari/mobile typecheck
 ```
 
-Test script yok (MVP-2A).
-
 ## Sonraki faz
 
-- MVP-2B: Bluesky Jetstream / YouTube (API key ile)
+- MVP-2C: Radar açıklanabilirlik UI
+- MVP-2D: Bluesky / YouTube API
 - MVP-3: Push
-- MVP-4: Konum

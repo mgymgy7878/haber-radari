@@ -92,11 +92,17 @@ app.get("/api/sources/status", async () => {
 app.get("/api/ingest/preview", async () => {
   try {
     const preview = await getIngestPreview();
-    return { ok: true, ...preview, meta: getMeta() };
+    return {
+      ok: true,
+      ...preview,
+      meta: getMeta(),
+      note: "quality alanı cluster, haber yaşı ve sosyal-only özetini içerir",
+    };
   } catch (err) {
     return {
       ok: false,
       previews: [],
+      quality: null,
       error: err instanceof Error ? err.message : String(err),
       meta: getMeta(),
     };
