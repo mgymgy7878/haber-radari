@@ -30,6 +30,20 @@ export interface ProcessedEvent {
   publishedAt: string;
   locationLabel?: string;
   tags?: string[];
+  newsAgeBand?: string;
+  sourceQualityTier?: string;
+  isSocialOnly?: boolean;
+  suppressReason?: string;
+  notificationReason?: string;
+  suppressionReason?: string;
+  verificationSummary?: string;
+  sourceSummary?: string;
+  cluster?: {
+    clusterId: string;
+    clusterSize: number;
+    isClusterPrimary: boolean;
+    duplicateReason?: string;
+  };
 }
 
 export interface SocialSignal {

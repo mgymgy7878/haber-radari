@@ -33,6 +33,12 @@ Connector hatası API'yi düşürmez; fallback/mock moduna geçer.
 - **Sosyal-only:** Tek başına `notify_candidate` olamaz
 - **Neden gördüm?:** `reasonBullets` (kartta gösterim MVP-2C)
 
+## Radar açıklanabilirliği (MVP-2C)
+
+Mobil kartlarda: **Neden gördüm?** · **Bildirim durumu** (`notificationReason`) · **Kaynak/güven** (`sourceSummary`) · **Teyit özeti** · baskılama gerekçesi (Ayarlar debug).
+
+Etiketler: DOĞRULANDI, RESMÎ, ERKEN SİNYAL, BİLDİRİM ADAYI, İNCELE, BASKILANDI.
+
 ## Gereksinimler
 
 - Node.js 20+
@@ -82,6 +88,5 @@ pnpm --filter @haber-radari/mobile typecheck
 
 ## Sonraki faz
 
-- MVP-2C: Radar açıklanabilirlik UI
 - MVP-2D: Bluesky / YouTube API
 - MVP-3: Push

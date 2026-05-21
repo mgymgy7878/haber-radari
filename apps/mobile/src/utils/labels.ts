@@ -1,4 +1,4 @@
-import type { EventDecision, VerificationState } from "../types";
+import type { EventDecision, ProcessedEvent, VerificationState } from "../types";
 import { colors } from "../theme/colors";
 
 export function verificationLabel(state: VerificationState): string {
@@ -42,6 +42,43 @@ export function decisionLabel(decision: EventDecision): string | null {
     default:
       return null;
   }
+}
+
+/** Kart üstü birincil karar etiketi */
+export function primaryDecisionBadge(event: ProcessedEvent): {
+  label: string;
+  color: string;
+} | null {
+  if (event.decision === "notify_candidate") {
+    return { label: "BİLDİRİM ADAYI", color: colors.notify };
+  }
+  if (event.decision === "suppress") {
+    return { label: "BASKILANDI", color: colors.suppressed };
+  }
+  if (event.isSocialOnly || (event.decision === "review" && event.verificationState === "unverified")) {
+    return { label: "ERKEN SİNYAL", color: colors.early };
+  }
+  if (event.decision === "review") {
+    return { label: "İNCELE", color: colors.review };
+  }
+  if (event.verificationState === "official") {
+    return { label: "RESMÎ", color: colors.official };
+  }
+  if (event.verificationState === "verified") {
+    return { label: "DOĞRULANDI", color: colors.verified };
+  }
+  return null;
+}
+
+export function sourceTierLabel(tier?: string): string {
+  const map: Record<string, string> = {
+    official: "Resmî",
+    market: "Piyasa",
+    editorial: "Editoryal",
+    aggregator: "Agregatör",
+    social: "Sosyal",
+  };
+  return tier ? map[tier] ?? tier : "—";
 }
 
 export function categoryLabel(cat: string): string {

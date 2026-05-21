@@ -37,7 +37,10 @@ export function SignalCard({ signal }: Props) {
       <Text style={styles.meta}>
         Durum: {signal.verificationState === "unverified" ? "Haber kaynaklarında teyit aranıyor" : "Kısmi teyit"}
       </Text>
-      <Text style={styles.meta}>Bildirim: Kapalı</Text>
+      <Text style={styles.meta}>Bildirim: Kapalı — bildirim adayı değil</Text>
+      <Text style={styles.socialWarn}>
+        Sosyal sinyal; bağımsız teyit yok — hakikat kaynağı sayılmaz.
+      </Text>
       <Text style={styles.time}>Hız skoru {(signal.velocityScore * 100).toFixed(0)}% · {timeAgo(signal.detectedAt)}</Text>
     </View>
   );
@@ -70,5 +73,12 @@ const styles = StyleSheet.create({
   title: { color: colors.text, fontSize: 15, fontWeight: "700", marginBottom: 6 },
   summary: { color: colors.textMuted, fontSize: 13, lineHeight: 19, marginBottom: 8 },
   meta: { color: colors.textMuted, fontSize: 12, marginBottom: 4 },
+  socialWarn: {
+    color: colors.early,
+    fontSize: 10,
+    fontWeight: "600",
+    lineHeight: 14,
+    marginBottom: 4,
+  },
   time: { color: colors.textMuted, fontSize: 10, marginTop: 6 },
 });

@@ -67,6 +67,7 @@ app.get("/api/notification-candidates", async () => {
       event,
       pushEligible: true,
       reasons: event.reasonBullets,
+      notificationReason: event.notificationReason,
       suggestedTitle: event.title,
       note: "MVP-1: Gerçek push gönderilmez, yalnızca aday listesi.",
     })),

@@ -110,7 +110,15 @@ export default function SettingsScreen() {
           Mahalle kavgası, bıçaklama, clickbait vb. burada görünür; ana akışta değil.
         </Text>
         {suppressed.map((e) => (
-          <EventCard key={e.id} event={e} compact />
+          <View key={e.id} style={styles.debugCard}>
+            <EventCard event={e} compact />
+            <Text style={styles.debugReason} numberOfLines={3}>
+              Baskı: {e.suppressionReason ?? e.suppressReason ?? "—"}
+            </Text>
+            <Text style={styles.debugReason} numberOfLines={2}>
+              Bildirim: {e.notificationReason ?? "Gönderilmez"}
+            </Text>
+          </View>
         ))}
       </View>
     </ScrollView>
@@ -128,4 +136,12 @@ const styles = StyleSheet.create({
   hint: { color: colors.textMuted, fontSize: 12, marginBottom: 10, fontStyle: "italic" },
   sourceRow: { marginBottom: 10, paddingLeft: 4 },
   sourceName: { color: colors.text, fontSize: 13, fontWeight: "600" },
+  debugCard: { marginBottom: 8 },
+  debugReason: {
+    color: colors.textMuted,
+    fontSize: 10,
+    marginTop: 2,
+    paddingLeft: 4,
+    lineHeight: 14,
+  },
 });

@@ -79,6 +79,10 @@ export interface ProcessedEvent extends RawEventInput {
   isSocialOnly: boolean;
   suppressReason?: string;
   cluster?: EventClusterInfo;
+  notificationReason: string;
+  suppressionReason?: string;
+  verificationSummary: string;
+  sourceSummary: string;
 }
 
 export type SignalStatus = "tracking" | "corroborating" | "verified" | "debunked";
