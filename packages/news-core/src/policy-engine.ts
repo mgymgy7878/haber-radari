@@ -1,5 +1,6 @@
 import { assignClusters, type ClusterAssignment } from "./cluster.js";
 import { applyClusterDedup } from "./dedup.js";
+import { buildEventExplainability } from "./explainability.js";
 import {
   getNewsAgeBand,
   getNewsAgePenalty,
@@ -208,6 +209,16 @@ export function processEvent(
     verificationState = "suppressed";
   }
 
+  const explain = buildEventExplainability({
+    event: { ...adjusted, verificationState },
+    decision,
+    finalScore,
+    newsAgeBand,
+    sourceQualityTier,
+    isSocialOnly,
+    suppressReason,
+  });
+
   return {
     ...adjusted,
     finalScore,
@@ -219,6 +230,10 @@ export function processEvent(
     sourceQualityTier,
     isSocialOnly,
     suppressReason,
+    notificationReason: explain.notificationReason,
+    suppressionReason: explain.suppressionReason,
+    verificationSummary: explain.verificationSummary,
+    sourceSummary: explain.sourceSummary,
     cluster: cluster
       ? {
           clusterId: cluster.clusterId,

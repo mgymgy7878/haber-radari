@@ -6,6 +6,7 @@ export * from "./source-trust-matrix.js";
 export * from "./cluster.js";
 export * from "./dedup.js";
 export * from "./reason-bullets.js";
+export * from "./explainability.js";
 export * from "./policy-engine.js";
 export * from "./quality-stats.js";
 export * from "./sample-events.js";
