@@ -8,6 +8,7 @@ import {
   filterRadarEvents,
   filterSuppressed,
   processEvent,
+  getQualityStats,
   processEvents,
   SAMPLE_RAW_EVENTS,
   SAMPLE_SOCIAL_SIGNALS,
@@ -100,7 +101,12 @@ export async function getSourcesStatus(): Promise<ConnectorStatusSnapshot[]> {
 }
 
 export async function getIngestPreview() {
-  return ingestPreview(3);
+  const preview = await ingestPreview(3);
+  const events = await getAllEvents();
+  return {
+    ...preview,
+    quality: getQualityStats(events),
+  };
 }
 
 export function getMeta() {

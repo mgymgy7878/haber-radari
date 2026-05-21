@@ -1,4 +1,6 @@
 import type { SourceMetadata } from "./source-metadata.js";
+import type { NewsAgeBand } from "./news-age.js";
+import type { SourceQualityTier } from "./source-trust-matrix.js";
 
 export type EventCategory =
   | "flash"
@@ -52,14 +54,31 @@ export interface RawEventInput {
   isLocalViolentCrime?: boolean;
   involvesPublicFigure?: boolean;
   isOfficialSource?: boolean;
-  /** Connector ingest metadata — policy skorunu bozmaz, açıklanabilirlik için */
   sourceMetadata?: SourceMetadata;
 }
+
+export interface EventClusterInfo {
+  clusterId: string;
+  fingerprint: string;
+  topicKey: string;
+  clusterSize: number;
+  isClusterPrimary: boolean;
+  duplicateReason?: string;
+}
+
+export type { NewsAgeBand } from "./news-age.js";
+export type { SourceQualityTier } from "./source-trust-matrix.js";
 
 export interface ProcessedEvent extends RawEventInput {
   finalScore: number;
   decision: EventDecision;
   reasonBullets: string[];
+  newsAgeBand: NewsAgeBand;
+  newsAgePenalty: number;
+  sourceQualityTier: SourceQualityTier;
+  isSocialOnly: boolean;
+  suppressReason?: string;
+  cluster?: EventClusterInfo;
 }
 
 export type SignalStatus = "tracking" | "corroborating" | "verified" | "debunked";
