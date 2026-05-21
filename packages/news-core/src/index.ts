@@ -9,4 +9,6 @@ export * from "./reason-bullets.js";
 export * from "./explainability.js";
 export * from "./policy-engine.js";
 export * from "./quality-stats.js";
+export * from "./social-scoring.js";
+export * from "./notification-queue.js";
 export * from "./sample-events.js";

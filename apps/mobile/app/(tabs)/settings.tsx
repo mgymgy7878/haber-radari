@@ -13,8 +13,12 @@ import {
   checkHealth,
   fetchEventsByFilter,
   fetchNotificationCandidates,
+  fetchNotificationQueue,
+  fetchSocialStatus,
   fetchSourcesStatus,
   type ConnectorSourceStatus,
+  type NotificationQueueEntry,
+  type SocialPlatformStatus,
 } from "../../src/api/client";
 import { EventCard } from "../../src/components/EventCard";
 import { colors } from "../../src/theme/colors";
@@ -25,19 +29,30 @@ export default function SettingsScreen() {
   const [candidates, setCandidates] = useState<ProcessedEvent[]>([]);
   const [suppressed, setSuppressed] = useState<ProcessedEvent[]>([]);
   const [sources, setSources] = useState<ConnectorSourceStatus[]>([]);
+  const [socialPlatforms, setSocialPlatforms] = useState<SocialPlatformStatus[]>([]);
+  const [notifyQueue, setNotifyQueue] = useState<NotificationQueueEntry[]>([]);
   const [loading, setLoading] = useState(true);
 
   const load = useCallback(async () => {
     setHealthy(await checkHealth());
     try {
-      const [c, s, src] = await Promise.all([
+      const [c, s, src, social, queue] = await Promise.all([
         fetchNotificationCandidates(),
         fetchEventsByFilter("suppressed"),
         fetchSourcesStatus().catch(() => []),
+        fetchSocialStatus().catch(() => ({ platforms: [], signalCount: 0 })),
+        fetchNotificationQueue().catch(() => ({
+          count: 0,
+          queue: [],
+          excludedSocialOnly: [],
+          note: "",
+        })),
       ]);
       setCandidates(c);
       setSuppressed(s);
       setSources(src);
+      setSocialPlatforms(social.platforms);
+      setNotifyQueue(queue.queue);
     } catch {
       /* API offline */
     }
@@ -81,6 +96,50 @@ export default function SettingsScreen() {
             </View>
           ))
         )}
+      </View>
+
+      <View style={styles.section}>
+        <Text style={styles.sectionTitle}>Sosyal kaynak durumu (MVP-2D)</Text>
+        <Text style={styles.hint}>
+          Bluesky Jetstream önizleme; YouTube API key ile gated-live; X/TikTok onaylı token
+          bekliyor.
+        </Text>
+        {socialPlatforms.length === 0 ? (
+          <Text style={styles.hint}>Sosyal durum alınamadı.</Text>
+        ) : (
+          socialPlatforms.map((p) => (
+            <View key={p.platform} style={styles.sourceRow}>
+              <Text style={styles.sourceName}>
+                {p.displayName} · {p.mode.toUpperCase()}
+                {p.requiresApiKey ? " · key" : ""}
+                {p.requiresApprovalOrToken ? " · onay/token" : ""}
+              </Text>
+              <Text style={styles.hint} numberOfLines={2}>
+                {p.itemCount} kayıt{p.lastError ? ` · ${p.lastError}` : ""}
+                {p.note ? ` — ${p.note}` : ""}
+              </Text>
+            </View>
+          ))
+        )}
+      </View>
+
+      <View style={styles.section}>
+        <Text style={styles.sectionTitle}>
+          Bildirim kuyruğu ({notifyQueue.length}) — push yok
+        </Text>
+        <Text style={styles.hint}>
+          Sosyal-only haberler kuyrukta değil; teyit yoksa bildirim açılmaz.
+        </Text>
+        {notifyQueue.slice(0, 4).map((q) => (
+          <View key={q.eventId} style={styles.queueRow}>
+            <Text style={styles.sourceName} numberOfLines={1}>
+              {q.title}
+            </Text>
+            <Text style={styles.hint} numberOfLines={2}>
+              {q.notificationReason}
+            </Text>
+          </View>
+        ))}
       </View>
 
       <View style={styles.section}>
@@ -144,4 +203,5 @@ const styles = StyleSheet.create({
     paddingLeft: 4,
     lineHeight: 14,
   },
+  queueRow: { marginBottom: 10, paddingLeft: 4 },
 });
