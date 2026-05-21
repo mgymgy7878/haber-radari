@@ -1,3 +1,5 @@
+import type { SourceMetadata } from "./source-metadata.js";
+
 export type EventCategory =
   | "flash"
   | "turkey"
@@ -19,6 +21,13 @@ export type VerificationState =
   | "suppressed";
 
 export type EventDecision = "show" | "notify_candidate" | "suppress" | "review";
+
+export type { SourceFetchMode, SourceMetadata, SourceRef, SourceType } from "./source-metadata.js";
+export {
+  SOURCE_TRUST_BY_TYPE,
+  defaultVerificationForSourceType,
+  resolveSourceTrustScore,
+} from "./source-metadata.js";
 
 export interface RawEventInput {
   id: string;
@@ -43,6 +52,8 @@ export interface RawEventInput {
   isLocalViolentCrime?: boolean;
   involvesPublicFigure?: boolean;
   isOfficialSource?: boolean;
+  /** Connector ingest metadata — policy skorunu bozmaz, açıklanabilirlik için */
+  sourceMetadata?: SourceMetadata;
 }
 
 export interface ProcessedEvent extends RawEventInput {

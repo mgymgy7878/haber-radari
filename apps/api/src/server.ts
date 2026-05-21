@@ -4,11 +4,13 @@ import {
   getAllEvents,
   getFinanceEvents,
   getFlashEvents,
+  getIngestPreview,
   getMeta,
   getNearbyEvents,
   getNotificationCandidates,
   getRadarEvents,
   getSignals,
+  getSourcesStatus,
   getSuppressedEvents,
   refreshEvents,
 } from "./store.js";
@@ -75,6 +77,30 @@ app.get("/api/notification-candidates", async () => {
 app.post("/api/refresh", async () => {
   const events = await refreshEvents();
   return { refreshed: true, count: events.length, meta: getMeta() };
+});
+
+app.get("/api/sources/status", async () => {
+  const sources = await getSourcesStatus();
+  return {
+    count: sources.length,
+    sources,
+    meta: getMeta(),
+    note: "TRT/GDELT canlı veya fallback; Bluesky/YouTube mock sınırı.",
+  };
+});
+
+app.get("/api/ingest/preview", async () => {
+  try {
+    const preview = await getIngestPreview();
+    return { ok: true, ...preview, meta: getMeta() };
+  } catch (err) {
+    return {
+      ok: false,
+      previews: [],
+      error: err instanceof Error ? err.message : String(err),
+      meta: getMeta(),
+    };
+  }
 });
 
 try {

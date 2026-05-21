@@ -1,5 +1,8 @@
-import { fetchGdeltMock } from "@haber-radari/connectors";
-import { fetchTrtRssMock } from "@haber-radari/connectors";
+import {
+  getAllConnectorStatuses,
+  ingestAllForEventPool,
+  ingestPreview,
+} from "@haber-radari/connectors";
 import {
   filterNotificationCandidates,
   filterRadarEvents,
@@ -11,13 +14,16 @@ import {
   type ProcessedEvent,
   type SocialSignal,
 } from "@haber-radari/news-core";
+import type { ConnectorStatusSnapshot } from "@haber-radari/connectors";
 
 let cachedEvents: ProcessedEvent[] | null = null;
 let cachedSignals: SocialSignal[] = SAMPLE_SOCIAL_SIGNALS;
 let lastRefresh: string | null = null;
+let lastConnectorStatuses: ConnectorStatusSnapshot[] = [];
 
 async function buildEventPool(): Promise<ProcessedEvent[]> {
-  const connectorRaw = [...(await fetchTrtRssMock()), ...(await fetchGdeltMock())];
+  const { raw: connectorRaw, statuses } = await ingestAllForEventPool();
+  lastConnectorStatuses = statuses;
   const allRaw = [...SAMPLE_RAW_EVENTS, ...connectorRaw];
   const unique = new Map(allRaw.map((e) => [e.id, e]));
   return processEvents([...unique.values()]);
@@ -86,15 +92,26 @@ export async function getSuppressedEvents(): Promise<ProcessedEvent[]> {
   return filterSuppressed(await getAllEvents());
 }
 
+export async function getSourcesStatus(): Promise<ConnectorStatusSnapshot[]> {
+  if (lastConnectorStatuses.length === 0) {
+    return getAllConnectorStatuses();
+  }
+  return lastConnectorStatuses;
+}
+
+export async function getIngestPreview() {
+  return ingestPreview(3);
+}
+
 export function getMeta() {
   return {
     lastRefresh,
     eventCount: cachedEvents?.length ?? 0,
     signalCount: cachedSignals.length,
+    connectorCount: lastConnectorStatuses.length,
   };
 }
 
-/** Tek olay yeniden işleme (debug) */
 export function reprocessOne(raw: Parameters<typeof processEvent>[0]): ProcessedEvent {
   return processEvent(raw);
 }
