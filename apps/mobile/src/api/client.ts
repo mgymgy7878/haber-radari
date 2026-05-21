@@ -78,3 +78,46 @@ export async function fetchSourcesStatus(): Promise<ConnectorSourceStatus[]> {
   );
   return data.sources;
 }
+
+export interface SocialPlatformStatus {
+  platform: string;
+  displayName: string;
+  mode: string;
+  requiresApiKey: boolean;
+  requiresApprovalOrToken?: boolean;
+  lastError: string | null;
+  itemCount: number;
+  note?: string;
+}
+
+export async function fetchSocialStatus(): Promise<{
+  platforms: SocialPlatformStatus[];
+  signalCount: number;
+  note?: string;
+}> {
+  const data = await fetchJson<{
+    platforms: SocialPlatformStatus[];
+    signalCount: number;
+    note?: string;
+  }>("/api/social/status");
+  return data;
+}
+
+export interface NotificationQueueEntry {
+  eventId: string;
+  title: string;
+  pushEligible: boolean;
+  notificationReason: string;
+  isSocialOnly: boolean;
+  finalScore: number;
+  note: string;
+}
+
+export async function fetchNotificationQueue(): Promise<{
+  count: number;
+  queue: NotificationQueueEntry[];
+  excludedSocialOnly: Array<{ eventId: string; title: string; reason: string }>;
+  note: string;
+}> {
+  return fetchJson("/api/notification-queue");
+}

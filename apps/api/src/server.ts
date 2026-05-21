@@ -11,8 +11,12 @@ import {
   getRadarEvents,
   getSignals,
   getSourcesStatus,
+  getSocialStatus,
+  getSocialPreview,
+  getNotificationQueue,
   getSuppressedEvents,
   refreshEvents,
+  refreshSocialSignalsCache,
 } from "./store.js";
 
 const PORT = Number(process.env.PORT ?? 3001);
@@ -86,7 +90,55 @@ app.get("/api/sources/status", async () => {
     count: sources.length,
     sources,
     meta: getMeta(),
-    note: "TRT/GDELT canlı veya fallback; Bluesky/YouTube mock sınırı.",
+    note: "TRT/GDELT canlı; Bluesky Jetstream / YouTube gated-live.",
+  };
+});
+
+app.get("/api/social/status", async () => {
+  const status = await getSocialStatus();
+  return { ok: true, ...status, meta: getMeta() };
+});
+
+app.get("/api/social/preview", async (req) => {
+  const query = req.query as { q?: string; limit?: string; timeoutMs?: string };
+  const limit = query.limit ? Number(query.limit) : 5;
+  const timeoutMs = query.timeoutMs ? Number(query.timeoutMs) : 5000;
+  try {
+    const preview = await getSocialPreview({
+      q: query.q,
+      limit: Number.isFinite(limit) ? limit : 5,
+      timeoutMs: Number.isFinite(timeoutMs) ? timeoutMs : 5000,
+    });
+    return {
+      ...preview,
+      meta: getMeta(),
+      note: "Kısa timeout; env yoksa gated/fallback + örnek sinyaller.",
+    };
+  } catch (err) {
+    return {
+      ok: false,
+      mode: "error",
+      records: [],
+      signals: [],
+      statuses: [],
+      error: err instanceof Error ? err.message : String(err),
+      meta: getMeta(),
+    };
+  }
+});
+
+app.get("/api/notification-queue", async () => {
+  const payload = await getNotificationQueue();
+  return { ok: true, ...payload, meta: getMeta() };
+});
+
+app.post("/api/social/refresh", async (req) => {
+  const body = (req.body ?? {}) as { q?: string; limit?: number; timeoutMs?: number };
+  const signals = await refreshSocialSignalsCache(body);
+  return {
+    refreshed: true,
+    count: signals.length,
+    meta: getMeta(),
   };
 });
 

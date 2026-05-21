@@ -7,7 +7,12 @@ export type SourceType =
   | "factcheck"
   | "aggregator";
 
-export type SourceFetchMode = "live" | "fallback" | "mock";
+export type SourceFetchMode =
+  | "live"
+  | "fallback"
+  | "mock"
+  | "gated"
+  | "error";
 
 /** Tip bazlı varsayılan güven skoru (0–1) */
 export const SOURCE_TRUST_BY_TYPE: Record<SourceType, number> = {
