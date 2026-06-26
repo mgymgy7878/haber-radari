@@ -12,7 +12,9 @@ import io.ktor.client.HttpClient
 import io.ktor.client.request.get
 import io.ktor.client.request.header
 import io.ktor.client.statement.bodyAsText
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.withContext
 
 /**
  * Haber repository — RSS çekme, parse ve yerel cache yönetimi.
@@ -39,7 +41,7 @@ class NewsRepository(
      *
      * @return Başarıyla eklenen yeni makale sayısı
      */
-    suspend fun refreshFeeds(): Int {
+    suspend fun refreshFeeds(): Int = withContext(Dispatchers.IO) {
         val enabledSources = sourceDao.getEnabledSources()
         android.util.Log.d("NewsFlow", "NewsRepository refreshFeeds started with ${enabledSources.size} sources")
         var newArticlesCount = 0
@@ -86,14 +88,14 @@ class NewsRepository(
         val thirtyDaysAgo = System.currentTimeMillis() - (30L * 24 * 60 * 60 * 1000)
         articleDao.deleteOlderThan(thirtyDaysAgo)
 
-        return newArticlesCount
+        return@withContext newArticlesCount
     }
 
     /**
      * Varsayılan RSS kaynaklarını veritabanına yükler (ilk çalıştırma).
      * Mevcut kaynakları ezmez (REPLACE strategy ile günceller).
      */
-    suspend fun seedDefaultSources() {
+    suspend fun seedDefaultSources() = withContext(Dispatchers.IO) {
         val defaults = listOf(
             Source(
                 id = "ntv-turkiye",
