@@ -18,10 +18,11 @@ haber-radari/
 |--------|--------|---------|
 | TRT RSS | Gerçek fetch + fallback | Hayır |
 | GDELT DOC | Public endpoint + fallback | Hayır |
-| Bluesky | Mock adapter sınırı | Gelecekte evet |
-| YouTube | Mock adapter sınırı | Gelecekte evet |
+| Bluesky Jetstream | Kısa önizleme (`app.bsky.feed.post`) | Hayır |
+| YouTube | `search.list` — `YOUTUBE_API_KEY` ile gated-live | Evet (sunucu) |
 | Sample events | Sabit örnek veri | — |
-| X / TikTok / Instagram | Yok | — |
+| X / TikTok | Gated — token/onay gerekir (MVP-2D yok) | Evet (gelecek) |
+| Instagram | Bu fazda yok | — |
 
 Connector hatası API'yi düşürmez; fallback/mock moduna geçer.
 
@@ -75,6 +76,9 @@ pnpm --filter @haber-radari/connectors build
 | `GET /api/notification-candidates` | Push adayları |
 | `GET /api/sources/status` | Connector durumu |
 | `GET /api/ingest/preview` | Ingest önizleme + `quality` özeti |
+| `GET /api/social/status` | Sosyal platform durumları |
+| `GET /api/social/preview` | Sosyal önizleme (`q`, `limit`, `timeoutMs`) |
+| `GET /api/notification-queue` | Bildirim adayı kuyruğu (push yok) |
 | `POST /api/refresh` | Olay havuzunu yenile |
 
 ## Typecheck
@@ -86,7 +90,21 @@ pnpm --filter @haber-radari/api typecheck
 pnpm --filter @haber-radari/mobile typecheck
 ```
 
+## Sosyal sinyal pipeline (MVP-2D)
+
+- **Bluesky:** Jetstream JSON WebSocket kısa önizleme (timeout/abort; sunucuyu kilitlemez).
+- **YouTube:** `YOUTUBE_API_KEY` varsa `search.list`; yoksa `gated` — hata fırlatılmaz.
+- **X / TikTok:** Yalnızca adapter durumu (`requiresApprovalOrToken`); scraping yok.
+- **Bildirim kuyruğu:** `GET /api/notification-queue` — push göndermez; sosyal-only dışlanır.
+- Secret'lar mobil uygulamaya konmaz; `.env.example` kök dizinde.
+
+```bash
+cp .env.example .env
+# YOUTUBE_API_KEY=...  (isteğe bağlı)
+pnpm dev:api
+```
+
 ## Sonraki faz
 
-- MVP-2D: Bluesky / YouTube API
-- MVP-3: Push
+- MVP-2E: Push bildirimleri
+- MVP-3: Konum / gelişmiş filtreler

@@ -1,0 +1,204 @@
+package com.haberradari.data.remote
+
+import com.haberradari.data.model.Article
+import com.haberradari.data.model.LegalMode
+import com.haberradari.data.model.Source
+import java.net.URI
+import java.security.MessageDigest
+import java.util.UUID
+
+/**
+ * RSS XML'den Article listesi üreten parser.
+ *
+ * Android'in yerleşik XML parsing yeteneklerini kullanır (XmlPullParser).
+ * Harici bağımlılık gerektirmez.
+ *
+ * DEĞİŞMEZ KURALLAR:
+ * - DISABLED kaynaklar parse edilmez
+ * - TITLE_LINK_ONLY modunda description null bırakılır
+ * - Tam metin (body/fullText/html) asla çıkartılmaz
+ * - Her Article için sourceName, originalUrl, publishedAt zorunludur
+ */
+object RssParser {
+
+    /**
+     * Ham RSS item — parse sonucu.
+     * Henüz legalMode filtresi uygulanmamış durum.
+     */
+    data class RssItem(
+        val title: String,
+        val link: String,
+        val pubDate: String,
+        val description: String?,
+        val imageUrl: String? = null
+    )
+
+    /**
+     * RSS XML'i parse eder ve RssItem listesi döner.
+     * Bozuk veya boş XML'de boş liste döner — crash yapmaz.
+     */
+    fun parseXml(xml: String): List<RssItem> {
+        val items = mutableListOf<RssItem>()
+        // Regex-based lightweight parser (XmlPullParser context gerektirdiğinden
+        // unit test uyumluluğu için regex kullanıyoruz)
+        val itemBlocks = Regex("<item[\\s\\S]*?</item>", RegexOption.IGNORE_CASE)
+            .findAll(xml)
+            .toList()
+
+        for (block in itemBlocks) {
+            val blockText = block.value
+            val title = extractTag(blockText, "title") ?: continue
+            val link = extractTag(blockText, "link") ?: continue
+
+            items.add(
+                RssItem(
+                    title = title.trim(),
+                    link = link.trim(),
+                    pubDate = extractTag(blockText, "pubDate") ?: "",
+                    description = extractTag(blockText, "description")?.trim(),
+                    imageUrl = extractMediaUrl(blockText)
+                )
+            )
+        }
+        return items
+    }
+
+    /**
+     * RssItem listesini Article listesine dönüştürür.
+     * LegalMode kurallarını uygular.
+     *
+     * @param items Parse edilmiş RSS item'ları
+     * @param source Kaynak bilgisi (legalMode kontrolü)
+     * @return Article listesi — DISABLED kaynaklarda boş liste
+     */
+    fun toArticles(items: List<RssItem>, source: Source): List<Article> {
+        // DISABLED kaynaktan asla makale üretme
+        if (source.legalMode == LegalMode.DISABLED) {
+            return emptyList()
+        }
+
+        val now = System.currentTimeMillis()
+
+        return items.mapNotNull { item ->
+            val canonicalUrl = normalizeUrl(item.link)
+            val hash = computeContentHash(item.title, canonicalUrl)
+            val publishedAt = parseDate(item.pubDate) ?: now
+
+            // TITLE_LINK_ONLY modunda description saklanmaz
+            val description = when (source.legalMode) {
+                LegalMode.TITLE_LINK_ONLY -> null
+                else -> item.description
+            }
+
+            Article(
+                id = UUID.randomUUID().toString(),
+                title = item.title,
+                description = description,
+                sourceName = source.name,
+                sourceId = source.id,
+                originalUrl = item.link,
+                canonicalUrl = canonicalUrl,
+                contentHash = hash,
+                publishedAt = publishedAt,
+                fetchedAt = now,
+                imageUrl = item.imageUrl
+            )
+        }
+    }
+
+    // --- URL Normalizasyonu ---
+
+    /**
+     * URL'yi normalize eder — duplicate karşılaştırması için.
+     * - Trailing slash kaldırır
+     * - HTTP → HTTPS dönüştürür
+     * - Fragment (#) kaldırır
+     * - Küçük harfe çevirir (host kısmı)
+     */
+    fun normalizeUrl(url: String): String {
+        return try {
+            val uri = URI(url.trim())
+            val scheme = (uri.scheme ?: "https").lowercase().let {
+                if (it == "http") "https" else it
+            }
+            val host = (uri.host ?: "").lowercase()
+            val path = (uri.path ?: "").trimEnd('/')
+            val query = uri.query?.let { "?$it" } ?: ""
+            "$scheme://$host$path$query"
+        } catch (_: Exception) {
+            url.trim().trimEnd('/').lowercase()
+        }
+    }
+
+    // --- Content Hash ---
+
+    /**
+     * SHA-256(title + canonicalUrl) → hex string.
+     * Duplicate tespiti için kullanılır.
+     */
+    fun computeContentHash(title: String, canonicalUrl: String): String {
+        val input = "$title|$canonicalUrl"
+        val digest = MessageDigest.getInstance("SHA-256")
+        return digest.digest(input.toByteArray(Charsets.UTF_8))
+            .joinToString("") { "%02x".format(it) }
+    }
+
+    // --- Yardımcı Fonksiyonlar ---
+
+    private fun extractTag(block: String, tag: String): String? {
+        // CDATA desteği
+        val cdataPattern = Regex(
+            "<$tag[^>]*>\\s*<!\\[CDATA\\[([\\s\\S]*?)]]>\\s*</$tag>",
+            RegexOption.IGNORE_CASE
+        )
+        cdataPattern.find(block)?.let {
+            return decodeXmlEntities(it.groupValues[1])
+        }
+
+        // Normal tag
+        val pattern = Regex("<$tag[^>]*>([\\s\\S]*?)</$tag>", RegexOption.IGNORE_CASE)
+        return pattern.find(block)?.let {
+            decodeXmlEntities(it.groupValues[1])
+        }
+    }
+
+    private fun extractMediaUrl(block: String): String? {
+        // <media:content url="..."> veya <enclosure url="...">
+        val mediaPattern = Regex(
+            """(?:media:content|enclosure)[^>]*url=["']([^"']+)["']""",
+            RegexOption.IGNORE_CASE
+        )
+        return mediaPattern.find(block)?.groupValues?.get(1)
+    }
+
+    private fun decodeXmlEntities(text: String): String {
+        return text
+            .replace("&amp;", "&")
+            .replace("&lt;", "<")
+            .replace("&gt;", ">")
+            .replace("&quot;", "\"")
+            .replace("&#39;", "'")
+            .replace("&apos;", "'")
+    }
+
+    private fun parseDate(dateStr: String): Long? {
+        if (dateStr.isBlank()) return null
+        return try {
+            // RFC 2822 format (RSS standard)
+            java.text.SimpleDateFormat(
+                "EEE, dd MMM yyyy HH:mm:ss Z",
+                java.util.Locale.ENGLISH
+            ).parse(dateStr)?.time
+        } catch (_: Exception) {
+            try {
+                // ISO 8601 fallback
+                java.text.SimpleDateFormat(
+                    "yyyy-MM-dd'T'HH:mm:ssZ",
+                    java.util.Locale.ENGLISH
+                ).parse(dateStr)?.time
+            } catch (_: Exception) {
+                null
+            }
+        }
+    }
+}

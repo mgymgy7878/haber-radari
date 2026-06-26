@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Haber Radarı</string>
+    <string name="feed_title">Haber Radarı</string>
+    <string name="loading_message">Haberler yükleniyor…</string>
+    <string name="empty_title">Henüz haber yok</string>
+    <string name="empty_message">RSS kaynaklarından haber çekmek için yenile butonuna basın.</string>
+    <string name="error_title">Bir hata oluştu</string>
+    <string name="refresh">Yenile</string>
+    <string name="retry">Tekrar Dene</string>
+    <string name="source_label">Kaynak</string>
+    <string name="original_link">Orijinal haber</string>
+</resources>
