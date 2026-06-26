@@ -29,6 +29,25 @@ interface ArticleDao {
     @Query("DELETE FROM articles WHERE publishedAt < :cutoffMillis")
     suspend fun deleteOlderThan(cutoffMillis: Long)
 
+    /** URL ve Başlık bazlı duplicate temizliği (Aynı kaynakta) */
+    @Query("""
+        DELETE FROM articles 
+        WHERE id NOT IN (
+            SELECT id FROM (
+                SELECT id, MAX(publishedAt) 
+                FROM articles 
+                GROUP BY sourceId, title
+            )
+        ) OR id NOT IN (
+            SELECT id FROM (
+                SELECT id, MAX(publishedAt) 
+                FROM articles 
+                GROUP BY sourceId, canonicalUrl
+            )
+        )
+    """)
+    suspend fun deleteDuplicates()
+
     /** Toplam makale sayısı */
     @Query("SELECT COUNT(*) FROM articles")
     suspend fun getArticleCount(): Int

@@ -63,6 +63,7 @@ class DefaultSourceSeedTest {
         override suspend fun insertArticles(articles: List<Article>) {}
         override suspend fun getByContentHash(hash: String): Article? = null
         override suspend fun deleteOlderThan(cutoffMillis: Long) {}
+        override suspend fun deleteDuplicates() {}
         override suspend fun getArticleCount(): Int = 0
     }
     

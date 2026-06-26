@@ -127,6 +127,7 @@ object RssParser {
      * - HTTP → HTTPS dönüştürür
      * - Fragment (#) kaldırır
      * - Küçük harfe çevirir (host kısmı)
+     * - İzleme (tracking) parametrelerini temizler
      */
     fun normalizeUrl(url: String): String {
         return try {
@@ -136,8 +137,20 @@ object RssParser {
             }
             val host = (uri.host ?: "").lowercase()
             val path = (uri.path ?: "").trimEnd('/')
-            val query = uri.query?.let { "?$it" } ?: ""
-            "$scheme://$host$path$query"
+            
+            // Query parametrelerini temizle (utm_, fbclid, gclid vb.)
+            val trackingParams = setOf("utm_source", "utm_medium", "utm_campaign", "utm_term", "utm_content", "fbclid", "gclid")
+            val cleanQuery = uri.query?.split("&")?.mapNotNull { param ->
+                val parts = param.split("=", limit = 2)
+                if (parts.isNotEmpty() && trackingParams.contains(parts[0].lowercase())) {
+                    null
+                } else {
+                    param
+                }
+            }?.joinToString("&")?.takeIf { it.isNotEmpty() }
+            
+            val queryPart = cleanQuery?.let { "?$it" } ?: ""
+            "$scheme://$host$path$queryPart"
         } catch (_: Exception) {
             url.trim().trimEnd('/').lowercase()
         }
