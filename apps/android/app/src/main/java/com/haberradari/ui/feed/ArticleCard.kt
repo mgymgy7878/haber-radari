@@ -36,13 +36,13 @@ import com.haberradari.data.model.Article
 @Composable
 fun ArticleCard(
     article: Article,
-    onArticleClick: (Article) -> Unit,
+    onOpenDetail: (Article) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Card(
         onClick = { 
             android.util.Log.d("NewsFlow", "ArticleCard onClick triggered for: ${article.title}")
-            onArticleClick(article) 
+            onOpenDetail(article) 
         },
         modifier = modifier
             .fillMaxWidth()

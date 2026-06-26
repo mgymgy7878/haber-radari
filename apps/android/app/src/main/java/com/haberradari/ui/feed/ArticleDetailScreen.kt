@@ -17,7 +17,7 @@ import com.haberradari.data.model.Article
 fun ArticleDetailScreen(
     article: Article,
     onBackClick: () -> Unit,
-    onOpenOriginalClick: (Article) -> Unit
+    onOpenOriginal: (Article) -> Unit
 ) {
     Scaffold(
         topBar = {
@@ -98,7 +98,7 @@ fun ArticleDetailScreen(
 
             // Orijinal site butonu
             Button(
-                onClick = { onOpenOriginalClick(article) },
+                onClick = { onOpenOriginal(article) },
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Text(text = "Orijinal haberi aç")

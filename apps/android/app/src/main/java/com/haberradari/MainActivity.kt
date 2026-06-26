@@ -31,6 +31,7 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        android.util.Log.d("NewsFlow", "MainActivity onCreate started: ${System.currentTimeMillis()}")
         enableEdgeToEdge()
 
         val app = application as HaberRadariApp
@@ -48,7 +49,7 @@ class MainActivity : ComponentActivity() {
                     if (article == null) {
                         FeedScreen(
                             viewModel = viewModel,
-                            onArticleClick = { 
+                            onOpenDetail = { 
                                 android.util.Log.d("NewsFlow", "Card clicked, selecting article: ${it.title}")
                                 selectedArticle = it 
                             }
@@ -57,7 +58,7 @@ class MainActivity : ComponentActivity() {
                         ArticleDetailScreen(
                             article = article,
                             onBackClick = { selectedArticle = null },
-                            onOpenOriginalClick = { 
+                            onOpenOriginal = { 
                                 android.util.Log.d("NewsFlow", "Opening original source for: ${it.title}")
                                 openArticle(it) 
                             }

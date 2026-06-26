@@ -47,7 +47,7 @@ import com.haberradari.data.model.Article
 @Composable
 fun FeedScreen(
     viewModel: FeedViewModel,
-    onArticleClick: (Article) -> Unit
+    onOpenDetail: (Article) -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val isRefreshing by viewModel.isRefreshing.collectAsState()
@@ -105,6 +105,13 @@ fun FeedScreen(
                         .padding(paddingValues)
                         .fillMaxSize()
                 ) {
+                    androidx.compose.material3.Text(
+                        text = "Debug build: in-app-detail 760c195",
+                        style = MaterialTheme.typography.labelSmall,
+                        color = androidx.compose.ui.graphics.Color.Red,
+                        modifier = Modifier.fillMaxWidth().padding(8.dp),
+                        textAlign = androidx.compose.ui.text.style.TextAlign.Center
+                    )
                     LazyColumn(
                         contentPadding = PaddingValues(vertical = 8.dp),
                         verticalArrangement = Arrangement.spacedBy(4.dp)
@@ -115,7 +122,7 @@ fun FeedScreen(
                         ) { article ->
                             ArticleCard(
                                 article = article,
-                                onArticleClick = onArticleClick
+                                onOpenDetail = onOpenDetail
                             )
                         }
                     }
