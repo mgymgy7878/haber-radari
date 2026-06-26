@@ -59,13 +59,17 @@ class DefaultSourceSeedTest {
     
     class FakeArticleDao : ArticleDao {
         override fun getAllArticles(): Flow<List<Article>> = flowOf(emptyList())
+        override suspend fun insertArticle(article: Article) {}
         override suspend fun insertArticles(articles: List<Article>) {}
-        override suspend fun deleteOlderThan(timestamp: Long) {}
+        override suspend fun getByContentHash(hash: String): Article? = null
+        override suspend fun deleteOlderThan(cutoffMillis: Long) {}
+        override suspend fun getArticleCount(): Int = 0
     }
     
     class FakeFeedHealthDao : FeedHealthDao {
         override suspend fun upsertHealth(health: FeedHealth) {}
         override suspend fun getHealthForSource(sourceId: String): FeedHealth? = null
+        override suspend fun getAllHealth(): List<FeedHealth> = emptyList()
     }
 
     @Test
