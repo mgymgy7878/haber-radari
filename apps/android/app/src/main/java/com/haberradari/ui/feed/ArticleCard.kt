@@ -103,12 +103,17 @@ fun ArticleCard(
 
             Spacer(modifier = Modifier.height(8.dp))
 
-            // 🔗 Orijinal link göstergesi
-            Text(
-                text = extractDomain(article.originalUrl),
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
+            // 🔗 Detay göstergesi
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.End
+            ) {
+                Text(
+                    text = "Haberi İncele ➔",
+                    style = MaterialTheme.typography.labelMedium,
+                    color = MaterialTheme.colorScheme.primary
+                )
+            }
         }
     }
 }
@@ -126,16 +131,5 @@ private fun formatRelativeTime(epochMillis: Long): String {
         diff < 86_400_000 -> "${diff / 3_600_000} saat önce"
         diff < 604_800_000 -> "${diff / 86_400_000} gün önce"
         else -> "${diff / 604_800_000} hafta önce"
-    }
-}
-
-/**
- * URL'den domain kısmını çıkart.
- */
-private fun extractDomain(url: String): String {
-    return try {
-        java.net.URI(url).host ?: url
-    } catch (_: Exception) {
-        url
     }
 }
