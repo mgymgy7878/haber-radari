@@ -88,6 +88,9 @@ class NewsRepository(
         val thirtyDaysAgo = System.currentTimeMillis() - (30L * 24 * 60 * 60 * 1000)
         articleDao.deleteOlderThan(thirtyDaysAgo)
 
+        // Veritabanındaki eski ve yeni yinelenen haberleri temizle
+        articleDao.deleteDuplicates()
+
         return@withContext newArticlesCount
     }
 
