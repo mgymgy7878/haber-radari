@@ -48,13 +48,19 @@ class MainActivity : ComponentActivity() {
                     if (article == null) {
                         FeedScreen(
                             viewModel = viewModel,
-                            onArticleClick = { selectedArticle = it }
+                            onArticleClick = { 
+                                android.util.Log.d("NewsFlow", "Card clicked, selecting article: ${it.title}")
+                                selectedArticle = it 
+                            }
                         )
                     } else {
                         ArticleDetailScreen(
                             article = article,
                             onBackClick = { selectedArticle = null },
-                            onOpenOriginalClick = { openArticle(it) }
+                            onOpenOriginalClick = { 
+                                android.util.Log.d("NewsFlow", "Opening original source for: ${it.title}")
+                                openArticle(it) 
+                            }
                         )
                     }
                 }

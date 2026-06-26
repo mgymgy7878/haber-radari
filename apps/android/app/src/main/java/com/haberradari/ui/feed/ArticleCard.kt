@@ -40,7 +40,10 @@ fun ArticleCard(
     modifier: Modifier = Modifier
 ) {
     Card(
-        onClick = { onArticleClick(article) },
+        onClick = { 
+            android.util.Log.d("NewsFlow", "ArticleCard onClick triggered for: ${article.title}")
+            onArticleClick(article) 
+        },
         modifier = modifier
             .fillMaxWidth()
             .padding(horizontal = 16.dp, vertical = 6.dp),
