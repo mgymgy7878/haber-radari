@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="radar_blue">#FF2196F3</color>
+    <color name="radar_blue_dark">#FF1565C0</color>
+    <color name="radar_orange">#FFFF9800</color>
+    <color name="radar_red">#FFE53935</color>
+    <color name="dark_background">#FF0F1419</color>
+    <color name="dark_surface">#FF1A2332</color>
+    <color name="light_background">#FFF5F8FA</color>
+    <color name="light_surface">#FFFFFFFF</color>
+</resources>

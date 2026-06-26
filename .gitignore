@@ -6,10 +6,23 @@ dist/
 .env
 .env.local
 .DS_Store
+# Expo-generated native dirs (root level)
 android/
 ios/
+# But keep our Android native app source
+!apps/android/
 *.jks
 *.p8
 *.p12
 *.key
 *.mobileprovision
+
+# Android native build artifacts
+*.apk
+*.aab
+.gradle/
+**/build/
+local.properties
+
+# IDE local files
+.idea/
