@@ -24,7 +24,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.material3.pulltorefresh.PullToRefreshBox
+
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -98,9 +98,7 @@ fun FeedScreen(
             }
 
             is FeedViewModel.UiState.Success -> {
-                PullToRefreshBox(
-                    isRefreshing = isRefreshing,
-                    onRefresh = { viewModel.refresh() },
+                Box(
                     modifier = Modifier
                         .padding(paddingValues)
                         .fillMaxSize()
@@ -119,6 +117,16 @@ fun FeedScreen(
                                 onOpenDetail = onOpenDetail
                             )
                         }
+                    }
+
+                    // En hafif refresh indicator (Scroll esnasÄ±nda listeyi etkilemez)
+                    if (isRefreshing) {
+                        androidx.compose.material3.LinearProgressIndicator(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .align(Alignment.TopCenter),
+                            color = MaterialTheme.colorScheme.primary
+                        )
                     }
                 }
             }
