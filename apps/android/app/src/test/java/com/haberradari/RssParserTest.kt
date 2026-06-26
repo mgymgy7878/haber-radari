@@ -124,4 +124,42 @@ class RssParserTest {
         assertEquals("Haber & Analiz: \"Önemli\"", items[0].title)
         assertEquals("A < B > C", items[0].description)
     }
+
+    @Test
+    fun `Atom XML parses correctly`() {
+        val atomXml = """
+            <?xml version="1.0" encoding="UTF-8"?>
+            <feed xmlns="http://www.w3.org/2005/Atom">
+              <title type="text">ntv.com.tr</title>
+              <entry>
+                <id>https://www.ntv.com.tr/turkiye/test</id>
+                <title>Atom Feed Başlığı</title>
+                <link rel="alternate" href="https://www.ntv.com.tr/turkiye/test"/>
+                <summary>Atom açıklaması</summary>
+                <published>2026-06-26T21:51:29+03:00</published>
+              </entry>
+              <entry>
+                <title>İkinci Atom</title>
+                <link href="https://example.com/ikinci"/>
+                <content>İkinci içerik</content>
+                <updated>2026-06-26T22:00:00+03:00</updated>
+              </entry>
+            </feed>
+        """.trimIndent()
+        
+        val items = RssParser.parseXml(atomXml)
+        assertEquals(2, items.size)
+        
+        val first = items[0]
+        assertEquals("Atom Feed Başlığı", first.title)
+        assertEquals("https://www.ntv.com.tr/turkiye/test", first.link)
+        assertEquals("Atom açıklaması", first.description)
+        assertEquals("2026-06-26T21:51:29+03:00", first.pubDate)
+        
+        val second = items[1]
+        assertEquals("İkinci Atom", second.title)
+        assertEquals("https://example.com/ikinci", second.link)
+        assertEquals("İkinci içerik", second.description)
+        assertEquals("2026-06-26T22:00:00+03:00", second.pubDate)
+    }
 }

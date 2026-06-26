@@ -41,21 +41,34 @@ object RssParser {
         val items = mutableListOf<RssItem>()
         // Regex-based lightweight parser (XmlPullParser context gerektirdiğinden
         // unit test uyumluluğu için regex kullanıyoruz)
-        val itemBlocks = Regex("<item[\\s\\S]*?</item>", RegexOption.IGNORE_CASE)
+        val itemBlocks = Regex("<(?:item|entry)[\\s\\S]*?</(?:item|entry)>", RegexOption.IGNORE_CASE)
             .findAll(xml)
             .toList()
 
         for (block in itemBlocks) {
             val blockText = block.value
             val title = extractTag(blockText, "title") ?: continue
-            val link = extractTag(blockText, "link") ?: continue
+            val link = extractLink(blockText) ?: continue
+
+            val pubDate = extractTag(blockText, "pubDate") 
+                ?: extractTag(blockText, "published") 
+                ?: extractTag(blockText, "updated") 
+                ?: ""
+
+            var description = extractTag(blockText, "description") 
+                ?: extractTag(blockText, "summary") 
+                ?: extractTag(blockText, "content")
+            
+            description = description?.trim()?.let {
+                if (it.length > 500) it.substring(0, 500) + "..." else it
+            }
 
             items.add(
                 RssItem(
                     title = title.trim(),
                     link = link.trim(),
-                    pubDate = extractTag(blockText, "pubDate") ?: "",
-                    description = extractTag(blockText, "description")?.trim(),
+                    pubDate = pubDate,
+                    description = description,
                     imageUrl = extractMediaUrl(blockText)
                 )
             )
@@ -158,8 +171,27 @@ object RssParser {
         // Normal tag
         val pattern = Regex("<$tag[^>]*>([\\s\\S]*?)</$tag>", RegexOption.IGNORE_CASE)
         return pattern.find(block)?.let {
-            decodeXmlEntities(it.groupValues[1])
+            val content = it.groupValues[1].trim()
+            if (content.isNotEmpty()) decodeXmlEntities(content) else null
         }
+    }
+
+    private fun extractLink(block: String): String? {
+        // RSS standardı: <link>http...</link>
+        val textLink = extractTag(block, "link")
+        if (!textLink.isNullOrBlank()) return textLink
+
+        // Atom standardı: <link rel="alternate" href="..." /> veya <link href="..." />
+        val linkPattern = Regex("<link[^>]*href=[\"']([^\"']+)[\"'][^>]*>", RegexOption.IGNORE_CASE)
+        val matches = linkPattern.findAll(block).toList()
+        
+        // Önce rel="alternate" olanı ara
+        val alternate = matches.find { it.value.contains("rel=[\"']alternate[\"']".toRegex(RegexOption.IGNORE_CASE)) }
+        if (alternate != null) {
+            return alternate.groupValues[1]
+        }
+        // Bulunamazsa ilk href'i dön
+        return matches.firstOrNull()?.groupValues?.get(1)
     }
 
     private fun extractMediaUrl(block: String): String? {
