@@ -25,7 +25,7 @@ interface SourceDao {
     suspend fun insertSource(source: Source)
 
     /** Toplu kaynak ekleme */
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertSources(sources: List<Source>)
 
     /** Kaynak ID ile getir */

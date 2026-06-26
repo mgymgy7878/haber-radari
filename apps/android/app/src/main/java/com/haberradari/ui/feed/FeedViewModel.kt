@@ -60,14 +60,12 @@ class FeedViewModel(
         }
     }
 
-    /**
-     * Manuel veya otomatik yenileme.
-     * Pull-to-refresh ve ilk yükleme burayı çağırır.
-     */
     fun refresh() {
         viewModelScope.launch {
             _isRefreshing.value = true
             try {
+                // Ensure default sources are seeded before refresh
+                repository.seedDefaultSources()
                 repository.refreshFeeds()
             } catch (e: Exception) {
                 // Flow observer zaten Error state'i yakalar
