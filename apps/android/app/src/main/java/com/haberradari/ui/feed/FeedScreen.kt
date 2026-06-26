@@ -1,4 +1,4 @@
-﻿package com.haberradari.ui.feed
+package com.haberradari.ui.feed
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -105,14 +105,8 @@ fun FeedScreen(
                         .padding(paddingValues)
                         .fillMaxSize()
                 ) {
-                    androidx.compose.material3.Text(
-                        text = "Debug build: in-app-detail 760c195",
-                        style = MaterialTheme.typography.labelSmall,
-                        color = androidx.compose.ui.graphics.Color.Red,
-                        modifier = Modifier.fillMaxWidth().padding(8.dp),
-                        textAlign = androidx.compose.ui.text.style.TextAlign.Center
-                    )
                     LazyColumn(
+                        modifier = Modifier.fillMaxSize(),
                         contentPadding = PaddingValues(vertical = 8.dp),
                         verticalArrangement = Arrangement.spacedBy(4.dp)
                     ) {
