@@ -28,6 +28,7 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
@@ -35,12 +36,12 @@ import androidx.compose.ui.unit.dp
 import com.haberradari.data.model.Article
 
 /**
- * Ana haber akÄ±ÅŸÄ± ekranÄ±.
+ * Ana haber akışı ekranı.
  *
  * Durumlar:
- * - Loading: YÃ¼kleniyor gÃ¶stergesi
- * - Empty: "HenÃ¼z haber yok" + yenile butonu
- * - Error: Hata mesajÄ± + tekrar dene
+ * - Loading: Yükleniyor göstergesi
+ * - Empty: "Henüz haber yok" + yenile butonu
+ * - Error: Hata mesajı + tekrar dene
  * - Success: Pull-to-refresh destekli haber listesi
  */
 @OptIn(ExperimentalMaterial3Api::class)
@@ -57,7 +58,7 @@ fun FeedScreen(
             TopAppBar(
                 title = {
                     Text(
-                        text = "Haber RadarÄ±",
+                        text = stringResource(id = com.haberradari.R.string.app_name),
                         style = MaterialTheme.typography.headlineMedium
                     )
                 },
@@ -149,7 +150,7 @@ private fun LoadingState(modifier: Modifier = Modifier) {
             )
             Spacer(modifier = Modifier.height(16.dp))
             Text(
-                text = "Haberler yÃ¼kleniyor...",
+                text = stringResource(id = com.haberradari.R.string.loading_message),
                 style = MaterialTheme.typography.bodyLarge,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
@@ -171,18 +172,18 @@ private fun EmptyState(
             modifier = Modifier.padding(32.dp)
         ) {
             Text(
-                text = "ğŸ“¡",
+                text = "📡",
                 style = MaterialTheme.typography.headlineLarge
             )
             Spacer(modifier = Modifier.height(16.dp))
             Text(
-                text = "HenÃ¼z haber yok",
+                text = stringResource(id = com.haberradari.R.string.empty_title),
                 style = MaterialTheme.typography.titleLarge,
                 color = MaterialTheme.colorScheme.onSurface
             )
             Spacer(modifier = Modifier.height(8.dp))
             Text(
-                text = "RSS kaynaklarÄ±ndan haber Ã§ekmek iÃ§in yenile butonuna basÄ±n.",
+                text = stringResource(id = com.haberradari.R.string.empty_message),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 textAlign = TextAlign.Center
@@ -210,12 +211,12 @@ private fun ErrorState(
             modifier = Modifier.padding(32.dp)
         ) {
             Text(
-                text = "âš ï¸",
+                text = "⚠️",
                 style = MaterialTheme.typography.headlineLarge
             )
             Spacer(modifier = Modifier.height(16.dp))
             Text(
-                text = "Bir hata oluÅŸtu",
+                text = stringResource(id = com.haberradari.R.string.error_title),
                 style = MaterialTheme.typography.titleLarge,
                 color = MaterialTheme.colorScheme.error
             )
