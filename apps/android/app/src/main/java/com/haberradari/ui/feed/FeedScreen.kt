@@ -1,4 +1,4 @@
-package com.haberradari.ui.feed
+﻿package com.haberradari.ui.feed
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -35,12 +35,12 @@ import androidx.compose.ui.unit.dp
 import com.haberradari.data.model.Article
 
 /**
- * Ana haber akışı ekranı.
+ * Ana haber akÄ±ÅŸÄ± ekranÄ±.
  *
  * Durumlar:
- * - Loading: Yükleniyor göstergesi
- * - Empty: "Henüz haber yok" + yenile butonu
- * - Error: Hata mesajı + tekrar dene
+ * - Loading: YÃ¼kleniyor gÃ¶stergesi
+ * - Empty: "HenÃ¼z haber yok" + yenile butonu
+ * - Error: Hata mesajÄ± + tekrar dene
  * - Success: Pull-to-refresh destekli haber listesi
  */
 @OptIn(ExperimentalMaterial3Api::class)
@@ -57,7 +57,7 @@ fun FeedScreen(
             TopAppBar(
                 title = {
                     Text(
-                        text = "Haber Radarı",
+                        text = "Haber RadarÄ±",
                         style = MaterialTheme.typography.headlineMedium
                     )
                 },
@@ -147,7 +147,7 @@ private fun LoadingState(modifier: Modifier = Modifier) {
             )
             Spacer(modifier = Modifier.height(16.dp))
             Text(
-                text = "Haberler yükleniyor...",
+                text = "Haberler yÃ¼kleniyor...",
                 style = MaterialTheme.typography.bodyLarge,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
@@ -169,18 +169,18 @@ private fun EmptyState(
             modifier = Modifier.padding(32.dp)
         ) {
             Text(
-                text = "📡",
+                text = "ğŸ“¡",
                 style = MaterialTheme.typography.headlineLarge
             )
             Spacer(modifier = Modifier.height(16.dp))
             Text(
-                text = "Henüz haber yok",
+                text = "HenÃ¼z haber yok",
                 style = MaterialTheme.typography.titleLarge,
                 color = MaterialTheme.colorScheme.onSurface
             )
             Spacer(modifier = Modifier.height(8.dp))
             Text(
-                text = "RSS kaynaklarından haber çekmek için yenile butonuna basın.",
+                text = "RSS kaynaklarÄ±ndan haber Ã§ekmek iÃ§in yenile butonuna basÄ±n.",
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 textAlign = TextAlign.Center
@@ -208,12 +208,12 @@ private fun ErrorState(
             modifier = Modifier.padding(32.dp)
         ) {
             Text(
-                text = "⚠️",
+                text = "âš ï¸",
                 style = MaterialTheme.typography.headlineLarge
             )
             Spacer(modifier = Modifier.height(16.dp))
             Text(
-                text = "Bir hata oluştu",
+                text = "Bir hata oluÅŸtu",
                 style = MaterialTheme.typography.titleLarge,
                 color = MaterialTheme.colorScheme.error
             )
@@ -231,3 +231,4 @@ private fun ErrorState(
         }
     }
 }
+
