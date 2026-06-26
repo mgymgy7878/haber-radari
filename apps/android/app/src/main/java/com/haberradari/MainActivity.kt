@@ -4,10 +4,17 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import androidx.activity.ComponentActivity
+import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.browser.customtabs.CustomTabsIntent
+import androidx.compose.animation.Crossfade
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import com.haberradari.data.model.Article
+import com.haberradari.ui.feed.ArticleDetailScreen
 import com.haberradari.ui.feed.FeedScreen
 import com.haberradari.ui.feed.FeedViewModel
 import com.haberradari.ui.theme.HaberRadariTheme
@@ -15,8 +22,8 @@ import com.haberradari.ui.theme.HaberRadariTheme
 /**
  * Ana Activity — Compose UI entry point.
  *
- * Haber kartına tıklandığında orijinal haberi
- * Chrome Custom Tab ile açar (uygulama içi tarayıcı).
+ * Haber kartına tıklandığında uygulama içi detay ekranı açılır.
+ * "Orijinal haberi aç" denirse Chrome Custom Tab ile açar.
  */
 class MainActivity : ComponentActivity() {
 
@@ -24,6 +31,7 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        android.util.Log.d("NewsFlow", "MainActivity onCreate started: ${System.currentTimeMillis()}")
         enableEdgeToEdge()
 
         val app = application as HaberRadariApp
@@ -31,10 +39,32 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             HaberRadariTheme {
-                FeedScreen(
-                    viewModel = viewModel,
-                    onArticleClick = { article -> openArticle(article) }
-                )
+                var selectedArticle by remember { mutableStateOf<Article?>(null) }
+
+                BackHandler(enabled = selectedArticle != null) {
+                    selectedArticle = null
+                }
+
+                Crossfade(targetState = selectedArticle, label = "ScreenTransition") { article ->
+                    if (article == null) {
+                        FeedScreen(
+                            viewModel = viewModel,
+                            onOpenDetail = { 
+                                android.util.Log.d("NewsFlow", "Card clicked, selecting article: ${it.title}")
+                                selectedArticle = it 
+                            }
+                        )
+                    } else {
+                        ArticleDetailScreen(
+                            article = article,
+                            onBackClick = { selectedArticle = null },
+                            onOpenOriginal = { 
+                                android.util.Log.d("NewsFlow", "Opening original source for: ${it.title}")
+                                openArticle(it) 
+                            }
+                        )
+                    }
+                }
             }
         }
     }

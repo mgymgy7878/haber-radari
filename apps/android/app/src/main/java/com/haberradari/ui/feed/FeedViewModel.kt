@@ -61,12 +61,14 @@ class FeedViewModel(
     }
 
     fun refresh() {
+        android.util.Log.d("NewsFlow", "refreshFeeds start: ${System.currentTimeMillis()}")
         viewModelScope.launch {
             _isRefreshing.value = true
             try {
                 // Ensure default sources are seeded before refresh
                 repository.seedDefaultSources()
                 repository.refreshFeeds()
+                android.util.Log.d("NewsFlow", "refreshFeeds end: ${System.currentTimeMillis()}")
             } catch (e: Exception) {
                 // Flow observer zaten Error state'i yakalar
                 // Burada sadece refreshing durumunu sıfırla

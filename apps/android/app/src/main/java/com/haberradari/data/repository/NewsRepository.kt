@@ -41,6 +41,7 @@ class NewsRepository(
      */
     suspend fun refreshFeeds(): Int {
         val enabledSources = sourceDao.getEnabledSources()
+        android.util.Log.d("NewsFlow", "NewsRepository refreshFeeds started with ${enabledSources.size} sources")
         var newArticlesCount = 0
 
         for (source in enabledSources) {
@@ -52,8 +53,10 @@ class NewsRepository(
                 val rssItems = RssParser.parseXml(xml)
                 val articles = RssParser.toArticles(rssItems, source)
 
+                val startDb = System.currentTimeMillis()
                 // Duplicate'lar INSERT IGNORE ile otomatik atlanır
                 articleDao.insertArticles(articles)
+                android.util.Log.d("NewsFlow", "DB insert end for ${source.name}: ${System.currentTimeMillis() - startDb} ms")
                 newArticlesCount += articles.size
 
                 // Feed health güncelle — başarılı
