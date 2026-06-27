@@ -17,7 +17,15 @@ import com.haberradari.data.model.Article
 import com.haberradari.ui.feed.ArticleDetailScreen
 import com.haberradari.ui.feed.FeedScreen
 import com.haberradari.ui.feed.FeedViewModel
+import com.haberradari.ui.feed.SourceHealthScreen
+import com.haberradari.ui.feed.SourceHealthViewModel
 import com.haberradari.ui.theme.HaberRadariTheme
+
+sealed class Screen {
+    object Feed : Screen()
+    data class Detail(val article: Article) : Screen()
+    object Health : Screen()
+}
 
 /**
  * Ana Activity — Compose UI entry point.
@@ -27,7 +35,8 @@ import com.haberradari.ui.theme.HaberRadariTheme
  */
 class MainActivity : ComponentActivity() {
 
-    private lateinit var viewModel: FeedViewModel
+    private lateinit var feedViewModel: FeedViewModel
+    private lateinit var healthViewModel: SourceHealthViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -35,34 +44,47 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
 
         val app = application as HaberRadariApp
-        viewModel = FeedViewModel(app.repository)
+        feedViewModel = FeedViewModel(app.repository)
+        healthViewModel = SourceHealthViewModel(app.repository)
 
         setContent {
             HaberRadariTheme {
-                var selectedArticle by remember { mutableStateOf<Article?>(null) }
+                var currentScreen by remember { mutableStateOf<Screen>(Screen.Feed) }
 
-                BackHandler(enabled = selectedArticle != null) {
-                    selectedArticle = null
+                BackHandler(enabled = currentScreen != Screen.Feed) {
+                    currentScreen = Screen.Feed
                 }
 
-                Crossfade(targetState = selectedArticle, label = "ScreenTransition") { article ->
-                    if (article == null) {
-                        FeedScreen(
-                            viewModel = viewModel,
-                            onOpenDetail = { 
-                                android.util.Log.d("NewsFlow", "Card clicked, selecting article: ${it.title}")
-                                selectedArticle = it 
-                            }
-                        )
-                    } else {
-                        ArticleDetailScreen(
-                            article = article,
-                            onBackClick = { selectedArticle = null },
-                            onOpenOriginal = { 
-                                android.util.Log.d("NewsFlow", "Opening original source for: ${it.title}")
-                                openArticle(it) 
-                            }
-                        )
+                Crossfade(targetState = currentScreen, label = "ScreenTransition") { screen ->
+                    when (screen) {
+                        is Screen.Feed -> {
+                            FeedScreen(
+                                viewModel = feedViewModel,
+                                onOpenDetail = { 
+                                    android.util.Log.d("NewsFlow", "Card clicked, selecting article: ${it.title}")
+                                    currentScreen = Screen.Detail(it) 
+                                },
+                                onOpenHealth = {
+                                    currentScreen = Screen.Health
+                                }
+                            )
+                        }
+                        is Screen.Detail -> {
+                            ArticleDetailScreen(
+                                article = screen.article,
+                                onBackClick = { currentScreen = Screen.Feed },
+                                onOpenOriginal = { 
+                                    android.util.Log.d("NewsFlow", "Opening original source for: ${it.title}")
+                                    openArticle(it) 
+                                }
+                            )
+                        }
+                        is Screen.Health -> {
+                            SourceHealthScreen(
+                                viewModel = healthViewModel,
+                                onBackClick = { currentScreen = Screen.Feed }
+                            )
+                        }
                     }
                 }
             }
