@@ -12,3 +12,6 @@ export * from "./quality-stats.js";
 export * from "./social-scoring.js";
 export * from "./notification-queue.js";
 export * from "./sample-events.js";
+export * from "./ai-reader/ai-reader-summary.js";
+export * from "./ai-reader/ai-reader-service.js";
+export * from "./ai-reader/mock-ai-reader-service.js";

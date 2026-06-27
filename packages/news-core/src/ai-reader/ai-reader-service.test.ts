@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { MockAiReaderService } from './mock-ai-reader-service';
+import { MockAiReaderService } from './mock-ai-reader-service.js';
 
 describe('AiReaderService Contract', () => {
   it('should return a valid summary matching the AiReaderSummary contract', async () => {

@@ -1,4 +1,4 @@
-import { AiReaderSummary } from './ai-reader-summary';
+import { AiReaderSummary } from './ai-reader-summary.js';
 
 export interface GenerateSummaryRequest {
   articleId: string;
