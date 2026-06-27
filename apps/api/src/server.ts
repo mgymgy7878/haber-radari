@@ -22,7 +22,7 @@ import {
 const PORT = Number(process.env.PORT ?? 3001);
 const HOST = process.env.HOST ?? "0.0.0.0";
 
-const app = Fastify({ logger: true });
+export const app = Fastify({ logger: true });
 
 await app.register(cors, { origin: true });
 
@@ -160,6 +160,41 @@ app.get("/api/ingest/preview", async () => {
       meta: getMeta(),
     };
   }
+});
+
+import { MockAiReaderService } from "@haber-radari/news-core";
+
+app.post("/ai-reader/summary/mock", async (req, reply) => {
+  const body = req.body as any;
+  
+  if (!body || !body.articleId || !body.sourceName || !body.title) {
+    return reply.status(400).send({ error: "Missing required fields: articleId, sourceName, title" });
+  }
+  
+  if (body.fullText || body.articleBody || body.contentHtml) {
+    return reply.status(400).send({ error: "Raw full text is not accepted" });
+  }
+
+  let urlValid = false;
+  try {
+    if (body.sourceUrl) {
+      new URL(body.sourceUrl);
+      urlValid = true;
+    }
+  } catch (e) {}
+
+  if (!urlValid && body.sourceUrl) {
+    return reply.status(400).send({ error: "Invalid sourceUrl" });
+  }
+  
+  const mockService = new MockAiReaderService();
+  const summary = await mockService.generateSummary({
+    articleId: body.articleId,
+    url: body.sourceUrl || '',
+    sourceName: body.sourceName
+  });
+
+  return summary;
 });
 
 try {

@@ -1,5 +1,5 @@
-import { AiReaderService, GenerateSummaryRequest } from './ai-reader-service';
-import { AiReaderSummary, EmotionalTone, VisibilityRecommendation } from './ai-reader-summary';
+import { AiReaderService, GenerateSummaryRequest } from './ai-reader-service.js';
+import { AiReaderSummary, EmotionalTone, VisibilityRecommendation } from './ai-reader-summary.js';
 
 export class MockAiReaderService implements AiReaderService {
   async generateSummary(request: GenerateSummaryRequest): Promise<AiReaderSummary> {

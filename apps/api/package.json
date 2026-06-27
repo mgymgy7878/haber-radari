@@ -7,17 +7,19 @@
     "dev": "pnpm --filter @haber-radari/news-core build && pnpm --filter @haber-radari/connectors build && tsx watch src/server.ts",
     "build": "tsc",
     "start": "node dist/server.js",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "test": "vitest"
   },
   "dependencies": {
+    "@fastify/cors": "^10.0.2",
     "@haber-radari/connectors": "workspace:*",
     "@haber-radari/news-core": "workspace:*",
-    "@fastify/cors": "^10.0.2",
     "fastify": "^5.2.1"
   },
   "devDependencies": {
     "@types/node": "^22.10.5",
     "tsx": "^4.19.2",
-    "typescript": "^5.7.3"
+    "typescript": "^5.7.3",
+    "vitest": "^4.1.9"
   }
 }
