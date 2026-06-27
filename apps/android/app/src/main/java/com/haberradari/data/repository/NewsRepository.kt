@@ -35,6 +35,8 @@ class NewsRepository(
     /** Makale akışı — UI bu Flow'u observe eder */
     fun getArticles(): Flow<List<Article>> = articleDao.getAllArticles()
 
+
+
     /**
      * Tüm aktif kaynakları çek, parse et ve Room'a yaz.
      * DISABLED ve kullanıcı-kapalı kaynaklar atlanır.
@@ -91,8 +93,21 @@ class NewsRepository(
         // Veritabanındaki eski ve yeni yinelenen haberleri temizle
         articleDao.deleteDuplicates()
 
+        // Veritabanında daha önceden kalmış clickbait haberleri temizle
+        val allArticlesSnapshot = articleDao.getArticlesSnapshot()
+        val clickbaitIds = allArticlesSnapshot
+            .filter { com.haberradari.data.remote.ClickbaitFilter.isClickbait(it.title) }
+            .map { it.id }
+        if (clickbaitIds.isNotEmpty()) {
+            articleDao.deleteByIds(clickbaitIds)
+            android.util.Log.d("NewsFlow", "Deleted ${clickbaitIds.size} existing clickbait articles from DB")
+        }
+
         return@withContext newArticlesCount
     }
+
+    /** Kaynak akışı — UI routing için kullanılır */
+    fun getSourcesFlow(): Flow<List<Source>> = sourceDao.getAllSources()
 
     /**
      * Varsayılan RSS kaynaklarını veritabanına yükler (ilk çalıştırma).
@@ -105,21 +120,24 @@ class NewsRepository(
                 name = "NTV Türkiye",
                 feedUrl = "https://www.ntv.com.tr/turkiye.rss",
                 legalMode = LegalMode.RSS_METADATA_ONLY,
-                category = "türkiye"
+                category = "türkiye",
+                authorityLevel = com.haberradari.data.model.SourceAuthority.GENERAL_MEDIA
             ),
             Source(
                 id = "bbc-turkce",
                 name = "BBC Türkçe",
                 feedUrl = "https://feeds.bbci.co.uk/turkce/rss.xml",
                 legalMode = LegalMode.RSS_METADATA_ONLY,
-                category = "dünya"
+                category = "dünya",
+                authorityLevel = com.haberradari.data.model.SourceAuthority.GENERAL_MEDIA
             ),
             Source(
                 id = "haberturk",
                 name = "Habertürk",
                 feedUrl = "https://www.haberturk.com/rss",
                 legalMode = LegalMode.RSS_METADATA_ONLY,
-                category = "genel"
+                category = "genel",
+                authorityLevel = com.haberradari.data.model.SourceAuthority.GENERAL_MEDIA
             )
         )
         sourceDao.insertSources(defaults)

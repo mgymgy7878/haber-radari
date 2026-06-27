@@ -27,5 +27,8 @@ data class Source(
     val enabled: Boolean = true,
 
     /** Haber kategorisi */
-    val category: String = "genel"
+    val category: String = "genel",
+    
+    /** Kaynağın otorite seviyesi */
+    val authorityLevel: SourceAuthority = SourceAuthority.GENERAL_MEDIA
 )

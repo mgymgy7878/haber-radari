@@ -13,6 +13,12 @@ interface ArticleDao {
     @Query("SELECT * FROM articles ORDER BY publishedAt DESC")
     fun getAllArticles(): Flow<List<Article>>
 
+    @Query("SELECT * FROM articles")
+    suspend fun getArticlesSnapshot(): List<Article>
+
+    @Query("DELETE FROM articles WHERE id IN (:ids)")
+    suspend fun deleteByIds(ids: List<String>)
+
     /** Tek makale ekleme — duplicate varsa atla (contentHash UNIQUE index) */
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertArticle(article: Article)
@@ -51,4 +57,5 @@ interface ArticleDao {
     /** Toplam makale sayısı */
     @Query("SELECT COUNT(*) FROM articles")
     suspend fun getArticleCount(): Int
+
 }
