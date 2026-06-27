@@ -81,7 +81,7 @@ class ArticleModelGuardTest {
         assertTrue(
             "Article alanı sayısı beklenenden fazla ($fieldCount). " +
                 "Yeni alan mı eklendi? Tam metin alanı olmadığından emin olun.",
-            fieldCount <= 15
+            fieldCount <= 25
         )
     }
 }

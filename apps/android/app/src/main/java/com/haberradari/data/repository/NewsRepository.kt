@@ -55,7 +55,16 @@ class NewsRepository(
             try {
                 val xml = fetchRssXml(source.feedUrl)
                 val rssItems = RssParser.parseXml(xml)
-                val articles = RssParser.toArticles(rssItems, source)
+                val rawArticles = RssParser.toArticles(rssItems, source)
+
+                // AI Reader & Human Value Filter v0: Apply visibility rules
+                val articles = rawArticles.map { article ->
+                    val result = com.haberradari.data.remote.HumanValueClassifier.determineVisibility(article)
+                    article.copy(
+                        visibility = result.visibility,
+                        visibilityReason = result.visibilityReason
+                    )
+                }
 
                 val startDb = System.currentTimeMillis()
                 // Duplicate'lar INSERT IGNORE ile otomatik atlanır
@@ -93,15 +102,7 @@ class NewsRepository(
         // Veritabanındaki eski ve yeni yinelenen haberleri temizle
         articleDao.deleteDuplicates()
 
-        // Veritabanında daha önceden kalmış clickbait haberleri temizle
-        val allArticlesSnapshot = articleDao.getArticlesSnapshot()
-        val clickbaitIds = allArticlesSnapshot
-            .filter { com.haberradari.data.remote.ClickbaitFilter.isClickbait(it.title) }
-            .map { it.id }
-        if (clickbaitIds.isNotEmpty()) {
-            articleDao.deleteByIds(clickbaitIds)
-            android.util.Log.d("NewsFlow", "Deleted ${clickbaitIds.size} existing clickbait articles from DB")
-        }
+
 
         return@withContext newArticlesCount
     }
