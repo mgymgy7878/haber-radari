@@ -35,6 +35,19 @@ class NewsRepository(
     /** Makale akışı — UI bu Flow'u observe eder */
     fun getArticles(): Flow<List<Article>> = articleDao.getAllArticles()
 
+    /** Kaynak, sağlık ve makale sayısı istatistikleri (Birleştirilmiş Flow) */
+    fun getSourceStats(): Flow<List<com.haberradari.data.model.SourceStats>> = kotlinx.coroutines.flow.combine(
+        sourceDao.getAllSources(),
+        feedHealthDao.getAllHealthFlow(),
+        articleDao.getArticleCountsBySourceFlow()
+    ) { sources, healths, counts ->
+        sources.map { source ->
+            val health = healths.find { it.sourceId == source.id }
+            val count = counts.find { it.sourceId == source.id }?.count ?: 0
+            com.haberradari.data.model.SourceStats(source, health, count)
+        }
+    }
+
     /**
      * Tüm aktif kaynakları çek, parse et ve Room'a yaz.
      * DISABLED ve kullanıcı-kapalı kaynaklar atlanır.
@@ -91,8 +104,13 @@ class NewsRepository(
         // Veritabanındaki eski ve yeni yinelenen haberleri temizle
         articleDao.deleteDuplicates()
 
+
+
         return@withContext newArticlesCount
     }
+
+    /** Kaynak akışı — UI routing için kullanılır */
+    fun getSourcesFlow(): Flow<List<Source>> = sourceDao.getAllSources()
 
     /**
      * Varsayılan RSS kaynaklarını veritabanına yükler (ilk çalıştırma).
@@ -104,22 +122,19 @@ class NewsRepository(
                 id = "ntv-turkiye",
                 name = "NTV Türkiye",
                 feedUrl = "https://www.ntv.com.tr/turkiye.rss",
-                legalMode = LegalMode.RSS_METADATA_ONLY,
-                category = "türkiye"
+                legalMode = LegalMode.RSS_METADATA_ONLY
             ),
             Source(
                 id = "bbc-turkce",
                 name = "BBC Türkçe",
                 feedUrl = "https://feeds.bbci.co.uk/turkce/rss.xml",
-                legalMode = LegalMode.RSS_METADATA_ONLY,
-                category = "dünya"
+                legalMode = LegalMode.RSS_METADATA_ONLY
             ),
             Source(
                 id = "haberturk",
                 name = "Habertürk",
                 feedUrl = "https://www.haberturk.com/rss",
-                legalMode = LegalMode.RSS_METADATA_ONLY,
-                category = "genel"
+                legalMode = LegalMode.RSS_METADATA_ONLY
             )
         )
         sourceDao.insertSources(defaults)

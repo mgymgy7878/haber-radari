@@ -13,6 +13,7 @@ interface ArticleDao {
     @Query("SELECT * FROM articles ORDER BY publishedAt DESC")
     fun getAllArticles(): Flow<List<Article>>
 
+
     /** Tek makale ekleme — duplicate varsa atla (contentHash UNIQUE index) */
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertArticle(article: Article)
@@ -51,4 +52,8 @@ interface ArticleDao {
     /** Toplam makale sayısı */
     @Query("SELECT COUNT(*) FROM articles")
     suspend fun getArticleCount(): Int
+
+    /** Kaynak başına makale sayısı */
+    @Query("SELECT sourceId, COUNT(*) as count FROM articles GROUP BY sourceId")
+    fun getArticleCountsBySourceFlow(): Flow<List<com.haberradari.data.model.SourceArticleCount>>
 }
