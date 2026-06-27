@@ -64,6 +64,7 @@ class DefaultSourceSeedTest {
         override suspend fun getByContentHash(hash: String): Article? = null
         override suspend fun deleteOlderThan(cutoffMillis: Long) {}
         override suspend fun deleteDuplicates() {}
+
         override suspend fun getArticleCount(): Int = 0
         override fun getArticleCountsBySourceFlow(): Flow<List<com.haberradari.data.model.SourceArticleCount>> = flowOf(emptyList())
     }

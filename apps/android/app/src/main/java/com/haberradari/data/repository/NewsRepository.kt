@@ -66,7 +66,16 @@ class NewsRepository(
             try {
                 val xml = fetchRssXml(source.feedUrl)
                 val rssItems = RssParser.parseXml(xml)
-                val articles = RssParser.toArticles(rssItems, source)
+                val rawArticles = RssParser.toArticles(rssItems, source)
+
+                // AI Reader & Human Value Filter v0: Apply visibility rules
+                val articles = rawArticles.map { article ->
+                    val result = com.haberradari.data.remote.HumanValueClassifier.determineVisibility(article)
+                    article.copy(
+                        visibility = result.visibility,
+                        visibilityReason = result.visibilityReason
+                    )
+                }
 
                 val startDb = System.currentTimeMillis()
                 // Duplicate'lar INSERT IGNORE ile otomatik atlanır
@@ -122,19 +131,25 @@ class NewsRepository(
                 id = "ntv-turkiye",
                 name = "NTV Türkiye",
                 feedUrl = "https://www.ntv.com.tr/turkiye.rss",
-                legalMode = LegalMode.RSS_METADATA_ONLY
+                legalMode = LegalMode.RSS_METADATA_ONLY,
+                category = "türkiye",
+                authorityLevel = com.haberradari.data.model.SourceAuthority.GENERAL_MEDIA
             ),
             Source(
                 id = "bbc-turkce",
                 name = "BBC Türkçe",
                 feedUrl = "https://feeds.bbci.co.uk/turkce/rss.xml",
-                legalMode = LegalMode.RSS_METADATA_ONLY
+                legalMode = LegalMode.RSS_METADATA_ONLY,
+                category = "dünya",
+                authorityLevel = com.haberradari.data.model.SourceAuthority.GENERAL_MEDIA
             ),
             Source(
                 id = "haberturk",
                 name = "Habertürk",
                 feedUrl = "https://www.haberturk.com/rss",
-                legalMode = LegalMode.RSS_METADATA_ONLY
+                legalMode = LegalMode.RSS_METADATA_ONLY,
+                category = "genel",
+                authorityLevel = com.haberradari.data.model.SourceAuthority.GENERAL_MEDIA
             )
         )
         sourceDao.insertSources(defaults)

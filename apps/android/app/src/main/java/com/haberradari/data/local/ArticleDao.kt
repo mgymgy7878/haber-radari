@@ -14,6 +14,7 @@ interface ArticleDao {
     fun getAllArticles(): Flow<List<Article>>
 
 
+
     /** Tek makale ekleme — duplicate varsa atla (contentHash UNIQUE index) */
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertArticle(article: Article)

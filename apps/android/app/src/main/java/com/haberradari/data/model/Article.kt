@@ -4,6 +4,13 @@ import androidx.room.Entity
 import androidx.room.Index
 import androidx.room.PrimaryKey
 
+enum class ArticleVisibility {
+    VISIBLE,
+    SUPPRESSED,
+    BOOSTED,
+    NEEDS_REVIEW
+}
+
 /**
  * Haber makalesi Room entity.
  *
@@ -66,5 +73,14 @@ data class Article(
     val fetchedAt: Long,
 
     /** RSS'den gelen thumbnail URL (varsa) */
-    val imageUrl: String? = null
+    val imageUrl: String? = null,
+
+    // --- AI Reader & Visibility Fields (v0 Contract) ---
+    val visibility: ArticleVisibility = ArticleVisibility.NEEDS_REVIEW,
+    val visibilityReason: String? = null,
+    val shortAiSummary: String? = null,
+    val detailedAiSummary: String? = null,
+    val whyItMatters: String? = null,
+    val publicInterestReason: String? = null,
+    val emotionalTone: String? = null
 )
