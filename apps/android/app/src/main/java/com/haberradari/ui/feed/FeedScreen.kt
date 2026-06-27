@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
@@ -48,7 +49,8 @@ import com.haberradari.data.model.Article
 @Composable
 fun FeedScreen(
     viewModel: FeedViewModel,
-    onOpenDetail: (Article) -> Unit
+    onOpenDetail: (Article) -> Unit,
+    onOpenHealth: () -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val isRefreshing by viewModel.isRefreshing.collectAsState()
@@ -63,6 +65,12 @@ fun FeedScreen(
                     )
                 },
                 actions = {
+                    IconButton(onClick = onOpenHealth) {
+                        Icon(
+                            imageVector = Icons.Default.Info,
+                            contentDescription = "Kaynak Sağlığı"
+                        )
+                    }
                     IconButton(onClick = { viewModel.refresh() }) {
                         Icon(
                             imageVector = Icons.Default.Refresh,

@@ -35,7 +35,18 @@ class NewsRepository(
     /** Makale akışı — UI bu Flow'u observe eder */
     fun getArticles(): Flow<List<Article>> = articleDao.getAllArticles()
 
-
+    /** Kaynak, sağlık ve makale sayısı istatistikleri (Birleştirilmiş Flow) */
+    fun getSourceStats(): Flow<List<com.haberradari.data.model.SourceStats>> = kotlinx.coroutines.flow.combine(
+        sourceDao.getAllSources(),
+        feedHealthDao.getAllHealthFlow(),
+        articleDao.getArticleCountsBySourceFlow()
+    ) { sources, healths, counts ->
+        sources.map { source ->
+            val health = healths.find { it.sourceId == source.id }
+            val count = counts.find { it.sourceId == source.id }?.count ?: 0
+            com.haberradari.data.model.SourceStats(source, health, count)
+        }
+    }
 
     /**
      * Tüm aktif kaynakları çek, parse et ve Room'a yaz.

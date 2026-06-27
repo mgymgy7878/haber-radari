@@ -66,12 +66,14 @@ class DefaultSourceSeedTest {
         override suspend fun deleteDuplicates() {}
 
         override suspend fun getArticleCount(): Int = 0
+        override fun getArticleCountsBySourceFlow(): Flow<List<com.haberradari.data.model.SourceArticleCount>> = flowOf(emptyList())
     }
     
     class FakeFeedHealthDao : FeedHealthDao {
         override suspend fun upsertHealth(health: FeedHealth) {}
         override suspend fun getHealthForSource(sourceId: String): FeedHealth? = null
         override suspend fun getAllHealth(): List<FeedHealth> = emptyList()
+        override fun getAllHealthFlow(): Flow<List<FeedHealth>> = flowOf(emptyList())
     }
 
     @Test

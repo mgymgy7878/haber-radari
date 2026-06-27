@@ -54,4 +54,7 @@ interface ArticleDao {
     @Query("SELECT COUNT(*) FROM articles")
     suspend fun getArticleCount(): Int
 
+    /** Kaynak başına makale sayısı */
+    @Query("SELECT sourceId, COUNT(*) as count FROM articles GROUP BY sourceId")
+    fun getArticleCountsBySourceFlow(): Flow<List<com.haberradari.data.model.SourceArticleCount>>
 }

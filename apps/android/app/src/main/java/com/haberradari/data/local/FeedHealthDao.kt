@@ -19,4 +19,8 @@ interface FeedHealthDao {
     /** Tüm feed sağlık kayıtları */
     @Query("SELECT * FROM feed_health")
     suspend fun getAllHealth(): List<FeedHealth>
+
+    /** Tüm feed sağlık kayıtları (Akış olarak) */
+    @Query("SELECT * FROM feed_health")
+    fun getAllHealthFlow(): kotlinx.coroutines.flow.Flow<List<FeedHealth>>
 }
