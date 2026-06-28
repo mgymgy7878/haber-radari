@@ -58,7 +58,8 @@ data class AiCuratedNewsItemDto(
     val sources: List<SourceEvidenceDto>,
     val mediaHints: List<String>?,
     val originalArticleIds: List<String>,
-    val smartDigest: SmartDigestDto? = null
+    val smartDigest: SmartDigestDto? = null,
+    val sourceSignal: SourceSignalDto? = null
 )
 
 data class SmartDigestDto(
@@ -80,5 +81,14 @@ data class SourceEvidenceDto(
     val url: String,
     val publishedAt: Long,
     val imageUrl: String?,
-    val videoUrl: String?
+    val videoUrl: String?,
+    val sourceSignal: SourceSignalDto? = null
+)
+
+data class SourceSignalDto(
+    val label: String,
+    val tierLabel: String,
+    val scoreBand: String,
+    val reasons: List<String>? = null,
+    val disclaimer: String
 )

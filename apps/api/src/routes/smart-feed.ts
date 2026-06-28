@@ -8,6 +8,7 @@ import {
   buildDigestInputFromClusterItem,
 } from '../smart-digest/smart-digest-service.js';
 import { buildSourceScoreShadow } from '../source-scoring/shadow-score-builder.js';
+import { attachSourceSignalsToItems } from '../source-scoring/source-signal-mapper.js';
 
 let cachedFeed: any = null;
 let cacheTimestamp = 0;
@@ -230,6 +231,22 @@ export async function smartFeedRoute(req: FastifyRequest, reply: FastifyReply) {
       nowMs: now,
     });
 
+    const leadArticleIdsByCluster = new Map<string, string>();
+    for (const cluster of clusters) {
+      if (publishedClusterIds.includes(cluster.id)) {
+        const sorted = sortClusterArticles(cluster.articles);
+        if (sorted.length > 0) {
+          leadArticleIdsByCluster.set(cluster.id, sorted[0].id);
+        }
+      }
+    }
+
+    const itemsWithSourceSignal = attachSourceSignalsToItems(
+      itemsWithDigest,
+      sourceScoreShadow,
+      leadArticleIdsByCluster,
+    );
+
     const candidateClusterCount = clusters.length;
     const totalAllocated = publishedCount + hiddenCount;
     
@@ -273,7 +290,7 @@ export async function smartFeedRoute(req: FastifyRequest, reply: FastifyReply) {
         engineBuildTag: "smart-feed-stats-ssot-v0.3",
         sourceScoreShadow,
       },
-      items: itemsWithDigest,
+      items: itemsWithSourceSignal,
       smartDigestStats,
       ...(includeWatchlist && { watchlistPreview }),
       ...(includeRaw && { rawPreview }),

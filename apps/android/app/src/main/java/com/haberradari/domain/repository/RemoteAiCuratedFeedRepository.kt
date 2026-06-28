@@ -6,6 +6,7 @@ import com.haberradari.data.model.AiCuratedNewsItem
 import com.haberradari.data.model.Article
 import com.haberradari.data.network.dto.AiCuratedFeedResponseDto
 import com.haberradari.data.network.mapper.SmartDigestMapper
+import com.haberradari.data.network.mapper.SourceSignalMapper
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import java.util.concurrent.TimeUnit
@@ -143,13 +144,15 @@ class RemoteAiCuratedFeedRepository(
                         url = srcDto.url,
                         publishedAt = srcDto.publishedAt,
                         imageUrl = srcDto.imageUrl,
-                        videoUrl = srcDto.videoUrl
+                        videoUrl = srcDto.videoUrl,
+                        sourceSignal = SourceSignalMapper.fromDto(srcDto.sourceSignal)
                     )
                 },
                 mediaHints = null,
                 originalArticleIds = itemDto.originalArticleIds,
                 isDemo = dto.isDemo,
-                smartDigest = SmartDigestMapper.fromDto(itemDto.smartDigest)
+                smartDigest = SmartDigestMapper.fromDto(itemDto.smartDigest),
+                sourceSignal = SourceSignalMapper.fromDto(itemDto.sourceSignal)
             )
         }
         

@@ -57,7 +57,8 @@ data class SourceEvidence(
     val url: String,
     val publishedAt: Long,
     val imageUrl: String?,
-    val videoUrl: String?
+    val videoUrl: String?,
+    val sourceSignal: SourceSignal? = null
 )
 
 data class AiCuratedNewsItem(
@@ -83,5 +84,6 @@ data class AiCuratedNewsItem(
     val topicQuality: TopicQuality = TopicQuality.NORMAL,
     val contentType: ContentType = ContentType.GENERAL,
     val publishReason: String? = null,
-    val smartDigest: SmartDigest? = null
+    val smartDigest: SmartDigest? = null,
+    val sourceSignal: SourceSignal? = null
 )
