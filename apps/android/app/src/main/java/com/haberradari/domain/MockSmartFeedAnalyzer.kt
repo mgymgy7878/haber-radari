@@ -149,6 +149,7 @@ class MockSmartFeedAnalyzer {
                         importance = importance,
                         confidence = confidence.coerceIn(0.1f, 0.99f),
                         sourceCount = sourceCount,
+                        uniqueSourceCount = evidenceArticles.map { it.sourceName }.distinct().size,
                         sources = evidenceArticles.map { it.toSourceEvidence() },
                         mediaHints = null,
                         originalArticleIds = evidenceArticles.map { it.id },

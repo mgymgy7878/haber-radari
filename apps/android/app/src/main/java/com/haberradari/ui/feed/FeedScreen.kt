@@ -413,6 +413,7 @@ private fun buildRssDetailItem(rssItem: com.haberradari.domain.repository.Watchl
         warningLabel = null,
         clusterReason = "",
         sourceCount = 1,
+        uniqueSourceCount = 1,
         filteredSourceCount = 0,
         sources = listOf(
             com.haberradari.data.model.SourceEvidence(
@@ -881,7 +882,7 @@ fun AiCuratedNewsItemCard(
             }
             
             Text(
-                text = "Güvenilirlik: ${item.evidenceStatus.name}",
+                text = CuratedSourceLabels.evidenceSummary(item.evidenceStatus, item.uniqueSourceCount),
                 style = MaterialTheme.typography.labelSmall,
                 color = evidenceColor
             )
@@ -894,7 +895,8 @@ fun AiCuratedNewsItemCard(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = "${item.sourceCount} Kaynak" + if (item.filteredSourceCount > 0) " (${item.filteredSourceCount} filtrelendi)" else "",
+                    text = CuratedSourceLabels.articleSourceSummary(item.sourceCount, item.uniqueSourceCount) +
+                        if (item.filteredSourceCount > 0) " (${item.filteredSourceCount} filtrelendi)" else "",
                     style = MaterialTheme.typography.labelMedium,
                     color = MaterialTheme.colorScheme.primary
                 )

@@ -57,9 +57,12 @@ class MainActivity : ComponentActivity() {
             val mockRepo = MockAiCuratedFeedRepository()
             
             object : com.haberradari.domain.repository.AiCuratedFeedRepository {
-                override suspend fun getCuratedFeed(localArticlesFallback: List<Article>?): com.haberradari.domain.repository.AiCuratedFeedResult {
+                override suspend fun getCuratedFeed(
+                    localArticlesFallback: List<Article>?,
+                    forceRefresh: Boolean
+                ): com.haberradari.domain.repository.AiCuratedFeedResult {
                     return try {
-                        remoteRepo.getCuratedFeed(localArticlesFallback)
+                        remoteRepo.getCuratedFeed(localArticlesFallback, forceRefresh)
                     } catch (e: Exception) {
                         android.util.Log.e("NewsFlow", "Remote Feed failed, falling back to mock: ${e.message}")
                         if (FeatureConfig.aiRemoteFallbackToMockEnabled) {
@@ -103,7 +106,10 @@ class MainActivity : ComponentActivity() {
                                     currentScreen = Screen.Detail(it) 
                                 },
                                 onOpenCuratedDetail = {
-                                    android.util.Log.d("NewsFlow", "Curated Card clicked, selecting item: ${it.aiTitle}")
+                                    android.util.Log.d(
+                                        "NewsFlow",
+                                        "Curated detail id=${it.id} articles=${it.sourceCount} unique=${it.uniqueSourceCount} lead=${it.aiTitle}"
+                                    )
                                     currentScreen = Screen.CuratedDetail(it)
                                 },
                                 onOpenHealth = {

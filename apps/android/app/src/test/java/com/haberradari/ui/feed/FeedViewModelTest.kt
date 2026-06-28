@@ -26,7 +26,10 @@ class FeedViewModelTest {
         private val remoteResult: (() -> AiCuratedFeedResult)? = null
     ) : AiCuratedFeedRepository {
 
-        override suspend fun getCuratedFeed(localArticlesFallback: List<Article>?): AiCuratedFeedResult {
+        override suspend fun getCuratedFeed(
+            localArticlesFallback: List<Article>?,
+            forceRefresh: Boolean
+        ): AiCuratedFeedResult {
             return remoteResult?.invoke() ?: throw Exception("Bağlantı Hatası")
         }
 

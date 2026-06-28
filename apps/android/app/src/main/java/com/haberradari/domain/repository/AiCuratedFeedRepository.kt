@@ -51,7 +51,10 @@ data class WatchlistPreviewItem(
 )
 
 interface AiCuratedFeedRepository {
-    suspend fun getCuratedFeed(localArticlesFallback: List<Article>? = null): AiCuratedFeedResult
+    suspend fun getCuratedFeed(
+        localArticlesFallback: List<Article>? = null,
+        forceRefresh: Boolean = false
+    ): AiCuratedFeedResult
     suspend fun getCachedFeed(): AiCuratedFeedResult?
 }
 

@@ -8,6 +8,25 @@ export interface Cluster {
   earliestPublishedAt: number;
 }
 
+export function sortClusterArticles(articles: RawArticle[]): RawArticle[] {
+  return [...articles].sort((a, b) => b.publishedAt - a.publishedAt);
+}
+
+export function mapClusterSources(articles: RawArticle[]) {
+  return sortClusterArticles(articles).map((a) => ({
+    sourceName: a.sourceName,
+    originalTitle: a.originalTitle,
+    url: a.originalUrl,
+    publishedAt: a.publishedAt,
+    imageUrl: a.imageUrl,
+    videoUrl: null as string | null,
+  }));
+}
+
+export function uniqueSourceCount(articles: RawArticle[]): number {
+  return new Set(articles.map((a) => a.sourceName)).size;
+}
+
 export class ClusterEngine {
   
   public clusterArticles(articles: RawArticle[]): Cluster[] {
@@ -63,7 +82,17 @@ export class ClusterEngine {
        }
     }
 
-    // 3. Keyword Barrier
+    // 3. Geographic barrier — farklı ülke/bölge odaklı başlıklar birleşmesin
+    const articleGeo = this.extractGeoMarkers(article.originalTitle);
+    const clusterGeo = this.extractGeoMarkers(
+      cluster.articles.map((a) => a.originalTitle).join(' ')
+    );
+    if (articleGeo.length > 0 && clusterGeo.length > 0) {
+      const geoOverlap = articleGeo.some((g) => clusterGeo.includes(g));
+      if (!geoOverlap) return false;
+    }
+
+    // 4. Keyword Barrier
     const strongKeywords = ['deprem', 'yangın', 'sel', 'kaza', 'cinayet', 'futbol', 'transfer', 'kupa', 'bakan', 'cumhurbaşkanı'];
     const articleStrongTokens = this.tokenize(article.originalTitle).filter(t => strongKeywords.includes(t));
     const clusterStrongTokens = cluster.articles.flatMap(a => this.tokenize(a.originalTitle)).filter(t => strongKeywords.includes(t));
@@ -75,7 +104,7 @@ export class ClusterEngine {
        }
     }
     
-    // 4. Token overlap similarity
+    // 5. Token overlap similarity
     const titleTokens = this.tokenize(article.originalTitle);
     
     for (const existingArticle of cluster.articles) {
@@ -107,6 +136,38 @@ export class ClusterEngine {
      return null;
   }
   
+  private extractGeoMarkers(text: string): string[] {
+    const lower = text.toLowerCase();
+    const markers = [
+      'fransa',
+      'suudi',
+      'arabistan',
+      'amerika',
+      'abd',
+      'ukrayna',
+      'rusya',
+      'israil',
+      'filistin',
+      'türkiye',
+      'turkiye',
+      'istanbul',
+      'ankara',
+      'izmir',
+      'almanya',
+      'ingiltere',
+      'çin',
+      'cin',
+      'japonya',
+      'irak',
+      'suriye',
+      'lübnan',
+      'libnan',
+      'mısır',
+      'misir',
+    ];
+    return markers.filter((m) => lower.includes(m));
+  }
+
   private tokenize(text: string): string[] {
     // Basic deterministic tokenization: lowercased, no punctuation, remove short stop words
     return text.toLowerCase()

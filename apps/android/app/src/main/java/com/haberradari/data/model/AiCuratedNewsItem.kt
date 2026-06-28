@@ -68,6 +68,7 @@ data class AiCuratedNewsItem(
     val importance: Importance,
     val confidence: Float,
     val sourceCount: Int,
+    val uniqueSourceCount: Int = sourceCount,
     val sources: List<SourceEvidence>,
     val mediaHints: List<MediaHint>?,
     val originalArticleIds: List<String>,

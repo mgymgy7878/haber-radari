@@ -1,6 +1,6 @@
 import { FastifyInstance, FastifyRequest, FastifyReply } from 'fastify';
 import { RssIngestService } from '../services/rss-ingest.js';
-import { ClusterEngine } from '../engine/cluster-engine.js';
+import { ClusterEngine, mapClusterSources, sortClusterArticles, uniqueSourceCount } from '../engine/cluster-engine.js';
 import { PublishGate, PublishDecision, ContentType } from '../engine/publish-gate.js';
 import {
   SmartDigestService,
@@ -76,9 +76,12 @@ export async function smartFeedRoute(req: FastifyRequest, reply: FastifyReply) {
       const evaluation = publishGate.evaluate(cluster);
       
       if (evaluation.decision === PublishDecision.PUBLISH_MAIN) {
-        const bestTitle = cluster.articles[0].originalTitle;
-        const bestSummary = cluster.articles[0].shortDescription;
+        const sortedArticles = sortClusterArticles(cluster.articles);
+        const leadArticle = sortedArticles[0];
+        const bestTitle = leadArticle.originalTitle;
+        const bestSummary = leadArticle.shortDescription;
         const combinedText = (bestTitle + ' ' + bestSummary).toLowerCase();
+        const clusterUniqueSourceCount = uniqueSourceCount(cluster.articles);
 
         let finalCategory = cluster.mainCategory;
         if (/(çevre|balık|kirlilik|dere|deniz|atık|zehirlenme)/i.test(combinedText)) {
@@ -105,17 +108,9 @@ export async function smartFeedRoute(req: FastifyRequest, reply: FastifyReply) {
           publishReason: evaluation.reason,
           warningLabel: evaluation.warningLabel,
           sourceCount: cluster.articles.length,
+          uniqueSourceCount: clusterUniqueSourceCount,
           filteredSourceCount: 0,
-          sources: Array.from(
-            new Map(cluster.articles.map(a => [a.sourceName, a])).values()
-          ).map(a => ({
-            sourceName: a.sourceName,
-            originalTitle: a.originalTitle,
-            url: a.originalUrl,
-            publishedAt: a.publishedAt,
-            imageUrl: a.imageUrl,
-            videoUrl: null
-          })),
+          sources: mapClusterSources(cluster.articles),
           mediaHints: null,
           originalArticleIds: cluster.articles.map(a => a.id)
         });
@@ -194,7 +189,7 @@ export async function smartFeedRoute(req: FastifyRequest, reply: FastifyReply) {
           category: item.category,
           publishDecision: item.publishDecision,
           publishReason: item.publishReason,
-          sourceCount: item.sourceCount,
+          sourceCount: item.uniqueSourceCount ?? item.sourceCount,
           importance: item.importance,
           evidenceStatus: item.evidenceStatus,
           contentType: item.contentType,

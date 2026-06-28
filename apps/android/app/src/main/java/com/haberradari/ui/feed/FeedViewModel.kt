@@ -116,10 +116,10 @@ class FeedViewModel(
         }
     }
 
-    private suspend fun fetchCuratedFeed(articles: List<Article>) {
+    private suspend fun fetchCuratedFeed(articles: List<Article>, forceRefresh: Boolean = false) {
         _uiState.value = _uiState.value.copy(isRemoteLoading = true)
         try {
-            val result = aiFeedRepository.getCuratedFeed(articles)
+            val result = aiFeedRepository.getCuratedFeed(articles, forceRefresh)
 
             _uiState.value = _uiState.value.copy(
                 curatedItems = result.items,
@@ -188,7 +188,7 @@ class FeedViewModel(
                 repository.seedDefaultSources()
                 repository.refreshFeeds()
                 android.util.Log.d("NewsFlow", "refreshFeeds end: ${System.currentTimeMillis()}")
-                fetchCuratedFeed(_uiState.value.articles)
+                fetchCuratedFeed(_uiState.value.articles, forceRefresh = true)
             } catch (e: Exception) {
                 val errorMsg = mapErrorMessage(e)
                 val cached = aiFeedRepository.getCachedFeed()

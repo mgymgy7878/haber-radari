@@ -136,13 +136,19 @@ fun AiCuratedDetailScreen(
                 Spacer(modifier = Modifier.height(16.dp))
                 
                 Text(
-                    text = "Kaynaklar (${item.sourceCount})",
+                    text = CuratedSourceLabels.detailSourcesHeading(item.sourceCount),
                     style = MaterialTheme.typography.titleLarge,
                     color = MaterialTheme.colorScheme.onSurface
                 )
+
+                Text(
+                    text = CuratedSourceLabels.detailUniqueSourceLine(item.uniqueSourceCount),
+                    style = MaterialTheme.typography.labelMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
                 
                 Text(
-                    text = "Kanıt Seviyesi: ${item.evidenceStatus.name} - ${item.clusterReason}",
+                    text = CuratedSourceLabels.evidenceSummary(item.evidenceStatus, item.uniqueSourceCount),
                     style = MaterialTheme.typography.labelMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )

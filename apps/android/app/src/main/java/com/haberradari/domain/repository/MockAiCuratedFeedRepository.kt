@@ -8,7 +8,10 @@ class MockAiCuratedFeedRepository(
     private val analyzer: MockSmartFeedAnalyzer = MockSmartFeedAnalyzer()
 ) : AiCuratedFeedRepository {
 
-    override suspend fun getCuratedFeed(localArticlesFallback: List<Article>?): AiCuratedFeedResult {
+    override suspend fun getCuratedFeed(
+        localArticlesFallback: List<Article>?,
+        forceRefresh: Boolean
+    ): AiCuratedFeedResult {
         val articles = localArticlesFallback ?: emptyList()
         val result = analyzer.analyzeAndCluster(articles)
         

@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { ClusterEngine } from './cluster-engine.js';
+import { ClusterEngine, mapClusterSources, uniqueSourceCount } from './cluster-engine.js';
 import { RawArticle } from '../models/raw-article.js';
 
 describe('ClusterEngine', () => {
@@ -40,5 +40,43 @@ describe('ClusterEngine', () => {
     
     // FIFA cluster shouldn't contain earthquake news
     expect(fifaCluster?.articles.some(a => a.originalTitle.includes('deprem'))).toBe(false);
+  });
+
+  it('prevents France and Saudi Arabia stories from clustering together', () => {
+    const articles = [
+      mockArticle(
+        '1',
+        "Fransa'nın doğusunda paraşütçüleri taşıyan sivil uçağın düşmesi sonucu 11 kişi öldü",
+        'Uçak kazası',
+        'Dünya'
+      ),
+      mockArticle(
+        '2',
+        'Suudi Arabistan\'da Aramco helikopteri düştü',
+        'Helikopter kazası',
+        'Dünya'
+      ),
+    ];
+
+    const clusters = engine.clusterArticles(articles);
+    expect(clusters.length).toBe(2);
+  });
+
+  it('keeps every cluster article in sources list (no sourceName collapse)', () => {
+    const articles = [
+      {
+        ...mockArticle('1', 'Fransa uçağı düştü', 'kaza', 'Dünya'),
+        sourceName: 'Anadolu Ajansı',
+      },
+      {
+        ...mockArticle('2', 'Fransa uçağı için ikinci AA haberi', 'detay', 'Dünya'),
+        sourceName: 'Anadolu Ajansı',
+      },
+    ];
+
+    const sources = mapClusterSources(articles);
+    expect(sources).toHaveLength(2);
+    expect(uniqueSourceCount(articles)).toBe(1);
+    expect(sources[0].originalTitle).toContain('Fransa');
   });
 });

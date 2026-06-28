@@ -24,13 +24,25 @@ class RemoteAiCuratedFeedRepository(
     private val gson = Gson()
     private val cacheFile = cacheDir?.let { java.io.File(it, "smart_feed_cache.json") }
 
-    override suspend fun getCuratedFeed(localArticlesFallback: List<Article>?): AiCuratedFeedResult {
+    override suspend fun getCuratedFeed(
+        localArticlesFallback: List<Article>?,
+        forceRefresh: Boolean
+    ): AiCuratedFeedResult {
         if (!FeatureConfig.aiRemoteFeedEnabled) {
             throw IllegalStateException("Remote feed is disabled by FeatureConfig.")
         }
 
         return withContext(Dispatchers.IO) {
-            val urlBuilder = StringBuilder("${FeatureConfig.smartFeedBaseUrl}/api/v1/smart-feed?includeWatchlist=1&includeLatest=1")
+            if (forceRefresh) {
+                cacheFile?.delete()
+            }
+
+            val urlBuilder = StringBuilder(
+                "${FeatureConfig.smartFeedBaseUrl}/api/v1/smart-feed?includeWatchlist=1&includeLatest=1"
+            )
+            if (forceRefresh) {
+                urlBuilder.append("&bypassCache=1")
+            }
             if (FeatureConfig.smartFeedRawSourceExplorerEnabled) {
                 urlBuilder.append("&includeRaw=1&includeNoise=1")
             }
@@ -122,6 +134,7 @@ class RemoteAiCuratedFeedRepository(
                 warningLabel = itemDto.warningLabel,
                 clusterReason = "",
                 sourceCount = itemDto.sourceCount,
+                uniqueSourceCount = itemDto.uniqueSourceCount ?: itemDto.sources.map { it.sourceName }.distinct().size,
                 filteredSourceCount = itemDto.filteredSourceCount,
                 sources = itemDto.sources.map { srcDto ->
                     com.haberradari.data.model.SourceEvidence(

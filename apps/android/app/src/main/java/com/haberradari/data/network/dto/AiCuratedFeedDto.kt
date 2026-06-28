@@ -53,6 +53,7 @@ data class AiCuratedNewsItemDto(
     val publishReason: String?,
     val warningLabel: String?,
     val sourceCount: Int,
+    val uniqueSourceCount: Int = sourceCount,
     val filteredSourceCount: Int,
     val sources: List<SourceEvidenceDto>,
     val mediaHints: List<String>?,
