@@ -7,6 +7,7 @@ import {
   SmartDigestService,
   buildDigestInputFromClusterItem,
 } from '../smart-digest/smart-digest-service.js';
+import { buildSourceScoreShadow } from '../source-scoring/shadow-score-builder.js';
 
 let cachedFeed: any = null;
 let cacheTimestamp = 0;
@@ -221,7 +222,14 @@ export async function smartFeedRoute(req: FastifyRequest, reply: FastifyReply) {
       }
     }
     const smartDigestStats = digestService.getFeedStats();
-    
+
+    const sourceScoreShadow = buildSourceScoreShadow({
+      articles: ingestResult.articles,
+      clusters,
+      sourceStatuses: ingestResult.sourceStatuses,
+      nowMs: now,
+    });
+
     const candidateClusterCount = clusters.length;
     const totalAllocated = publishedCount + hiddenCount;
     
@@ -262,7 +270,8 @@ export async function smartFeedRoute(req: FastifyRequest, reply: FastifyReply) {
         watchlistClusterIds,
         filteredClusterIds,
         rawOnlyClusterIds,
-        engineBuildTag: "smart-feed-stats-ssot-v0.3"
+        engineBuildTag: "smart-feed-stats-ssot-v0.3",
+        sourceScoreShadow,
       },
       items: itemsWithDigest,
       smartDigestStats,

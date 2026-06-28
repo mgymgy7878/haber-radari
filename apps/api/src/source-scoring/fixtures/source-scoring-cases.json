@@ -1,0 +1,173 @@
+[
+  {
+    "id": "official-afad",
+    "description": "Resmi kurum domain — yüksek authority",
+    "input": {
+      "sourceId": "afad_fixture",
+      "sourceName": "AFAD",
+      "sourceUrl": "https://www.afad.gov.tr/rss",
+      "trustTier": "HIGH",
+      "enabled": true,
+      "fetchStatus": {
+        "success": true,
+        "itemCount": 5,
+        "skippedMissingMetadataCount": 0
+      },
+      "articles": [
+        {
+          "id": "a1",
+          "originalTitle": "Deprem bilgilendirme",
+          "originalUrl": "https://www.afad.gov.tr/haber/1",
+          "publishedAt": 1700000000000,
+          "shortDescription": "Resmi açıklama"
+        }
+      ]
+    },
+    "expect": {
+      "authorityTier": "OFFICIAL",
+      "minAuthorityScore": 90,
+      "minFinalSourceScore": 80,
+      "reasonIncludes": ["Resmi kurum"]
+    }
+  },
+  {
+    "id": "established-media-ntv",
+    "description": "Bilinen medya — orta/yüksek authority",
+    "input": {
+      "sourceId": "ntv_son_dakika",
+      "sourceName": "NTV",
+      "sourceUrl": "https://www.ntv.com.tr/son-dakika.rss",
+      "trustTier": "MEDIUM",
+      "enabled": true,
+      "fetchStatus": {
+        "success": true,
+        "itemCount": 10,
+        "skippedMissingMetadataCount": 0
+      },
+      "articles": [
+        {
+          "id": "n1",
+          "originalTitle": "Ekonomi haberi",
+          "originalUrl": "https://www.ntv.com.tr/1",
+          "publishedAt": 1700000000000,
+          "shortDescription": "Özet metin"
+        }
+      ]
+    },
+    "expect": {
+      "authorityTier": "ESTABLISHED_MEDIA",
+      "minAuthorityScore": 65,
+      "minFinalSourceScore": 60,
+      "reasonIncludes": ["medya"]
+    }
+  },
+  {
+    "id": "unknown-source",
+    "description": "Bilinmeyen kaynak — düşük/orta authority",
+    "input": {
+      "sourceId": "unknown_blog",
+      "sourceName": "Rastgele Blog",
+      "sourceUrl": "https://rastgele-blog.example/feed",
+      "trustTier": "LOW",
+      "enabled": true,
+      "fetchStatus": {
+        "success": true,
+        "itemCount": 1,
+        "skippedMissingMetadataCount": 0
+      },
+      "articles": [
+        {
+          "id": "u1",
+          "originalTitle": "İddia",
+          "originalUrl": "https://rastgele-blog.example/1",
+          "publishedAt": 1700000000000,
+          "shortDescription": "Kaynak belirsiz"
+        }
+      ]
+    },
+    "expect": {
+      "authorityTier": "LOCAL_MEDIA",
+      "maxAuthorityScore": 60,
+      "reasonIncludes": ["Düşük trust"]
+    }
+  },
+  {
+    "id": "metadata-incomplete",
+    "description": "Metadata eksik — health penalty",
+    "input": {
+      "sourceId": "meta_bad",
+      "sourceName": "Meta Eksik",
+      "sourceUrl": "https://meta.example/rss",
+      "trustTier": "MEDIUM",
+      "enabled": true,
+      "fetchStatus": {
+        "success": true,
+        "itemCount": 3,
+        "skippedMissingMetadataCount": 2
+      },
+      "articles": [
+        {
+          "id": "m1",
+          "originalTitle": "",
+          "originalUrl": "https://meta.example/1",
+          "publishedAt": 0,
+          "shortDescription": ""
+        }
+      ]
+    },
+    "expect": {
+      "maxMetadataCompletenessScore": 55,
+      "maxHealthScore": 75,
+      "reasonIncludes": ["Metadata"]
+    }
+  },
+  {
+    "id": "fetch-failed",
+    "description": "Son fetch başarısız — health penalty",
+    "input": {
+      "sourceId": "fetch_fail",
+      "sourceName": "Down Source",
+      "sourceUrl": "https://down.example/rss",
+      "trustTier": "HIGH",
+      "enabled": true,
+      "fetchStatus": {
+        "success": false,
+        "itemCount": 0,
+        "skippedMissingMetadataCount": 0
+      },
+      "articles": []
+    },
+    "expect": {
+      "minFailurePenalty": 40,
+      "maxHealthScore": 60,
+      "reasonIncludes": ["fetch başarısız"]
+    }
+  },
+  {
+    "id": "duplicate-cluster-boost",
+    "description": "Çoklu kaynak teyidi — boost",
+    "cluster": {
+      "clusterId": "c-multi",
+      "uniqueSourceCount": 3,
+      "articleIds": ["art1", "art2", "art3"],
+      "sourceIds": ["s1", "s2", "s3"]
+    },
+    "expect": {
+      "duplicateConfirmationBoost": 15
+    }
+  },
+  {
+    "id": "single-source-no-boost",
+    "description": "Tek kaynak — boost yok",
+    "cluster": {
+      "clusterId": "c-single",
+      "uniqueSourceCount": 1,
+      "articleIds": ["art1"],
+      "sourceIds": ["s1"]
+    },
+    "expect": {
+      "duplicateConfirmationBoost": 0,
+      "overlayReasonIncludes": ["Tek kaynak"]
+    }
+  }
+]
