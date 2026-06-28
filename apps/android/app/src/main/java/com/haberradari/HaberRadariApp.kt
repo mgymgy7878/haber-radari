@@ -25,6 +25,9 @@ class HaberRadariApp : Application() {
     lateinit var repository: NewsRepository
         private set
 
+    lateinit var aiReaderRepository: com.haberradari.data.repository.AiReaderRepository
+        private set
+
     private val applicationScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
 
     override fun onCreate() {
@@ -39,6 +42,8 @@ class HaberRadariApp : Application() {
             sourceDao = database.sourceDao(),
             feedHealthDao = database.feedHealthDao()
         )
+
+        aiReaderRepository = com.haberradari.data.repository.MockAiReaderRepository()
 
         // Varsayılan kaynakları yükle (ilk çalıştırma)
         applicationScope.launch {

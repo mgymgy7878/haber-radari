@@ -1,0 +1,41 @@
+{
+  "generatedAt": 1719572400000,
+  "isDemo": false,
+  "stats": {
+    "totalScanned": 54,
+    "candidateClusterCount": 10,
+    "publishedCount": 0,
+    "hiddenCount": 10,
+    "watchlistCount": 2,
+    "filteredCount": 0,
+    "invariantOk": true
+  },
+  "items": [],
+  "watchlistPreview": [
+    {
+      "id": "wl-1",
+      "title": "İzleme listesi örnek haber",
+      "category": "Gündem",
+      "publishDecision": "WATCHLIST_ONLY",
+      "publishReason": "Tek kaynak",
+      "evidenceStatus": "SINGLE_SOURCE",
+      "contentType": "GENERAL",
+      "topicQuality": "NORMAL",
+      "sourceCount": 1,
+      "reasonCode": "SINGLE_SOURCE"
+    },
+    {
+      "id": "wl-2",
+      "title": "İkinci izleme listesi haberi",
+      "category": "Ekonomi",
+      "publishDecision": "WATCHLIST_ONLY",
+      "publishReason": "Düşük güven",
+      "evidenceStatus": "LOW_CONFIDENCE",
+      "contentType": "GENERAL",
+      "topicQuality": "LOW_VALUE",
+      "sourceCount": 1,
+      "reasonCode": "LOW_CONFIDENCE"
+    }
+  ],
+  "latestRssPreview": []
+}

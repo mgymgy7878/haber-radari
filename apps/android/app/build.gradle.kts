@@ -1,9 +1,27 @@
+import java.time.Instant
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
+
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
     id("com.google.devtools.ksp")
     id("org.jetbrains.kotlin.plugin.compose") version "2.1.0"
 }
+
+fun gitShortSha(): String = runCatching {
+    ProcessBuilder("git", "rev-parse", "--short", "HEAD")
+        .directory(rootProject.projectDir.parentFile.parentFile)
+        .redirectErrorStream(true)
+        .start()
+        .inputStream.bufferedReader()
+        .readText()
+        .trim()
+}.getOrDefault("unknown").ifEmpty { "unknown" }
+
+val buildTimestamp: String = DateTimeFormatter.ofPattern("yyyyMMdd-HHmm")
+    .withZone(ZoneId.systemDefault())
+    .format(Instant.now())
 
 android {
     namespace = "com.haberradari"
@@ -13,10 +31,13 @@ android {
         applicationId = "com.haberradari"
         minSdk = 26
         targetSdk = 35
-        versionCode = 1
-        versionName = "0.1.0-rss-core"
+        versionCode = 62
+        versionName = "0.6.2-debug"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        buildConfigField("String", "GIT_SHA", "\"${gitShortSha()}\"")
+        buildConfigField("String", "BUILD_TIME", "\"$buildTimestamp\"")
     }
 
     buildTypes {
@@ -40,6 +61,11 @@ android {
 
     buildFeatures {
         compose = true
+        buildConfig = true
+    }
+
+    testOptions {
+        unitTests.isReturnDefaultValues = true
     }
 }
 
@@ -77,6 +103,10 @@ dependencies {
     // Core
     implementation("androidx.core:core-ktx:1.15.0")
     implementation("androidx.browser:browser:1.8.0") // Custom Tabs for article links
+
+    // Remote Feed Networking
+    implementation("com.squareup.okhttp3:okhttp:4.12.0")
+    implementation("com.google.code.gson:gson:2.10.1")
 
     // Test
     testImplementation("junit:junit:4.13.2")
