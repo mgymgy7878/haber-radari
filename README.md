@@ -1,110 +1,166 @@
 # Haber Radarı
 
-Kişisel **önemli gelişme radarı** — reklam, clickbait, 3. sayfa ve ilgisiz yerel haberleri filtreleyen Android odaklı mobil uygulama.
+Kişisel **önemli gelişme radarı** — reklam, clickbait ve ilgisiz haberleri filtreleyen, **metadata tabanlı** haber akışı.
 
-## Yapı
+## Aktif ürün hattı (SSOT)
+
+| Bileşen | Konum | Rol |
+|---------|-------|-----|
+| **Native Android client** | `apps/android` | Aktif mobil istemci — Smart Feed tüketir, LLM çağrısı yapmaz |
+| **Smart Feed backend** | `apps/api` | RSS ingest → cluster → publish gate → smart digest → JSON API |
+| **Shared packages** | `packages/news-core`, `packages/connectors` | Policy, skorlama, connector sınırları |
+
+**Veri akışı:**
+
+```
+RSS kaynakları → cluster engine → publish gate → smart digest (backend-only) → GET /api/v1/smart-feed → Android UI
+```
+
+### Güvenlik sınırları (Smart Digest)
+
+- LLM **yalnızca backend** tarafında; Android'de API key **yok**
+- Gerçek external LLM çağrısı **varsayılan kapalı** (`LLM_DIGEST_EXTERNAL_ENABLED=0`)
+- Operatör onayı olmadan external digest yapılmaz
+- Tam haber metni / scraping **yok** — yalnızca metadata (`title`, `shortDescription`, `sourceName`, `originalUrl`, …)
+- Prompt/response log **varsayılan kapalı**
+
+Gerçek provider pilotu ayrı operasyonel onay gerektirir. Bkz. [Provider pilot runbook](docs/ops/v0.6.4-real-provider-pilot-runbook.md).
+
+## Legacy / ikincil hatlar
+
+| Bileşen | Konum | Durum |
+|---------|-------|-------|
+| **Expo React Native** | `apps/mobile` | Legacy MVP — Radar API (`/api/events`, sosyal sinyaller). Aktif ürün geliştirmesi burada değil |
+| **Radar / events API** | `apps/api` (`/api/events`, …) | Eski connector tabanlı radar hattı; Smart Feed ile paralel, birincil ürün değil |
+
+Yeni özellikler **Android + Smart Feed** hattına eklenir.
+
+## Monorepo yapısı
 
 ```
 haber-radari/
-├── apps/mobile      Expo React Native
-├── apps/api         Fastify API
-├── packages/news-core   Policy, skorlama, source metadata
-└── packages/connectors  TRT RSS, GDELT, sosyal adapter sınırları
+├── apps/android/       Native Android (Kotlin / Compose) — aktif client
+├── apps/api/           Fastify API — Smart Feed + Smart Digest
+├── apps/mobile/        Expo RN — legacy MVP
+├── packages/news-core/ Policy, skorlama
+├── packages/connectors/ TRT RSS, GDELT, sosyal adapter sınırları
+├── docs/               Architecture, ops, product specs
+└── evidence/           Faz kanıtları (evidence/README.md)
 ```
-
-## Kaynaklar (MVP-2A)
-
-| Kaynak | Durum | API key |
-|--------|--------|---------|
-| TRT RSS | Gerçek fetch + fallback | Hayır |
-| GDELT DOC | Public endpoint + fallback | Hayır |
-| Bluesky Jetstream | Kısa önizleme (`app.bsky.feed.post`) | Hayır |
-| YouTube | `search.list` — `YOUTUBE_API_KEY` ile gated-live | Evet (sunucu) |
-| Sample events | Sabit örnek veri | — |
-| X / TikTok | Gated — token/onay gerekir (MVP-2D yok) | Evet (gelecek) |
-| Instagram | Bu fazda yok | — |
-
-Connector hatası API'yi düşürmez; fallback/mock moduna geçer.
-
-## İçerik kalitesi (MVP-2B)
-
-- **Cluster / dedup:** Başlık fingerprint + konu benzerliği; küme tekrarları baskılanır.
-- **Eski haber cezası (saat):** `fresh` ≤6 saat · `recent` 6–24 · `aging` 24–48 · `stale` 48+
-- **Kaynak güven matrisi:** official > market > editorial > aggregator > social
-- **Sosyal-only:** Tek başına `notify_candidate` olamaz
-- **Neden gördüm?:** `reasonBullets` (kartta gösterim MVP-2C)
-
-## Radar açıklanabilirliği (MVP-2C)
-
-Mobil kartlarda: **Neden gördüm?** · **Bildirim durumu** (`notificationReason`) · **Kaynak/güven** (`sourceSummary`) · **Teyit özeti** · baskılama gerekçesi (Ayarlar debug).
-
-Etiketler: DOĞRULANDI, RESMÎ, ERKEN SİNYAL, BİLDİRİM ADAYI, İNCELE, BASKILANDI.
 
 ## Gereksinimler
 
 - Node.js 20+
 - pnpm 9+
+- Android Studio / JDK 17+ (native client için)
 
-## Kurulum
+## Hızlı başlangıç
 
-```bash
+### Backend (Smart Feed API)
+
+```powershell
+cd apps/api
 pnpm install
-pnpm --filter @haber-radari/news-core build
-pnpm --filter @haber-radari/connectors build
+pnpm build
+pnpm start
 ```
 
-## Çalıştırma
+Geliştirme modu: repo kökünden `pnpm dev:api`
 
-**Terminal 1 — API:** `pnpm dev:api`  
-**Terminal 2 — Mobil:** `pnpm dev:mobile`
+**Operatör status (read-only, secret döndürmez):**
 
-### API adresi
+```powershell
+cd apps/api
+pnpm smart-digest:status
+# veya HTTP: GET http://127.0.0.1:3001/api/v1/smart-digest/status
+```
 
-| Ortam | URL |
-|--------|-----|
-| PC / curl | `http://localhost:3001` |
-| Android emülatör | `http://10.0.2.2:3001` |
-| Fiziksel Expo Go | `$env:EXPO_PUBLIC_API_URL="http://<LAN-IP>:3001"` |
+### Android (native client)
 
-## API uçları
+```powershell
+cd apps/android
+$env:JAVA_HOME="C:\Program Files\Android\Android Studio\jbr"
+$env:ANDROID_HOME="C:\Users\mscor\AppData\Local\Android\Sdk"
+.\gradlew.bat testDebugUnitTest
+.\gradlew.bat installDebug
+```
+
+**Emülatör / cihaz → localhost API:**
+
+```powershell
+adb reverse tcp:3001 tcp:3001
+```
+
+| Ortam | API URL |
+|-------|---------|
+| PC / curl | `http://127.0.0.1:3001` |
+| Android (adb reverse sonrası) | `http://127.0.0.1:3001` |
+| Android emülatör (reverse yok) | `http://10.0.2.2:3001` |
+
+### Legacy Expo mobile (opsiyonel)
+
+```powershell
+pnpm dev:mobile
+# EXPO_PUBLIC_API_URL=http://<LAN-IP>:3001
+```
+
+## Birincil API uçları (Smart Feed hattı)
 
 | Uç | Açıklama |
 |-----|----------|
-| `GET /health` | Sağlık |
-| `GET /api/events` | Radar akışı |
+| `GET /api/v1/smart-feed` | AI-curated feed (RSS → cluster → publish gate → digest) |
+| `GET /api/v1/smart-digest/status` | Read-only operatör dashboard (budget, gates; **API key değeri dönmez**) |
+| `GET /health` | Sağlık kontrolü |
+
+Smart Feed contract: [docs/architecture/smart-feed-api-contract-v0.md](docs/architecture/smart-feed-api-contract-v0.md)
+
+## Smart Digest ortam değişkenleri
+
+Şablon: `apps/api/.env.example` — **asla commit edilmez**, yalnızca local `.env` için referans.
+
+| Değişken | Açıklama |
+|----------|----------|
+| `LLM_DIGEST_ENABLED` | Digest pipeline açık/kapalı |
+| `LLM_DIGEST_PROVIDER` | `mock` veya `external` |
+| `LLM_DIGEST_EXTERNAL_ENABLED` | Gerçek provider — **default 0** |
+| `LLM_DIGEST_REQUIRE_OPERATOR_APPROVAL` | Operatör onay kapısı |
+| `OPERATOR_APPROVED_REAL_LLM_DIGEST` | Gerçek çağrı onayı (pilot anında 1) |
+| `LLM_DIGEST_API_KEY` | Backend-only; **repo'ya yazılmaz** |
+| `LLM_DIGEST_DAILY_LIMIT` | Günlük external call limiti (default 5) |
+| `LLM_DIGEST_PER_REQUEST_LIMIT` | Request başına limit (default 1) |
+| `LLM_DIGEST_LOG_PROMPTS` / `LLM_DIGEST_LOG_RESPONSES` | Default **0** (kapalı) |
+
+## Ops / runbook
+
+- [Provider pilot runbook](docs/ops/v0.6.4-real-provider-pilot-runbook.md)
+- [Current architecture v0.6](docs/architecture/current-architecture-v0.6.md)
+- [Project current state](docs/project/current-state.md)
+- [Evidence index](evidence/README.md)
+
+## Legacy Radar API uçları (ikincil)
+
+| Uç | Açıklama |
+|-----|----------|
+| `GET /api/events` | Eski radar akışı |
 | `GET /api/signals` | Sosyal sinyaller |
-| `GET /api/notification-candidates` | Push adayları |
 | `GET /api/sources/status` | Connector durumu |
-| `GET /api/ingest/preview` | Ingest önizleme + `quality` özeti |
-| `GET /api/social/status` | Sosyal platform durumları |
-| `GET /api/social/preview` | Sosyal önizleme (`q`, `limit`, `timeoutMs`) |
-| `GET /api/notification-queue` | Bildirim adayı kuyruğu (push yok) |
 | `POST /api/refresh` | Olay havuzunu yenile |
 
-## Typecheck
+## Test
 
-```bash
-pnpm --filter @haber-radari/news-core typecheck
-pnpm --filter @haber-radari/connectors typecheck
-pnpm --filter @haber-radari/api typecheck
-pnpm --filter @haber-radari/mobile typecheck
+```powershell
+cd apps/api
+pnpm vitest run src
+pnpm build
 ```
 
-## Sosyal sinyal pipeline (MVP-2D)
-
-- **Bluesky:** Jetstream JSON WebSocket kısa önizleme (timeout/abort; sunucuyu kilitlemez).
-- **YouTube:** `YOUTUBE_API_KEY` varsa `search.list`; yoksa `gated` — hata fırlatılmaz.
-- **X / TikTok:** Yalnızca adapter durumu (`requiresApprovalOrToken`); scraping yok.
-- **Bildirim kuyruğu:** `GET /api/notification-queue` — push göndermez; sosyal-only dışlanır.
-- Secret'lar mobil uygulamaya konmaz; `.env.example` kök dizinde.
-
-```bash
-cp .env.example .env
-# YOUTUBE_API_KEY=...  (isteğe bağlı)
-pnpm dev:api
+```powershell
+cd apps/android
+.\gradlew.bat testDebugUnitTest
 ```
 
-## Sonraki faz
+## Mevcut faz durumu
 
-- MVP-2E: Push bildirimleri
-- MVP-3: Konum / gelişmiş filtreler
+v0.5.5 – v0.6.4 **PASS** (Smart Feed + Smart Digest altyapısı). Detay: [docs/project/current-state.md](docs/project/current-state.md)
+
+**Gerçek external LLM pilotu:** henüz yapılmadı. Açık operatör onayı olmadan başlatılmamalı.
