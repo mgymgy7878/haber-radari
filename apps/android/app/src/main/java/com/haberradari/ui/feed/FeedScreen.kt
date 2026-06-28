@@ -866,41 +866,25 @@ fun AiCuratedNewsItemCard(
                 overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis
             )
 
-            SmartDigestSection(
-                digest = item.smartDigest,
-                variant = SmartDigestUiVariant.CARD,
-                modifier = Modifier.padding(top = 12.dp)
-            )
-            
-            Spacer(modifier = Modifier.height(12.dp))
-            
-            val evidenceColor = when (item.evidenceStatus) {
-                EvidenceStatus.CONFIRMED -> androidx.compose.ui.graphics.Color(0xFF4CAF50)
-                EvidenceStatus.PARTIAL -> MaterialTheme.colorScheme.primary
-                EvidenceStatus.SINGLE_SOURCE -> MaterialTheme.colorScheme.secondary
-                else -> MaterialTheme.colorScheme.onSurfaceVariant
+            if (TrustTransparencyUiLogic.shouldShowSmartDigestBlock(item.publishDecision)) {
+                SmartDigestSection(
+                    digest = item.smartDigest,
+                    variant = SmartDigestUiVariant.CARD,
+                    modifier = Modifier.padding(top = 12.dp),
+                    showStatusChip = false
+                )
+                Spacer(modifier = Modifier.height(12.dp))
             }
-            
-            Text(
-                text = CuratedSourceLabels.evidenceSummary(item.evidenceStatus, item.uniqueSourceCount),
-                style = MaterialTheme.typography.labelSmall,
-                color = evidenceColor
-            )
-            
+
+            TrustEvidenceRow(item = item)
+
             Spacer(modifier = Modifier.height(12.dp))
-            
+
             androidx.compose.foundation.layout.Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
+                horizontalArrangement = Arrangement.End,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Text(
-                    text = CuratedSourceLabels.articleSourceSummary(item.sourceCount, item.uniqueSourceCount) +
-                        if (item.filteredSourceCount > 0) " (${item.filteredSourceCount} filtrelendi)" else "",
-                    style = MaterialTheme.typography.labelMedium,
-                    color = MaterialTheme.colorScheme.primary
-                )
-                
                 Text(
                     text = "Kaynakları İncele →",
                     style = MaterialTheme.typography.labelMedium,

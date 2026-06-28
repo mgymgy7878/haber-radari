@@ -76,6 +76,6 @@ class CuratedItemIntegrityTest {
         val label = CuratedSourceLabels.articleSourceSummary(articleCount = 2, uniqueSourceCount = 1)
         assertEquals("2 haber · 1 benzersiz kaynak", label)
         val evidence = CuratedSourceLabels.evidenceSummary(EvidenceStatus.SINGLE_SOURCE, 1)
-        assertTrue(evidence.contains("tek benzersiz kaynak"))
+        assertTrue(evidence.contains("tek kaynak"))
     }
 }

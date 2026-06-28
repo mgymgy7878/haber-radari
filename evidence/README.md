@@ -14,6 +14,7 @@ Haber Radarı faz kanıtları. Git'te izlenen dosyalar aşağıdadır.
 | **v0.6.3** | Controlled pilot infrastructure (fake provider) | `v0.6.3-*.json`, `v0.6.3-secret-redaction.txt`, `v0.6.3.md` |
 | **v0.6.4** | Runbook + status endpoint | `v0.6.4-smart-digest-status*.json`, `v0.6.4-provider-pilot-runbook.md`, `v0.6.4.md` |
 | **v0.6.5** | Release hygiene / docs SSOT | `v0.6.5.md` |
+| **v0.6.6** | Android trust & source transparency UX | `v0.6.6-digest-statuses.md`, `v0.6.6.md` |
 
 ## v0.5.x — Device / UI (referans)
 

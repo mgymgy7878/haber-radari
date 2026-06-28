@@ -8,13 +8,11 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import com.haberradari.BuildConfig
 import com.haberradari.data.model.SmartDigest
 import com.haberradari.data.model.SmartDigestConfidence
 
@@ -27,57 +25,48 @@ enum class SmartDigestUiVariant {
 fun SmartDigestSection(
     digest: SmartDigest?,
     variant: SmartDigestUiVariant,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    showStatusChip: Boolean = true
 ) {
-    if (SmartDigestUiLogic.shouldShowDebugStatusNote(digest, BuildConfig.DEBUG)) {
-        Text(
-            text = SmartDigestUiLogic.debugStatusLabel(digest!!),
-            modifier = modifier.padding(top = 4.dp),
-            style = MaterialTheme.typography.labelSmall,
-            color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)
-        )
-        return
-    }
-
-    if (!SmartDigestUiLogic.shouldShowDigestContent(digest)) return
-
-    val contentDigest = digest!!
-    val keyPoints = SmartDigestUiLogic.keyPointsForDisplay(contentDigest)
+    if (!showStatusChip && !SmartDigestUiLogic.shouldShowDigestContent(digest)) return
 
     Column(modifier = modifier.fillMaxWidth()) {
-        Row(
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-            verticalAlignment = androidx.compose.ui.Alignment.CenterVertically
-        ) {
-            Surface(
-                color = MaterialTheme.colorScheme.primaryContainer,
-                shape = MaterialTheme.shapes.small
-            ) {
-                Text(
-                    text = "AI özeti",
-                    modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
-                    style = MaterialTheme.typography.labelSmall,
-                    color = MaterialTheme.colorScheme.onPrimaryContainer
-                )
-            }
-            Surface(
-                color = MaterialTheme.colorScheme.surfaceVariant,
-                shape = MaterialTheme.shapes.small
-            ) {
-                Text(
-                    text = "Metadata tabanlıdır",
-                    modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
-                    style = MaterialTheme.typography.labelSmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-            }
-            if (BuildConfig.DEBUG) {
-                Text(
-                    text = "digest: ${contentDigest.status.name}",
-                    style = MaterialTheme.typography.labelSmall,
-                    color = MaterialTheme.colorScheme.outline
-                )
-            }
+        if (showStatusChip) {
+            DigestStatusChip(digest = digest)
+        }
+
+        val statusNote = TrustTransparencyUiLogic.digestStatusShortNote(digest)
+        if (statusNote != null) {
+            Spacer(modifier = Modifier.height(6.dp))
+            Text(
+                text = statusNote,
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                maxLines = 3,
+                overflow = TextOverflow.Ellipsis
+            )
+        }
+
+        if (!SmartDigestUiLogic.shouldShowDigestContent(digest)) return
+
+        val contentDigest = digest!!
+        val keyPoints = SmartDigestUiLogic.keyPointsForDisplay(contentDigest)
+
+        Spacer(modifier = Modifier.height(8.dp))
+
+        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            Text(
+                text = "Metadata tabanlıdır",
+                style = MaterialTheme.typography.labelSmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+            Text(
+                text = "Orijinal haber yerine geçmez",
+                style = MaterialTheme.typography.labelSmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
+            )
         }
 
         if (variant == SmartDigestUiVariant.DETAIL) {
