@@ -15,6 +15,7 @@ Haber Radarı faz kanıtları. Git'te izlenen dosyalar aşağıdadır.
 | **v0.6.4** | Runbook + status endpoint | `v0.6.4-smart-digest-status*.json`, `v0.6.4-provider-pilot-runbook.md`, `v0.6.4.md` |
 | **v0.6.5** | Release hygiene / docs SSOT | `v0.6.5.md` |
 | **v0.6.6** | Android trust & source transparency UX + classification fix | `v0.6.6-digest-statuses.md`, `v0.6.6.md`, `v0.6.6-classification-fix.md` |
+| **classification-regression-v0** | Fixture pack for publish-gate substring shield | `classification-regression-fixture-pack-v0.md` |
 
 ## v0.5.x — Device / UI (referans)
 
