@@ -1,0 +1,28 @@
+﻿{
+    "enabled":  false,
+    "provider":  "disabled",
+    "externalEnabled":  false,
+    "requireOperatorApproval":  true,
+    "operatorApproved":  false,
+    "requireCache":  true,
+    "dailyLimit":  5,
+    "perRequestLimit":  1,
+    "timeoutMs":  8000,
+    "budget":  {
+                   "date":  "2026-06-28",
+                   "externalCalls":  5,
+                   "cacheHits":  0,
+                   "failures":  6,
+                   "budgetDenied":  1,
+                   "approvalDenied":  0,
+                   "lastUpdatedAt":  "2026-06-28T17:17:51.745Z"
+               },
+    "safety":  {
+                   "realExternalCallAllowedNow":  false,
+                   "reasonIfBlocked":  "DIGEST_DISABLED",
+                   "apiKeyConfigured":  false,
+                   "apiKeyExposed":  false,
+                   "promptLoggingEnabled":  false,
+                   "responseLoggingEnabled":  false
+               }
+}
