@@ -1,7 +1,7 @@
 import { FastifyInstance, FastifyRequest, FastifyReply } from 'fastify';
 import { RssIngestService } from '../services/rss-ingest.js';
 import { ClusterEngine, mapClusterSources, sortClusterArticles, uniqueSourceCount } from '../engine/cluster-engine.js';
-import { PublishGate, PublishDecision } from '../engine/publish-gate.js';
+import { PublishGate, PublishDecision, type PublishResult } from '../engine/publish-gate.js';
 import { resolveFeedCategory } from '../engine/feed-category.js';
 import {
   SmartDigestService,
@@ -9,6 +9,7 @@ import {
 } from '../smart-digest/smart-digest-service.js';
 import { buildSourceScoreShadow } from '../source-scoring/shadow-score-builder.js';
 import { attachSourceSignalsToItems } from '../source-scoring/source-signal-mapper.js';
+import { buildSourceSignalPublishDryRun } from '../source-scoring/source-signal-publish-dry-run.js';
 
 let cachedFeed: any = null;
 let cacheTimestamp = 0;
@@ -75,8 +76,11 @@ export async function smartFeedRoute(req: FastifyRequest, reply: FastifyReply) {
     const rawPreview: any[] = [];
     const noisePreview: any[] = [];
 
+    const clusterEvaluations = new Map<string, PublishResult>();
+
     for (const cluster of clusters) {
       const evaluation = publishGate.evaluate(cluster);
+      clusterEvaluations.set(cluster.id, evaluation);
       
       if (evaluation.decision === PublishDecision.PUBLISH_MAIN) {
         const sortedArticles = sortClusterArticles(cluster.articles);
@@ -247,6 +251,19 @@ export async function smartFeedRoute(req: FastifyRequest, reply: FastifyReply) {
       leadArticleIdsByCluster,
     );
 
+    const itemsByClusterId = new Map(
+      itemsWithSourceSignal.map(
+        (item) => [item.id, { sourceSignal: item.sourceSignal }] as const,
+      ),
+    );
+    const sourceSignalPublishDryRun = buildSourceSignalPublishDryRun({
+      clusters,
+      clusterEvaluations,
+      itemsByClusterId,
+      shadow: sourceScoreShadow,
+      leadArticleIdsByCluster,
+    });
+
     const candidateClusterCount = clusters.length;
     const totalAllocated = publishedCount + hiddenCount;
     
@@ -289,6 +306,7 @@ export async function smartFeedRoute(req: FastifyRequest, reply: FastifyReply) {
         rawOnlyClusterIds,
         engineBuildTag: "smart-feed-stats-ssot-v0.3",
         sourceScoreShadow,
+        sourceSignalPublishDryRun,
       },
       items: itemsWithSourceSignal,
       smartDigestStats,
