@@ -12,3 +12,4 @@ export * from './providers/smart-digest-provider.js';
 export * from './providers/mock-smart-digest-provider.js';
 export * from './providers/external-smart-digest-provider.js';
 export * from './smart-digest-service.js';
+export * from './status.js';
