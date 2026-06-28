@@ -56,6 +56,19 @@ Dil: `wouldBlock`, `wouldDemote`, `dryRunOnly`, `insufficientSignal` — mutlak 
 
 ---
 
+## Manuel smoke (`GET /api/v1/smart-feed?bypassCache=1`)
+
+| Kontrol | Sonuç |
+|---------|-------|
+| `sourceSignalPublishDryRun.readOnly` | `true` ✅ |
+| `sourceScoreShadow.readOnly` | `true` ✅ |
+| `evaluatedCount` | `42` |
+| `publishedCount` | `2` (değişmedi) |
+| `items.length` | `2` |
+| `sourceSignal.label` | `Kaynak sinyali` ✅ |
+
+---
+
 ## Test sonuçları
 
 | Suite | Sonuç |

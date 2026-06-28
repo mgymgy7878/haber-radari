@@ -1,0 +1,25 @@
+{
+  "capturedAt": "2026-06-28T01:17:00+03:00",
+  "branch": "test/source-signal-publish-gate-dry-run-v0",
+  "commit": "17f1e57",
+  "endpoint": "GET /api/v1/smart-feed?bypassCache=1",
+  "checks": {
+    "debugStats.sourceSignalPublishDryRun.readOnly": true,
+    "debugStats.sourceScoreShadow.readOnly": true,
+    "stats.publishedCount": 2,
+    "items.length": 2,
+    "items[0].sourceSignal.label": "Kaynak sinyali",
+    "publishBehaviorChanged": false
+  },
+  "dryRunSummary": {
+    "evaluatedCount": 42,
+    "wouldBlockCount": 0,
+    "wouldDemoteCount": 0
+  },
+  "safetyFlags": {
+    "realExternalCallExecuted_unitTests": false,
+    "realExternalCallExecuted_smoke": true,
+    "productionApiKeyUsed": false,
+    "operatorApprovalUsed": false
+  }
+}
