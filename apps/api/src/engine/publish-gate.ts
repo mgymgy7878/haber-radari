@@ -1,4 +1,9 @@
 import { Cluster } from './cluster-engine.js';
+import {
+  containsCriticalDisasterSeverity,
+  containsDisasterAlertSignal,
+  containsSportContext,
+} from './turkish-text-match.js';
 
 export enum EvidenceStatus {
   CONFIRMED = 'CONFIRMED',
@@ -76,7 +81,12 @@ export class PublishGate {
       if (importance === 'LOW') {
          decision = PublishDecision.FILTERED_OUT;
          reason = "Tek kaynaklı ve düşük öncelikli olay.";
-      } else if (topicQuality === TopicQuality.CRITICAL && contentType === ContentType.DISASTER_ALERT) {
+      } else if (
+        topicQuality === TopicQuality.CRITICAL &&
+        contentType === ContentType.DISASTER_ALERT &&
+        !containsSportContext(combinedText) &&
+        containsCriticalDisasterSeverity(combinedText)
+      ) {
          decision = PublishDecision.PUBLISH_MAIN;
          reason = "Ana akışa alınma nedeni: Tek kaynaklı ama kritik olay bildirimi";
          warningLabel = "Tek Kaynak (Doğrulanmamış)";
@@ -121,7 +131,8 @@ export class PublishGate {
     if (/(konuştu|dedi|açıkladı|değerlendirdi|mesaj verdi|töreninde konuştu|toplantısında konuştu|cumhurbaşkanı|iletişim başkanı|parti sözcüsü)/i.test(text)) return ContentType.POLITICAL_STATEMENT;
     if (/(yardım|arama kurtarma|insani yardım|ekip|yardım eli)/i.test(text)) return ContentType.HUMANITARIAN_AID;
     if (/(gençlik alanına|dönüştürülecek|anma töreni|yeniden inşa)/i.test(text)) return ContentType.DISASTER_FOLLOW_UP;
-    if (/(deprem|yangın|sel|afet|kaza|ölü|yaralı)/i.test(text)) return ContentType.DISASTER_ALERT;
+    if (containsSportContext(text) && !containsDisasterAlertSignal(text)) return ContentType.SPORTS;
+    if (containsDisasterAlertSignal(text)) return ContentType.DISASTER_ALERT;
     if (/(faiz|enflasyon|tüik|merkez bankası|bddk|spk)/i.test(text)) return ContentType.ECONOMY_DATA;
     if (/(savaş|sınır|harekat|terör)/i.test(text)) return ContentType.NATIONAL_SECURITY;
     if (/(futbol|basketbol|transfer|maç)/i.test(text)) return ContentType.SPORTS;
@@ -134,7 +145,7 @@ export class PublishGate {
     if (contentType === ContentType.LISTICLE_OR_ENTERTAINMENT) return TopicQuality.NOISE;
     if (contentType === ContentType.ASAYIS_CRIME || contentType === ContentType.SPORTS) return TopicQuality.LOW_VALUE;
     
-    if (contentType === ContentType.DISASTER_ALERT && /(şiddetli|büyük|can kaybı|öldü|ölü|yaralı)/i.test(text)) return TopicQuality.CRITICAL;
+    if (contentType === ContentType.DISASTER_ALERT && containsCriticalDisasterSeverity(text)) return TopicQuality.CRITICAL;
     if (contentType === ContentType.ECONOMY_DATA && /(açıkladı|kararı)/i.test(text)) return TopicQuality.CRITICAL;
     if (contentType === ContentType.NATIONAL_SECURITY) return TopicQuality.CRITICAL;
     

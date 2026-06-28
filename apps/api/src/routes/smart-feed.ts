@@ -1,7 +1,8 @@
 import { FastifyInstance, FastifyRequest, FastifyReply } from 'fastify';
 import { RssIngestService } from '../services/rss-ingest.js';
 import { ClusterEngine, mapClusterSources, sortClusterArticles, uniqueSourceCount } from '../engine/cluster-engine.js';
-import { PublishGate, PublishDecision, ContentType } from '../engine/publish-gate.js';
+import { PublishGate, PublishDecision } from '../engine/publish-gate.js';
+import { resolveFeedCategory } from '../engine/feed-category.js';
 import {
   SmartDigestService,
   buildDigestInputFromClusterItem,
@@ -83,16 +84,11 @@ export async function smartFeedRoute(req: FastifyRequest, reply: FastifyReply) {
         const combinedText = (bestTitle + ' ' + bestSummary).toLowerCase();
         const clusterUniqueSourceCount = uniqueSourceCount(cluster.articles);
 
-        let finalCategory = cluster.mainCategory;
-        if (/(çevre|balık|kirlilik|dere|deniz|atık|zehirlenme)/i.test(combinedText)) {
-           finalCategory = 'Çevre / Halk Sağlığı';
-        } else if (/(sel|deprem|yangın|fırtına|tahliye|ölü|yaralı)/i.test(combinedText)) {
-           finalCategory = 'Afet';
-        } else if (/(yardım|arama kurtarma|insani yardım)/i.test(combinedText)) {
-           finalCategory = 'Dış Yardım / İnsani Yardım';
-        } else if (evaluation.contentType === ContentType.POLITICAL_STATEMENT) {
-           finalCategory = 'Siyaset / Açıklama';
-        }
+        const finalCategory = resolveFeedCategory(
+          combinedText,
+          evaluation.contentType,
+          cluster.mainCategory,
+        );
 
         publishedItems.push({
           id: cluster.id,

@@ -1,0 +1,892 @@
+﻿{
+    "generatedAt":  1782670489410,
+    "isDemo":  false,
+    "source":  "BACKEND_DETERMINISTIC_RSS_V0",
+    "stats":  {
+                  "totalScanned":  49,
+                  "candidateClusterCount":  43,
+                  "publishedCount":  2,
+                  "hiddenCount":  41,
+                  "watchlistCount":  37,
+                  "filteredCount":  4,
+                  "rawOnlyCount":  0,
+                  "sourceCount":  4,
+                  "successfulSourceCount":  4,
+                  "failedSourceCount":  0,
+                  "invariantOk":  true,
+                  "invariantError":  null
+              },
+    "debugStats":  {
+                       "rawArticleCount":  49,
+                       "clusterCount":  43,
+                       "publishedClusterIds":  [
+                                                   "09ccb2e4-788a-4520-93d9-0635348ec652",
+                                                   "401d8a9e-8f9f-4dbe-b029-f46acda2679f"
+                                               ],
+                       "watchlistClusterIds":  [
+                                                   "c1dd8303-350b-49ba-847c-b2905a9fbdbf",
+                                                   "169df584-7e89-4a4d-8165-e5ebcb60ba00",
+                                                   "5ac90cd6-374b-4b89-b37e-17228855530e",
+                                                   "e4866c50-47ae-4943-be32-4afaf5dc81f5",
+                                                   "95dbee11-f9eb-4715-a4b9-59614f3e5e9a",
+                                                   "d5a8b4ac-d13f-400c-ae4e-a1e86a958a45",
+                                                   "30c63d46-e6d5-4c45-8505-52121683f749",
+                                                   "6cca01db-c24d-4d68-939a-27e8da7acbd0",
+                                                   "fb6f04dc-3d49-449f-9ad8-56e6a5ec4b4e",
+                                                   "e779a4f5-9922-4197-96c6-8c301495b0fc",
+                                                   "6bee125e-d767-4edf-ac34-7bc8e4c2065e",
+                                                   "e86165ef-6cdd-4d97-a583-a69171350e93",
+                                                   "359415b7-69f8-4850-9930-2935f4b5a42c",
+                                                   "617f34e2-e248-4c88-a42c-4426d73e14fe",
+                                                   "5510329c-e23b-4057-9746-07e6cfb383aa",
+                                                   "f37bebf9-14a4-4ea1-8724-0788f7f72345",
+                                                   "577d0cc7-bab8-4323-8ecc-f799d7daa3fa",
+                                                   "656a7658-4463-4484-b401-b69ea21571b2",
+                                                   "45dde532-6d1c-4bff-aee4-1ba07c2f302e",
+                                                   "996929a2-2393-4274-9949-7ee1d770a6b5",
+                                                   "6340e67b-a7cd-4b40-bf49-a27045bc8609",
+                                                   "999a118a-9f93-4928-ae34-0d0339ff7e91",
+                                                   "1d1624e3-17cd-4ad3-b7ba-49ff5be106b0",
+                                                   "e6116bda-954b-42cb-bc87-efeec05889e8",
+                                                   "f2d0cec9-c4ac-4ab2-8ca7-d7c1af6aa1ea",
+                                                   "08f479e9-d762-4055-b61a-4efb253df740",
+                                                   "188bc965-be10-4e75-b457-c033b6e08c61",
+                                                   "80a88bab-2d0f-4657-ba39-9ae4e54d7485",
+                                                   "5616e027-3c1f-4b7d-b4e6-5c0a18b8baab",
+                                                   "fcde291b-21fe-4204-a950-e245fc20909b",
+                                                   "d68e41d4-05c6-4f46-92fb-d847ad17a0f8",
+                                                   "f8c425f2-c460-4b29-92da-7e5123e8f026",
+                                                   "8b245ba8-de48-4786-8a3f-7681cda180f3",
+                                                   "dd1ba97e-a3a4-4697-87c6-2ccd9da23a97",
+                                                   "2fc31dab-ea81-4d38-b401-4f1571b222a2",
+                                                   "a6f269e7-dddd-4170-a9d3-3c3302c9d4a7",
+                                                   "ecfa3959-120c-43f2-b8fc-e0790eab942b"
+                                               ],
+                       "filteredClusterIds":  [
+                                                  "e951e190-417a-470f-9977-7808b25e9867",
+                                                  "6065e6b8-84f1-4ddd-acf0-5a9d71443eff",
+                                                  "261d4e41-d689-4369-9b86-fdf7eac4c47d",
+                                                  "e2aa58f3-51b2-4263-b732-fefce45d2107"
+                                              ],
+                       "rawOnlyClusterIds":  [
+
+                                             ],
+                       "engineBuildTag":  "smart-feed-stats-ssot-v0.3"
+                   },
+    "items":  [
+                  {
+                      "id":  "09ccb2e4-788a-4520-93d9-0635348ec652",
+                      "aiTitle":  "Formula 1\u0027de sezonun 8. etabı Avusturya Grand Prix\u0027sini George Russell kazandı",
+                      "aiSummary":  "Formula 1 Dünya Şampiyonası\u0027nda sezonun 8. yarışı Avusturya Grand Prix\u0027sini Mercedes\u0027in Büyük Britanyalı pilotu George Russell kazandı.",
+                      "category":  "Afet",
+                      "importance":  "MEDIUM",
+                      "confidence":  0.65,
+                      "evidenceStatus":  "SINGLE_SOURCE",
+                      "topicQuality":  "CRITICAL",
+                      "contentType":  "DISASTER_ALERT",
+                      "publishDecision":  "PUBLISH_MAIN",
+                      "publishReason":  "Ana akışa alınma nedeni: Tek kaynaklı ama kritik olay bildirimi",
+                      "warningLabel":  "Tek Kaynak (Doğrulanmamış)",
+                      "sourceCount":  1,
+                      "uniqueSourceCount":  1,
+                      "filteredSourceCount":  0,
+                      "sources":  [
+                                      {
+                                          "sourceName":  "Anadolu Ajansı",
+                                          "originalTitle":  "Formula 1\u0027de sezonun 8. etabı Avusturya Grand Prix\u0027sini George Russell kazandı",
+                                          "url":  "https://www.aa.com.tr/tr/spor/formula-1de-sezonun-8-etabi-avusturya-grand-prixsini-george-russell-kazandi/3980548",
+                                          "publishedAt":  1782659147000,
+                                          "videoUrl":  null
+                                      }
+                                  ],
+                      "mediaHints":  null,
+                      "originalArticleIds":  [
+                                                 "b1c21ae398286627f65a288a57a979f5"
+                                             ],
+                      "smartDigest":  {
+                                          "status":  "DISABLED",
+                                          "summary":  null,
+                                          "keyPoints":  [
+
+                                                        ],
+                                          "whyItMatters":  null,
+                                          "confidence":  "LOW",
+                                          "sourcePolicy":  "METADATA_ONLY",
+                                          "modelProvider":  "disabled",
+                                          "cacheKey":  "b34f13314d46a83d27b1e3fd934fc71a7a719751e82c438784bba84440e13402",
+                                          "generatedAt":  null
+                                      }
+                  },
+                  {
+                      "id":  "401d8a9e-8f9f-4dbe-b029-f46acda2679f",
+                      "aiTitle":  "Balıkesir\u0027de 4 büyüklüğünde deprem",
+                      "aiSummary":  "Balıkesir\u0027de saat 15.56\u0027da 4 büyüklüğünde deprem meydana geldi.",
+                      "category":  "Çevre / Halk Sağlığı",
+                      "importance":  "MEDIUM",
+                      "confidence":  0.65,
+                      "evidenceStatus":  "SINGLE_SOURCE",
+                      "topicQuality":  "CRITICAL",
+                      "contentType":  "DISASTER_ALERT",
+                      "publishDecision":  "PUBLISH_MAIN",
+                      "publishReason":  "Ana akışa alınma nedeni: Tek kaynaklı ama kritik olay bildirimi",
+                      "warningLabel":  "Tek Kaynak (Doğrulanmamış)",
+                      "sourceCount":  1,
+                      "uniqueSourceCount":  1,
+                      "filteredSourceCount":  0,
+                      "sources":  [
+                                      {
+                                          "sourceName":  "Anadolu Ajansı",
+                                          "originalTitle":  "Balıkesir\u0027de 4 büyüklüğünde deprem",
+                                          "url":  "https://www.aa.com.tr/tr/gundem/-balikesirde-4-buyuklugunde-deprem/3980485",
+                                          "publishedAt":  1782652227000,
+                                          "videoUrl":  null
+                                      }
+                                  ],
+                      "mediaHints":  null,
+                      "originalArticleIds":  [
+                                                 "15d35588e49fc748cb0100d4ac7c25d8"
+                                             ],
+                      "smartDigest":  {
+                                          "status":  "DISABLED",
+                                          "summary":  null,
+                                          "keyPoints":  [
+
+                                                        ],
+                                          "whyItMatters":  null,
+                                          "confidence":  "LOW",
+                                          "sourcePolicy":  "METADATA_ONLY",
+                                          "modelProvider":  "disabled",
+                                          "cacheKey":  "0a14cf7fcded91c539bc02a173f47c5d0a716a0b6c62d017e98dc6741149e8ea",
+                                          "generatedAt":  null
+                                      }
+                  }
+              ],
+    "smartDigestStats":  {
+                             "enabled":  false,
+                             "provider":  "disabled",
+                             "eligibleCount":  0,
+                             "generatedCount":  0,
+                             "cachedCount":  0,
+                             "failedCount":  0,
+                             "budgetDeniedCount":  0,
+                             "approvalDeniedCount":  0,
+                             "externalCallCount":  0
+                         },
+    "watchlistPreview":  [
+                             {
+                                 "id":  "c1dd8303-350b-49ba-847c-b2905a9fbdbf",
+                                 "title":  "Fenerbahçe, çalışmalarını taraftara açık idmanla sürdürdü",
+                                 "category":  "Güncel",
+                                 "publishDecision":  "WATCHLIST_ONLY",
+                                 "publishReason":  "Doğrulama bekleniyor (Tek kaynaklı)",
+                                 "evidenceStatus":  "SINGLE_SOURCE",
+                                 "contentType":  "NEWS_EVENT",
+                                 "topicQuality":  "NORMAL",
+                                 "sourceCount":  1,
+                                 "reasonCode":  "Doğrulama bekleniyor (Tek kaynaklı)"
+                             },
+                             {
+                                 "id":  "169df584-7e89-4a4d-8165-e5ebcb60ba00",
+                                 "title":  "Rusya Devlet Başkanı Putin, ülkede akaryakıt sorunlarının sürdüğünü söyledi",
+                                 "category":  "Güncel",
+                                 "publishDecision":  "WATCHLIST_ONLY",
+                                 "publishReason":  "Doğrulama bekleniyor (Tek kaynaklı)",
+                                 "evidenceStatus":  "SINGLE_SOURCE",
+                                 "contentType":  "NEWS_EVENT",
+                                 "topicQuality":  "NORMAL",
+                                 "sourceCount":  1,
+                                 "reasonCode":  "Doğrulama bekleniyor (Tek kaynaklı)"
+                             },
+                             {
+                                 "id":  "5ac90cd6-374b-4b89-b37e-17228855530e",
+                                 "title":  "İsrail\u0027de muhalif lider Golan\u0027dan Netanyahu\u0027ya \"İsrail\u0027in yalnızlaştığı ve diplomatik açıdan zayıfladığı\" eleştirisi",
+                                 "category":  "Güncel",
+                                 "publishDecision":  "WATCHLIST_ONLY",
+                                 "publishReason":  "Doğrulama bekleniyor (Tek kaynaklı)",
+                                 "evidenceStatus":  "SINGLE_SOURCE",
+                                 "contentType":  "NEWS_EVENT",
+                                 "topicQuality":  "NORMAL",
+                                 "sourceCount":  1,
+                                 "reasonCode":  "Doğrulama bekleniyor (Tek kaynaklı)"
+                             },
+                             {
+                                 "id":  "e4866c50-47ae-4943-be32-4afaf5dc81f5",
+                                 "title":  "AK Parti\u0027nin 33. İstişare ve Değerlendirme Toplantısı tamamlandı",
+                                 "category":  "Güncel",
+                                 "publishDecision":  "WATCHLIST_ONLY",
+                                 "publishReason":  "Doğrulama bekleniyor (Tek kaynaklı)",
+                                 "evidenceStatus":  "SINGLE_SOURCE",
+                                 "contentType":  "NEWS_EVENT",
+                                 "topicQuality":  "NORMAL",
+                                 "sourceCount":  1,
+                                 "reasonCode":  "Doğrulama bekleniyor (Tek kaynaklı)"
+                             },
+                             {
+                                 "id":  "95dbee11-f9eb-4715-a4b9-59614f3e5e9a",
+                                 "title":  "İstanbul\u0027da 5 bin kişi aynı anda horon oynayarak Guinness Rekorlar Kitabı\u0027na girdi",
+                                 "category":  "Güncel",
+                                 "publishDecision":  "WATCHLIST_ONLY",
+                                 "publishReason":  "Doğrulama bekleniyor (Tek kaynaklı)",
+                                 "evidenceStatus":  "SINGLE_SOURCE",
+                                 "contentType":  "NEWS_EVENT",
+                                 "topicQuality":  "NORMAL",
+                                 "sourceCount":  1,
+                                 "reasonCode":  "Doğrulama bekleniyor (Tek kaynaklı)"
+                             },
+                             {
+                                 "id":  "d5a8b4ac-d13f-400c-ae4e-a1e86a958a45",
+                                 "title":  "100. Gazi Koşusu\u0027nu jokeyliğini Halis Karataş\u0027ın yaptığı \"Bay Nalçakan\" kazandı",
+                                 "category":  "Güncel",
+                                 "publishDecision":  "WATCHLIST_ONLY",
+                                 "publishReason":  "Doğrulama bekleniyor (Tek kaynaklı)",
+                                 "evidenceStatus":  "SINGLE_SOURCE",
+                                 "contentType":  "DISASTER_ALERT",
+                                 "topicQuality":  "NORMAL",
+                                 "sourceCount":  1,
+                                 "reasonCode":  "Doğrulama bekleniyor (Tek kaynaklı)"
+                             },
+                             {
+                                 "id":  "30c63d46-e6d5-4c45-8505-52121683f749",
+                                 "title":  "Türkiye, yeni haftada kavurucu sıcakların etkisine giriyor",
+                                 "category":  "Manşet",
+                                 "publishDecision":  "WATCHLIST_ONLY",
+                                 "publishReason":  "Doğrulama bekleniyor (Tek kaynaklı)",
+                                 "evidenceStatus":  "SINGLE_SOURCE",
+                                 "contentType":  "NEWS_EVENT",
+                                 "topicQuality":  "NORMAL",
+                                 "sourceCount":  1,
+                                 "reasonCode":  "Doğrulama bekleniyor (Tek kaynaklı)"
+                             },
+                             {
+                                 "id":  "6cca01db-c24d-4d68-939a-27e8da7acbd0",
+                                 "title":  "Ogura, MotoGP\u0027deki ilk yarış zaferine ulaştı",
+                                 "category":  "Güncel",
+                                 "publishDecision":  "WATCHLIST_ONLY",
+                                 "publishReason":  "Doğrulama bekleniyor (Tek kaynaklı)",
+                                 "evidenceStatus":  "SINGLE_SOURCE",
+                                 "contentType":  "NEWS_EVENT",
+                                 "topicQuality":  "NORMAL",
+                                 "sourceCount":  1,
+                                 "reasonCode":  "Doğrulama bekleniyor (Tek kaynaklı)"
+                             },
+                             {
+                                 "id":  "fb6f04dc-3d49-449f-9ad8-56e6a5ec4b4e",
+                                 "title":  "TBMM Başkanı Kurtulmuş, NATO PA Başkanı Perestrello ile görüştü",
+                                 "category":  "Güncel",
+                                 "publishDecision":  "WATCHLIST_ONLY",
+                                 "publishReason":  "Doğrulama bekleniyor (Tek kaynaklı)",
+                                 "evidenceStatus":  "SINGLE_SOURCE",
+                                 "contentType":  "NEWS_EVENT",
+                                 "topicQuality":  "NORMAL",
+                                 "sourceCount":  1,
+                                 "reasonCode":  "Doğrulama bekleniyor (Tek kaynaklı)"
+                             },
+                             {
+                                 "id":  "e779a4f5-9922-4197-96c6-8c301495b0fc",
+                                 "title":  "Rusya\u0027nın İrkutsk bölgesinde akaryakıt sorunu nedeniyle tedbirler genişletildi",
+                                 "category":  "Güncel",
+                                 "publishDecision":  "WATCHLIST_ONLY",
+                                 "publishReason":  "Doğrulama bekleniyor (Tek kaynaklı)",
+                                 "evidenceStatus":  "SINGLE_SOURCE",
+                                 "contentType":  "NEWS_EVENT",
+                                 "topicQuality":  "NORMAL",
+                                 "sourceCount":  1,
+                                 "reasonCode":  "Doğrulama bekleniyor (Tek kaynaklı)"
+                             }
+                         ],
+    "rawPreview":  [
+
+                   ],
+    "noisePreview":  [
+                         {
+                             "id":  "e951e190-417a-470f-9977-7808b25e9867",
+                             "title":  "60 saniyede bugün (28 Haziran 2026)",
+                             "category":  "Güncel",
+                             "publishDecision":  "FILTERED_OUT",
+                             "publishReason":  "Generic SEO veya Evergreen içerik (Son dakika deprem vb.)",
+                             "evidenceStatus":  "PARTIAL",
+                             "contentType":  "UNKNOWN",
+                             "topicQuality":  "NOISE",
+                             "sourceCount":  3,
+                             "reasonCode":  "Generic SEO veya Evergreen içerik (Son dakika deprem vb.)"
+                         },
+                         {
+                             "id":  "6065e6b8-84f1-4ddd-acf0-5a9d71443eff",
+                             "title":  "Beşiktaş Futbol Direktörü Önder Özen: Transferde finale yaklaştığımız üç oyuncu var",
+                             "category":  "Güncel",
+                             "publishDecision":  "FILTERED_OUT",
+                             "publishReason":  "Düşük değerli içerik (Asayiş, Magazin veya Liste)",
+                             "evidenceStatus":  "SINGLE_SOURCE",
+                             "contentType":  "SPORTS",
+                             "topicQuality":  "LOW_VALUE",
+                             "sourceCount":  1,
+                             "reasonCode":  "Düşük değerli içerik (Asayiş, Magazin veya Liste)"
+                         },
+                         {
+                             "id":  "261d4e41-d689-4369-9b86-fdf7eac4c47d",
+                             "title":  "Son dakika deprem mi oldu? Az önce deprem nerede oldu? İstanbul, Ankara, İzmir ve il il AFAD son depremler 26 Haziran 2026",
+                             "category":  "Son Dakika",
+                             "publishDecision":  "FILTERED_OUT",
+                             "publishReason":  "Generic SEO veya Evergreen içerik (Son dakika deprem vb.)",
+                             "evidenceStatus":  "SINGLE_SOURCE",
+                             "contentType":  "UNKNOWN",
+                             "topicQuality":  "NOISE",
+                             "sourceCount":  4,
+                             "reasonCode":  "Generic SEO veya Evergreen içerik (Son dakika deprem vb.)"
+                         },
+                         {
+                             "id":  "e2aa58f3-51b2-4263-b732-fefce45d2107",
+                             "title":  "Bankalarda yeni dönem",
+                             "category":  "Ekonomi",
+                             "publishDecision":  "FILTERED_OUT",
+                             "publishReason":  "Düşük değerli içerik (Asayiş, Magazin veya Liste)",
+                             "evidenceStatus":  "SINGLE_SOURCE",
+                             "contentType":  "SPORTS",
+                             "topicQuality":  "LOW_VALUE",
+                             "sourceCount":  2,
+                             "reasonCode":  "Düşük değerli içerik (Asayiş, Magazin veya Liste)"
+                         }
+                     ],
+    "latestRssPreview":  [
+                             {
+                                 "id":  "828355adb8ddd1015dccddc06da4015f",
+                                 "title":  "Son dakika deprem mi oldu? Az önce deprem nerede oldu? İstanbul, Ankara, İzmir ve il il AFAD son depremler 28 Haziran 2026",
+                                 "category":  "Son Dakika",
+                                 "publishDecision":  "LATEST_RSS",
+                                 "publishReason":  "Normal RSS feed",
+                                 "evidenceStatus":  "LOW_CONFIDENCE",
+                                 "contentType":  "GENERAL",
+                                 "topicQuality":  "NORMAL",
+                                 "sourceCount":  1,
+                                 "reasonCode":  "LatestRss",
+                                 "shortDescription":  "Son depremler... Son dakika deprem mi oldu? Az önce deprem nerede oldu? İstanbul, Ankara, İzmir ve il il AFAD son depremler.. 28 Haziran 2026 deprem son dakika haberleri haberin detayında... Artçı deprem mi oldu? Son deprem büyüklüğü ne kadar? Yakınımdaki depremler nelerdir? Anlık deprem mi oldu?...",
+                                 "originalUrl":  "https://www.ntv.com.tr/turkiye/son-dakika-deprem-mi-oldu-az-once-deprem-nerede-oldu-istanbul-ankara-izmir-ve-il-il-afad-son-depremler-28-haziran-2026-1730426",
+                                 "publishedAt":  1782669600000,
+                                 "sourceNames":  [
+                                                     "NTV"
+                                                 ]
+                             },
+                             {
+                                 "id":  "ace6cf7e1fa9c8c3105a8e60f4b361e4",
+                                 "title":  "Fenerbahçe, çalışmalarını taraftara açık idmanla sürdürdü",
+                                 "category":  "Güncel",
+                                 "publishDecision":  "LATEST_RSS",
+                                 "publishReason":  "Normal RSS feed",
+                                 "evidenceStatus":  "LOW_CONFIDENCE",
+                                 "contentType":  "GENERAL",
+                                 "topicQuality":  "NORMAL",
+                                 "sourceCount":  1,
+                                 "reasonCode":  "LatestRss",
+                                 "shortDescription":  "Fenerbahçe, yeni sezon hazırlıkları kapsamında ilk etap çalışmalarını taraftara açık yaptığı antrenmanla sürdürdü.",
+                                 "originalUrl":  "https://www.aa.com.tr/tr/spor/fenerbahce-calismalarini-taraftara-acik-idmanla-surdurdu/3980603",
+                                 "publishedAt":  1782667215000,
+                                 "sourceNames":  [
+                                                     "Anadolu Ajansı"
+                                                 ]
+                             },
+                             {
+                                 "id":  "5482b30d28fbfa1e7b974a7309bba8d0",
+                                 "title":  "Rusya Devlet Başkanı Putin, ülkede akaryakıt sorunlarının sürdüğünü söyledi",
+                                 "category":  "Güncel",
+                                 "publishDecision":  "LATEST_RSS",
+                                 "publishReason":  "Normal RSS feed",
+                                 "evidenceStatus":  "LOW_CONFIDENCE",
+                                 "contentType":  "GENERAL",
+                                 "topicQuality":  "NORMAL",
+                                 "sourceCount":  1,
+                                 "reasonCode":  "LatestRss",
+                                 "shortDescription":  "Rusya Devlet Başkanı Vladimir Putin, ülkede sürücüler ve işletmeler açısından akaryakıt tedarikindeki sorunların devam ettiğini belirtti.",
+                                 "originalUrl":  "https://www.aa.com.tr/tr/dunya/rusya-devlet-baskani-putin-ulkede-akaryakit-sorunlarinin-surdugunu-soyledi/3980598",
+                                 "publishedAt":  1782666958000,
+                                 "sourceNames":  [
+                                                     "Anadolu Ajansı"
+                                                 ]
+                             },
+                             {
+                                 "id":  "7d7d18680ce2b2d53bcf38610e0e7c9a",
+                                 "title":  "İsrail\u0027de muhalif lider Golan\u0027dan Netanyahu\u0027ya \"İsrail\u0027in yalnızlaştığı ve diplomatik açıdan zayıfladığı\" eleştirisi",
+                                 "category":  "Güncel",
+                                 "publishDecision":  "LATEST_RSS",
+                                 "publishReason":  "Normal RSS feed",
+                                 "evidenceStatus":  "LOW_CONFIDENCE",
+                                 "contentType":  "GENERAL",
+                                 "topicQuality":  "NORMAL",
+                                 "sourceCount":  1,
+                                 "reasonCode":  "LatestRss",
+                                 "shortDescription":  "İsrail Demokratlar Partisi lideri Yair Golan, Başbakan Binyamin Netanyahu\u0027nun \"stratejik başarısızlığı\" nedeniyle Tel Aviv\u0027in, Hizbullah\u0027ın silahsızlandırılması için uluslararası bir mekanizma oluşturabilecek güven ve nüfuzu kaybettiğini belirtti.",
+                                 "originalUrl":  "https://www.aa.com.tr/tr/dunya/israilde-muhalif-lider-golandan-netanyahuya-israilin-yalnizlastigi-ve-diplomatik-acidan-zayifladigi-elestirisi/3980582",
+                                 "publishedAt":  1782665781000,
+                                 "sourceNames":  [
+                                                     "Anadolu Ajansı"
+                                                 ]
+                             },
+                             {
+                                 "id":  "c45ccea4af0f15c01a97911f4d11c18d",
+                                 "title":  "Beşiktaş Futbol Direktörü Önder Özen: Transferde finale yaklaştığımız üç oyuncu var",
+                                 "category":  "Güncel",
+                                 "publishDecision":  "LATEST_RSS",
+                                 "publishReason":  "Normal RSS feed",
+                                 "evidenceStatus":  "LOW_CONFIDENCE",
+                                 "contentType":  "GENERAL",
+                                 "topicQuality":  "NORMAL",
+                                 "sourceCount":  1,
+                                 "reasonCode":  "LatestRss",
+                                 "shortDescription":  "Beşiktaş Futbol Direktörü Önder Özen, siyah-beyazlı camiaya birlik ve beraberlik çağrısında bulunurken, üç oyuncunun transferinde sona yaklaştıklarını belirtti.",
+                                 "originalUrl":  "https://www.aa.com.tr/tr/spor/besiktas-futbol-direktoru-onder-ozen-transferde-finale-yaklastigimiz-uc-oyuncu-var/3980576",
+                                 "publishedAt":  1782664090000,
+                                 "sourceNames":  [
+                                                     "Anadolu Ajansı"
+                                                 ]
+                             },
+                             {
+                                 "id":  "b1c21ae398286627f65a288a57a979f5",
+                                 "title":  "Formula 1\u0027de sezonun 8. etabı Avusturya Grand Prix\u0027sini George Russell kazandı",
+                                 "category":  "Güncel",
+                                 "publishDecision":  "LATEST_RSS",
+                                 "publishReason":  "Normal RSS feed",
+                                 "evidenceStatus":  "LOW_CONFIDENCE",
+                                 "contentType":  "GENERAL",
+                                 "topicQuality":  "NORMAL",
+                                 "sourceCount":  1,
+                                 "reasonCode":  "LatestRss",
+                                 "shortDescription":  "Formula 1 Dünya Şampiyonası\u0027nda sezonun 8. yarışı Avusturya Grand Prix\u0027sini Mercedes\u0027in Büyük Britanyalı pilotu George Russell kazandı.",
+                                 "originalUrl":  "https://www.aa.com.tr/tr/spor/formula-1de-sezonun-8-etabi-avusturya-grand-prixsini-george-russell-kazandi/3980548",
+                                 "publishedAt":  1782659147000,
+                                 "sourceNames":  [
+                                                     "Anadolu Ajansı"
+                                                 ]
+                             },
+                             {
+                                 "id":  "846670851ef13cc77cdf8cd4d2657c59",
+                                 "title":  "AK Parti\u0027nin 33. İstişare ve Değerlendirme Toplantısı tamamlandı",
+                                 "category":  "Güncel",
+                                 "publishDecision":  "LATEST_RSS",
+                                 "publishReason":  "Normal RSS feed",
+                                 "evidenceStatus":  "LOW_CONFIDENCE",
+                                 "contentType":  "GENERAL",
+                                 "topicQuality":  "NORMAL",
+                                 "sourceCount":  1,
+                                 "reasonCode":  "LatestRss",
+                                 "shortDescription":  "AK Parti\u0027nin \"Çeyrek Asırlık Destan AK Parti\" temasıyla Sakarya\u0027nın Sapanca ilçesinde düzenlediği 33. İstişare ve Değerlendirme Toplantısı sona erdi.",
+                                 "originalUrl":  "https://www.aa.com.tr/tr/gundem/ak-partinin-33-istisare-ve-degerlendirme-toplantisi-tamamlandi/3980540",
+                                 "publishedAt":  1782658136000,
+                                 "sourceNames":  [
+                                                     "Anadolu Ajansı"
+                                                 ]
+                             },
+                             {
+                                 "id":  "d24630f0a52236b69cf0de0c4d06bcca",
+                                 "title":  "İstanbul\u0027da 5 bin kişi aynı anda horon oynayarak Guinness Rekorlar Kitabı\u0027na girdi",
+                                 "category":  "Güncel",
+                                 "publishDecision":  "LATEST_RSS",
+                                 "publishReason":  "Normal RSS feed",
+                                 "evidenceStatus":  "LOW_CONFIDENCE",
+                                 "contentType":  "GENERAL",
+                                 "topicQuality":  "NORMAL",
+                                 "sourceCount":  1,
+                                 "reasonCode":  "LatestRss",
+                                 "shortDescription":  "Katılımcılar, denemenin başarılı sonuçlanmasını horon oynayarak kutladı.",
+                                 "originalUrl":  "https://www.aa.com.tr/tr/kultur/istanbulda-5-bin-kisi-ayni-anda-horon-oynayarak-guinness-rekorlar-kitabina-girdi/3980539",
+                                 "publishedAt":  1782657747000,
+                                 "sourceNames":  [
+                                                     "Anadolu Ajansı"
+                                                 ]
+                             },
+                             {
+                                 "id":  "02f3129a5488da1590f7089c2e54ede9",
+                                 "title":  "100. Gazi Koşusu\u0027nu jokeyliğini Halis Karataş\u0027ın yaptığı \"Bay Nalçakan\" kazandı",
+                                 "category":  "Güncel",
+                                 "publishDecision":  "LATEST_RSS",
+                                 "publishReason":  "Normal RSS feed",
+                                 "evidenceStatus":  "LOW_CONFIDENCE",
+                                 "contentType":  "GENERAL",
+                                 "topicQuality":  "NORMAL",
+                                 "sourceCount":  1,
+                                 "reasonCode":  "LatestRss",
+                                 "shortDescription":  "Gazi Mustafa Kemal Atatürk adına 1927 yılından bu yana düzenlenen Gazi Koşusu\u0027nun 100\u0027üncüsünü Emrah Nalçakan\u0027ın sahibi olduğu, jokeyliğini Halis Karataş\u0027ın yaptığı \"Bay Nalçakan\" isimli safkan kazandı.",
+                                 "originalUrl":  "https://www.aa.com.tr/tr/spor/100-gazi-kosusunu-jokeyligini-halis-karatasin-yaptigi-bay-nalcakan-kazandi/3980533",
+                                 "publishedAt":  1782656882000,
+                                 "sourceNames":  [
+                                                     "Anadolu Ajansı"
+                                                 ]
+                             },
+                             {
+                                 "id":  "34570e9a5a0c96289a90ce6a92c8a8e3",
+                                 "title":  "Türkiye, yeni haftada kavurucu sıcakların etkisine giriyor",
+                                 "category":  "Manşet",
+                                 "publishDecision":  "LATEST_RSS",
+                                 "publishReason":  "Normal RSS feed",
+                                 "evidenceStatus":  "LOW_CONFIDENCE",
+                                 "contentType":  "GENERAL",
+                                 "topicQuality":  "NORMAL",
+                                 "sourceCount":  1,
+                                 "reasonCode":  "LatestRss",
+                                 "shortDescription":  "Yeni haftayla birlikte Türkiye genelinde hava sıcaklıkları artacak. Meteoroloji Genel Müdürlüğünün son tahminlerine göre bazı bölgelerde termometreler 42 dereceyi gösterecek. Özellikle kronik rahatsızlığı bulunanlar, yaşlı ve çocuklar günün en sıcak saatlerinde dikkatli olmalı.",
+                                 "originalUrl":  "https://www.trthaber.com/haber/turkiye/turkiye-yeni-haftada-kavurucu-sicaklarin-etkisine-giriyor-949593.html",
+                                 "publishedAt":  1782656760000,
+                                 "sourceNames":  [
+                                                     "TRT Haber"
+                                                 ]
+                             },
+                             {
+                                 "id":  "57f3e3e586bae9a0955c2c0190028a14",
+                                 "title":  "Ogura, MotoGP\u0027deki ilk yarış zaferine ulaştı",
+                                 "category":  "Güncel",
+                                 "publishDecision":  "LATEST_RSS",
+                                 "publishReason":  "Normal RSS feed",
+                                 "evidenceStatus":  "LOW_CONFIDENCE",
+                                 "contentType":  "GENERAL",
+                                 "topicQuality":  "NORMAL",
+                                 "sourceCount":  1,
+                                 "reasonCode":  "LatestRss",
+                                 "shortDescription":  "Toprak Razgatlıoğlu, motosikletindeki arıza yüzünden yarışı tamamlayamadı.",
+                                 "originalUrl":  "https://www.aa.com.tr/tr/spor/ogura-motogpdeki-ilk-yaris-zaferine-ulasti/3980530",
+                                 "publishedAt":  1782656729000,
+                                 "sourceNames":  [
+                                                     "Anadolu Ajansı"
+                                                 ]
+                             },
+                             {
+                                 "id":  "b94f11a0516944272515d2b807316369",
+                                 "title":  "TBMM Başkanı Kurtulmuş, NATO PA Başkanı Perestrello ile görüştü",
+                                 "category":  "Güncel",
+                                 "publishDecision":  "LATEST_RSS",
+                                 "publishReason":  "Normal RSS feed",
+                                 "evidenceStatus":  "LOW_CONFIDENCE",
+                                 "contentType":  "GENERAL",
+                                 "topicQuality":  "NORMAL",
+                                 "sourceCount":  1,
+                                 "reasonCode":  "LatestRss",
+                                 "shortDescription":  "TBMM Başkanı Numan Kurtulmuş, NATO Parlamenter Zirvesi dolayısıyla İstanbul\u0027da bulunan NATO Parlamenter Asamblesi (NATO PA) Başkanı Marcos Perestrello ile bir araya geldi.",
+                                 "originalUrl":  "https://www.aa.com.tr/tr/gundem/tbmm-baskani-kurtulmus-nato-pa-baskani-perestrello-ile-gorustu-/3980517",
+                                 "publishedAt":  1782655120000,
+                                 "sourceNames":  [
+                                                     "Anadolu Ajansı"
+                                                 ]
+                             },
+                             {
+                                 "id":  "4deb983a59e51a5c2b5b72bb95e3e425",
+                                 "title":  "Rusya\u0027nın İrkutsk bölgesinde akaryakıt sorunu nedeniyle tedbirler genişletildi",
+                                 "category":  "Güncel",
+                                 "publishDecision":  "LATEST_RSS",
+                                 "publishReason":  "Normal RSS feed",
+                                 "evidenceStatus":  "LOW_CONFIDENCE",
+                                 "contentType":  "GENERAL",
+                                 "topicQuality":  "NORMAL",
+                                 "sourceCount":  1,
+                                 "reasonCode":  "LatestRss",
+                                 "shortDescription":  "Rusya’nın İrkutsk bölgesinde akaryakıt arzındaki sıkıntılar nedeniyle \"yüksek hazırlık durumu\"na geçildiği ve yeni kısıtlamalar uygulanacağı bildirildi.",
+                                 "originalUrl":  "https://www.aa.com.tr/tr/dunya/rusyanin-irkutsk-bolgesinde-akaryakit-sorunu-nedeniyle-tedbirler-genisletildi/3980512",
+                                 "publishedAt":  1782654734000,
+                                 "sourceNames":  [
+                                                     "Anadolu Ajansı"
+                                                 ]
+                             },
+                             {
+                                 "id":  "b52d647e1c21c705504300e96071161d",
+                                 "title":  "İsrail Dışişleri Bakanından Lübnan\u0027la anlaşma sonrası \"Hizbullah silahsızlandırılana kadar\" işgalin süreceği mesajı",
+                                 "category":  "Güncel",
+                                 "publishDecision":  "LATEST_RSS",
+                                 "publishReason":  "Normal RSS feed",
+                                 "evidenceStatus":  "LOW_CONFIDENCE",
+                                 "contentType":  "GENERAL",
+                                 "topicQuality":  "NORMAL",
+                                 "sourceCount":  1,
+                                 "reasonCode":  "LatestRss",
+                                 "shortDescription":  "İsrail Dışişleri Bakanı Gideon Saar, Beyrut yönetimi ile ABD arabuluculuğunda imzaladıkları çerçeve anlaşmaya ilişkin \"Hizbullah silahsızlandırılana kadar\" Lübnan\u0027ın güneyinde işgali sürdüreceklerine işaret etti.",
+                                 "originalUrl":  "https://www.aa.com.tr/tr/dunya/israil-disisleri-bakanindan-lubnanla-anlasma-sonrasi-hizbullah-silahsizlandirilana-kadar-isgalin-surecegi-mesaji/3980506",
+                                 "publishedAt":  1782654077000,
+                                 "sourceNames":  [
+                                                     "Anadolu Ajansı"
+                                                 ]
+                             },
+                             {
+                                 "id":  "699cea928245410a26ac15521cd063e7",
+                                 "title":  "İzmir\u0027de kaza ihbarına giden itfaiye aracının devrilmesi sonucu 2 itfaiyeci yaralandı",
+                                 "category":  "Güncel",
+                                 "publishDecision":  "LATEST_RSS",
+                                 "publishReason":  "Normal RSS feed",
+                                 "evidenceStatus":  "LOW_CONFIDENCE",
+                                 "contentType":  "GENERAL",
+                                 "topicQuality":  "NORMAL",
+                                 "sourceCount":  1,
+                                 "reasonCode":  "LatestRss",
+                                 "shortDescription":  "İzmir\u0027in Bergama ilçesinde devrilen itfaiye aracındaki 2 personel yaralandı.",
+                                 "originalUrl":  "https://www.aa.com.tr/tr/gundem/izmirde-kaza-ihbarina-giden-itfaiye-aracinin-devrilmesi-sonucu-2-itfaiyeci-yaralandi/3980499",
+                                 "publishedAt":  1782653399000,
+                                 "sourceNames":  [
+                                                     "Anadolu Ajansı"
+                                                 ]
+                             },
+                             {
+                                 "id":  "fbc8f06dbe294f927fb0235f527f4c0a",
+                                 "title":  "Kadir İnanır son yolculuğuna uğurlandı",
+                                 "category":  "Güncel",
+                                 "publishDecision":  "LATEST_RSS",
+                                 "publishReason":  "Normal RSS feed",
+                                 "evidenceStatus":  "LOW_CONFIDENCE",
+                                 "contentType":  "GENERAL",
+                                 "topicQuality":  "NORMAL",
+                                 "sourceCount":  1,
+                                 "reasonCode":  "LatestRss",
+                                 "shortDescription":  "Kültür ve Turizm Bakanı Mehmet Nuri Ersoy,  \"Kadir İnanır, çok eşsiz bir değerdi. Çok önemli bir ustaydı.\" dedi.",
+                                 "originalUrl":  "https://www.aa.com.tr/tr/kultur/kadir-inanir-son-yolculuguna-ugurlandi/3980496",
+                                 "publishedAt":  1782652931000,
+                                 "sourceNames":  [
+                                                     "Anadolu Ajansı"
+                                                 ]
+                             },
+                             {
+                                 "id":  "8fd53f43a96d6b11669f114a068ccecc",
+                                 "title":  "Son dakika Balıkesir\u0027de deprem mi oldu? Az önce deprem Balıkesir\u0027de nerede oldu? Balıkesir deprem Kandilli ve AFAD son depremler listesi 28 Haziran 2026",
+                                 "category":  "Son Dakika",
+                                 "publishDecision":  "LATEST_RSS",
+                                 "publishReason":  "Normal RSS feed",
+                                 "evidenceStatus":  "LOW_CONFIDENCE",
+                                 "contentType":  "GENERAL",
+                                 "topicQuality":  "NORMAL",
+                                 "sourceCount":  1,
+                                 "reasonCode":  "LatestRss",
+                                 "shortDescription":  "Son dakika Balıkesir deprem haberleri.. Balıkesir\u0027de deprem mi oldu? Az önce deprem Balıkesir\u0027de nerede oldu? Balıkesir Kandilli ve AFAD son depremler.. 28 Haziran 2026 Balıkesir deprem son dakika haberleri haberin detayında... Artçı deprem mi oldu Balıkesir\u0027de? Balıkesir son deprem büyüklüğü ne ...",
+                                 "originalUrl":  "https://www.ntv.com.tr/turkiye/son-dakika-balikesirde-deprem-mi-oldu-az-once-deprem-balikesirde-nerede-oldu-balikesir-deprem-kandilli-ve-afad-son-depremler-listesi-28-haziran-2026-1730536",
+                                 "publishedAt":  1782652800000,
+                                 "sourceNames":  [
+                                                     "NTV"
+                                                 ]
+                             },
+                             {
+                                 "id":  "15d35588e49fc748cb0100d4ac7c25d8",
+                                 "title":  "Balıkesir\u0027de 4 büyüklüğünde deprem",
+                                 "category":  "Güncel",
+                                 "publishDecision":  "LATEST_RSS",
+                                 "publishReason":  "Normal RSS feed",
+                                 "evidenceStatus":  "LOW_CONFIDENCE",
+                                 "contentType":  "GENERAL",
+                                 "topicQuality":  "NORMAL",
+                                 "sourceCount":  1,
+                                 "reasonCode":  "LatestRss",
+                                 "shortDescription":  "Balıkesir\u0027de saat 15.56\u0027da 4 büyüklüğünde deprem meydana geldi.",
+                                 "originalUrl":  "https://www.aa.com.tr/tr/gundem/-balikesirde-4-buyuklugunde-deprem/3980485",
+                                 "publishedAt":  1782652227000,
+                                 "sourceNames":  [
+                                                     "Anadolu Ajansı"
+                                                 ]
+                             },
+                             {
+                                 "id":  "9aa5751b0d4f735374bd51fda6e94726",
+                                 "title":  "DMM, \"Trafik radar sistemlerinin özelleştirileceği ve özel şirketlerin sürücülere ceza keseceği\" iddiasını yalanladı",
+                                 "category":  "Güncel",
+                                 "publishDecision":  "LATEST_RSS",
+                                 "publishReason":  "Normal RSS feed",
+                                 "evidenceStatus":  "LOW_CONFIDENCE",
+                                 "contentType":  "GENERAL",
+                                 "topicQuality":  "NORMAL",
+                                 "sourceCount":  1,
+                                 "reasonCode":  "LatestRss",
+                                 "shortDescription":  "Cumhurbaşkanlığı İletişim Başkanlığı Dezenformasyonla Mücadele Merkezi (DMM), \"Trafik radar sistemlerinin özelleştirileceği ve özel şirketlerin sürücülere ceza keseceği\" yönündeki iddianın doğru olmadığını bildirdi.",
+                                 "originalUrl":  "https://www.aa.com.tr/tr/gundem/dmm-trafik-radar-sistemlerinin-ozellestirilecegi-ve-ozel-sirketlerin-suruculere-ceza-kesecegi-iddiasini-yalanladi/3980482",
+                                 "publishedAt":  1782652013000,
+                                 "sourceNames":  [
+                                                     "Anadolu Ajansı"
+                                                 ]
+                             },
+                             {
+                                 "id":  "7eed349f6e7782b16c3547e7436d3a98",
+                                 "title":  "60 saniyede bugün (28 Haziran 2026)",
+                                 "category":  "Güncel",
+                                 "publishDecision":  "LATEST_RSS",
+                                 "publishReason":  "Normal RSS feed",
+                                 "evidenceStatus":  "LOW_CONFIDENCE",
+                                 "contentType":  "GENERAL",
+                                 "topicQuality":  "NORMAL",
+                                 "sourceCount":  1,
+                                 "reasonCode":  "LatestRss",
+                                 "shortDescription":  "Türkiye ve dünya gündeminin 60 saniyelik özeti. AJet\u0027in katkılarıyla...",
+                                 "originalUrl":  "https://www.aa.com.tr/tr/gundem/60-saniyede-bugun-28-haziran-2026/3980472",
+                                 "publishedAt":  1782650727000,
+                                 "sourceNames":  [
+                                                     "Anadolu Ajansı"
+                                                 ]
+                             },
+                             {
+                                 "id":  "ffdbefd8923d82320eb3853a89af53a2",
+                                 "title":  "Türkiye rüzgarda 5, güneşte 10. büyük kurulum pazarı oldu",
+                                 "category":  "Ekonomi",
+                                 "publishDecision":  "LATEST_RSS",
+                                 "publishReason":  "Normal RSS feed",
+                                 "evidenceStatus":  "LOW_CONFIDENCE",
+                                 "contentType":  "GENERAL",
+                                 "topicQuality":  "NORMAL",
+                                 "sourceCount":  1,
+                                 "reasonCode":  "LatestRss",
+                                 "shortDescription":  "Türkiye 2025\u0027te rüzgar enerjisi kurulumlarında dünyada 5\u0027inci, güneş enerjisi kurulumlarında ise 10\u0027uncu sırada yer aldı",
+                                 "originalUrl":  "https://www.haberturk.com/turkiye-ruzgarda-5-guneste-10-buyuk-kurulum-pazari-oldu-3894721-ekonomi",
+                                 "publishedAt":  1782650035000,
+                                 "sourceNames":  [
+                                                     "Habertürk"
+                                                 ]
+                             },
+                             {
+                                 "id":  "57582274580097c123cc1fa195610652",
+                                 "title":  "İstanbul\u0027da sıcak havadan bunalanlar sahillere akın etti",
+                                 "category":  "Güncel",
+                                 "publishDecision":  "LATEST_RSS",
+                                 "publishReason":  "Normal RSS feed",
+                                 "evidenceStatus":  "LOW_CONFIDENCE",
+                                 "contentType":  "GENERAL",
+                                 "topicQuality":  "NORMAL",
+                                 "sourceCount":  1,
+                                 "reasonCode":  "LatestRss",
+                                 "shortDescription":  "Sıcaklığın yüksek seyrettiği kentte, bazı vatandaşlar sahilde denize girmeyi tercih ederken bazıları da gölgeliklerde dinlendi.",
+                                 "originalUrl":  "https://www.aa.com.tr/tr/gundem/istanbulda-sicak-havadan-bunalanlar-sahillere-akin-etti/3980444",
+                                 "publishedAt":  1782649018000,
+                                 "sourceNames":  [
+                                                     "Anadolu Ajansı"
+                                                 ]
+                             },
+                             {
+                                 "id":  "90ced73b472f542c7b9bc5432762a44a",
+                                 "title":  "Gazze\u0027de enkaz altındaki 8 bin 500 kayıp cenazeyi bulmak için tek iş makinasıyla verilen \"umutsuz\" mücadele",
+                                 "category":  "Güncel",
+                                 "publishDecision":  "LATEST_RSS",
+                                 "publishReason":  "Normal RSS feed",
+                                 "evidenceStatus":  "LOW_CONFIDENCE",
+                                 "contentType":  "GENERAL",
+                                 "topicQuality":  "NORMAL",
+                                 "sourceCount":  1,
+                                 "reasonCode":  "LatestRss",
+                                 "shortDescription":  "İsrail\u0027in yaklaşık 3 yıldan bu yana Gazze Şeridi\u0027ne düzenlediği saldırılarda enkaz altında kalan yaklaşık 8 bin 500 cenazeye ulaşma çabaları ekipman yetersizliği nedeniyle yıllar sürecek bir çıkmaza dönüştü.",
+                                 "originalUrl":  "https://www.aa.com.tr/tr/dunya/gazzede-enkaz-altindaki-8-bin-500-kayip-cenazeyi-bulmak-icin-tek-is-makinasiyla-verilen-umutsuz-mucadele/3980439",
+                                 "publishedAt":  1782648836000,
+                                 "sourceNames":  [
+                                                     "Anadolu Ajansı"
+                                                 ]
+                             },
+                             {
+                                 "id":  "f0fea46ff7cd11480ea318f1fda0fb30",
+                                 "title":  "Cumhurbaşkanı Erdoğan: Bu hareket sadece 86 milyonun değil ümmetin de umududur",
+                                 "category":  "Manşet",
+                                 "publishDecision":  "LATEST_RSS",
+                                 "publishReason":  "Normal RSS feed",
+                                 "evidenceStatus":  "LOW_CONFIDENCE",
+                                 "contentType":  "GENERAL",
+                                 "topicQuality":  "NORMAL",
+                                 "sourceCount":  1,
+                                 "reasonCode":  "LatestRss",
+                                 "shortDescription":  "Cumhurbaşkanı ve AK Parti Genel Başkanı Recep Tayyip Erdoğan, \"Bu hareket sadece 86 milyonun değil ümmetin de umududur. Biz sadece kendi insanımızın değil bütün dünyadaki mazlumların duasını alan bir hareketiz\" diye konuştu.",
+                                 "originalUrl":  "https://www.trthaber.com/haber/gundem/cumhurbaskani-erdogan-bu-hareket-sadece-86-milyonun-degil-ummetin-de-umududur-949583.html",
+                                 "publishedAt":  1782647100000,
+                                 "sourceNames":  [
+                                                     "TRT Haber"
+                                                 ]
+                             },
+                             {
+                                 "id":  "b2daa7b96d638f5e3709912ce3b0b0c8",
+                                 "title":  "Sosyal medya yasakları ikiye katlandı",
+                                 "category":  "Ekonomi",
+                                 "publishDecision":  "LATEST_RSS",
+                                 "publishReason":  "Normal RSS feed",
+                                 "evidenceStatus":  "LOW_CONFIDENCE",
+                                 "contentType":  "GENERAL",
+                                 "topicQuality":  "NORMAL",
+                                 "sourceCount":  1,
+                                 "reasonCode":  "LatestRss",
+                                 "shortDescription":  "Avustralya, 16 yaş altı çocuklar için getirdiği sosyal medya yasağının yeterince etkili olmadığını belirterek teknoloji devlerine uygulanabilecek cezaları ikiye katladı. Maksimum ceza 99 milyon Avustralya dolarına yükseltildi, denetim yetkileri güçlendirildi. Yasak yürürlüğe girmesine rağmen genç...",
+                                 "originalUrl":  "https://www.haberturk.com/avustralyadan-cocuklara-sosyal-medya-yasaklarinda-sertlesme-sosyal-medya-yasaklari-ikiye-katlandi-3894698-teknoloji",
+                                 "publishedAt":  1782642254000,
+                                 "sourceNames":  [
+                                                     "Habertürk"
+                                                 ]
+                             },
+                             {
+                                 "id":  "dc0a8c9c03e2cc78cbdbe01e916aee7f",
+                                 "title":  "İntermodal taşımacılıkta yeni dönem: TIR dorseleri raylarda taşınacak",
+                                 "category":  "Ekonomi",
+                                 "publishDecision":  "LATEST_RSS",
+                                 "publishReason":  "Normal RSS feed",
+                                 "evidenceStatus":  "LOW_CONFIDENCE",
+                                 "contentType":  "GENERAL",
+                                 "topicQuality":  "NORMAL",
+                                 "sourceCount":  1,
+                                 "reasonCode":  "LatestRss",
+                                 "shortDescription":  "Ulaştırma ve Altyapı Bakanı Abdulkadir Uraloğlu, Türkiye Raylı Sistem Araçları Sanayi A.Ş (TÜRASAŞ) tarafından yürütülen TIR Dorsesi Taşıma Vagonu Projesinde prototip vagon üretiminin tamamlandığını ve test süreçlerinin başladığını bildirdi",
+                                 "originalUrl":  "https://www.haberturk.com/intermodal-tasimacilikta-yeni-donem-tir-dorseleri-raylarda-tasinacak-3894680-ekonomi",
+                                 "publishedAt":  1782634996000,
+                                 "sourceNames":  [
+                                                     "Habertürk"
+                                                 ]
+                             },
+                             {
+                                 "id":  "ae952f59018bd1728dddd8906beec8a0",
+                                 "title":  "İran Devrim Muhafızları\u0027ndan ateşkes mesajı: İhlaller sert karşılık bulacak",
+                                 "category":  "Manşet",
+                                 "publishDecision":  "LATEST_RSS",
+                                 "publishReason":  "Normal RSS feed",
+                                 "evidenceStatus":  "LOW_CONFIDENCE",
+                                 "contentType":  "GENERAL",
+                                 "topicQuality":  "NORMAL",
+                                 "sourceCount":  1,
+                                 "reasonCode":  "LatestRss",
+                                 "shortDescription":  "İran Devrim Muhafızları Ordusu Sözcüsü Hüseyin Muhibbi, \"düşmanın\" ateşkesi her ihlal ettiğinde daha sert bir karşılık bulacağını söyledi.",
+                                 "originalUrl":  "https://www.trthaber.com/haber/dunya/iran-devrim-muhafizlarindan-ateskes-mesaji-ihlaller-sert-karsilik-bulacak-949560.html",
+                                 "publishedAt":  1782629040000,
+                                 "sourceNames":  [
+                                                     "TRT Haber"
+                                                 ]
+                             },
+                             {
+                                 "id":  "190e8f56e889577f53131489b1d50dfd",
+                                 "title":  "İletişim Başkanı Duran: Daha adil bir dünyayı gerçekleştirmek için çabalamak gerekiyor",
+                                 "category":  "Manşet",
+                                 "publishDecision":  "LATEST_RSS",
+                                 "publishReason":  "Normal RSS feed",
+                                 "evidenceStatus":  "LOW_CONFIDENCE",
+                                 "contentType":  "GENERAL",
+                                 "topicQuality":  "NORMAL",
+                                 "sourceCount":  1,
+                                 "reasonCode":  "LatestRss",
+                                 "shortDescription":  "İletişim Başkanı Burhanettin Duran, Türkiye\u0027nin kendi modernitesini üreten bir tecrübeye sahip olduğunu belirterek, \"Dünyaya daha adil bir dünyayı gerçekleştirmek için çabalamak gerekiyor\" dedi.",
+                                 "originalUrl":  "https://www.trthaber.com/haber/gundem/iletisim-baskani-duran-daha-adil-bir-dunyayi-gerceklestirmek-icin-cabalamak-gerekiyor-949558.html",
+                                 "publishedAt":  1782628920000,
+                                 "sourceNames":  [
+                                                     "TRT Haber"
+                                                 ]
+                             },
+                             {
+                                 "id":  "2f4a5f8d0bce575f2bdee047a01517af",
+                                 "title":  "Bakırköy\u0027de dere yatağında binlerce ölü balık bulundu",
+                                 "category":  "Manşet",
+                                 "publishDecision":  "LATEST_RSS",
+                                 "publishReason":  "Normal RSS feed",
+                                 "evidenceStatus":  "LOW_CONFIDENCE",
+                                 "contentType":  "GENERAL",
+                                 "topicQuality":  "NORMAL",
+                                 "sourceCount":  1,
+                                 "reasonCode":  "LatestRss",
+                                 "shortDescription":  "İstanbul\u0027un Bakırköy ilçesinde sahile bağlantısı bulunan dere yatağında çok sayıda ölü balık tespit edildi. AFAD, Sahil Güvenlik ve belediye ekipleri bölgede inceleme yaparken, sudan alınan numuneler analiz için laboratuvara gönderildi.",
+                                 "originalUrl":  "https://www.trthaber.com/haber/turkiye/bakirkoyde-dere-yataginda-binlerce-olu-balik-bulundu-949557.html",
+                                 "publishedAt":  1782628260000,
+                                 "sourceNames":  [
+                                                     "TRT Haber"
+                                                 ]
+                             },
+                             {
+                                 "id":  "bbd6645dcdd685299bc93de937e4e9ee",
+                                 "title":  "Trump: İran\u0027da başlattığımız işi askeri olarak tamamlamak zorunda kalabiliriz",
+                                 "category":  "Manşet",
+                                 "publishDecision":  "LATEST_RSS",
+                                 "publishReason":  "Normal RSS feed",
+                                 "evidenceStatus":  "LOW_CONFIDENCE",
+                                 "contentType":  "GENERAL",
+                                 "topicQuality":  "NORMAL",
+                                 "sourceCount":  1,
+                                 "reasonCode":  "LatestRss",
+                                 "shortDescription":  "ABD Başkanı Donald Trump, ateşkesi ihlal ettiği gerekçesiyle İran\u0027a yönelik saldırılara ilişkin, \"Artık makul olamayacağımız bir nokta gelebilir ve başarıyla başlattığımız işi askeri olarak tamamlamak zorunda kalabiliriz. Bu olursa artık İran var olmaz.\" açıklamasında bulundu.",
+                                 "originalUrl":  "https://www.trthaber.com/haber/dunya/trump-iranda-baslattigimiz-isi-askeri-olarak-tamamlamak-zorunda-kalabiliriz-949554.html",
+                                 "publishedAt":  1782626400000,
+                                 "sourceNames":  [
+                                                     "TRT Haber"
+                                                 ]
+                             }
+                         ]
+}

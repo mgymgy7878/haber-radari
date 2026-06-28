@@ -31,8 +31,8 @@ android {
         applicationId = "com.haberradari"
         minSdk = 26
         targetSdk = 35
-        versionCode = 62
-        versionName = "0.6.2-debug"
+        versionCode = 66
+        versionName = "0.6.6-debug"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
