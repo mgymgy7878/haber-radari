@@ -33,6 +33,8 @@ import com.haberradari.data.model.EvidenceStatus
 import com.haberradari.data.model.SmartDigest
 import com.haberradari.data.model.SmartDigestStatus
 import com.haberradari.data.model.SourceEvidence
+import com.haberradari.data.model.SourceSignal
+import com.haberradari.data.model.SourceSignalBand
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -102,6 +104,7 @@ fun TrustEvidenceRow(
             if (TrustTransparencyUiLogic.shouldShowSmartDigestBlock(item.publishDecision)) {
                 DigestStatusChip(digest = item.smartDigest)
             }
+            SourceSignalChip(signal = item.sourceSignal)
         }
 
         if (TrustTransparencyUiLogic.shouldShowSingleSourceWarning(
@@ -153,30 +156,118 @@ fun WhyShownSection(
         )
         Spacer(modifier = Modifier.height(8.dp))
         TrustTransparencyUiLogic.whyShownLines(item).forEach { line ->
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 4.dp),
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
+            WhyShownLineRow(line = line)
+        }
+
+        val signalLines = TrustTransparencyUiLogic.sourceSignalWhyShownLines(item.sourceSignal)
+        if (signalLines.isNotEmpty()) {
+            Spacer(modifier = Modifier.height(12.dp))
+            Text(
+                text = "Kaynak sinyali",
+                style = MaterialTheme.typography.titleSmall,
+                color = MaterialTheme.colorScheme.onSurface
+            )
+            Spacer(modifier = Modifier.height(6.dp))
+            signalLines.forEach { line ->
+                WhyShownLineRow(line = line)
+            }
+            item.sourceSignal?.disclaimer?.takeIf { it.isNotBlank() }?.let { disclaimer ->
+                Spacer(modifier = Modifier.height(6.dp))
                 Text(
-                    text = line.label,
-                    style = MaterialTheme.typography.labelMedium,
+                    text = disclaimer,
+                    style = MaterialTheme.typography.labelSmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    modifier = Modifier.width(112.dp),
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
-                )
-                Text(
-                    text = line.value,
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurface,
-                    modifier = Modifier.weight(1f),
-                    maxLines = 4,
+                    maxLines = 3,
                     overflow = TextOverflow.Ellipsis
                 )
             }
         }
+    }
+}
+
+@Composable
+private fun WhyShownLineRow(line: TrustTransparencyUiLogic.WhyShownLine) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 4.dp),
+        horizontalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+        Text(
+            text = line.label,
+            style = MaterialTheme.typography.labelMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            modifier = Modifier.width(112.dp),
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis
+        )
+        Text(
+            text = line.value,
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onSurface,
+            modifier = Modifier.weight(1f),
+            maxLines = 4,
+            overflow = TextOverflow.Ellipsis
+        )
+    }
+}
+
+@Composable
+fun SourceSignalChip(
+    signal: SourceSignal?,
+    modifier: Modifier = Modifier
+) {
+    if (signal == null) return
+    val label = TrustTransparencyUiLogic.sourceSignalFeedChipLabel(signal) ?: return
+    val (container, content) = sourceSignalChipColors(signal.scoreBand)
+    Surface(
+        modifier = modifier,
+        color = container,
+        shape = MaterialTheme.shapes.small
+    ) {
+        Text(
+            text = label,
+            modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
+            style = MaterialTheme.typography.labelSmall,
+            color = content,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis
+        )
+    }
+}
+
+@Composable
+private fun sourceSignalChipColors(band: SourceSignalBand): Pair<Color, Color> {
+    val scheme = MaterialTheme.colorScheme
+    return when (band) {
+        SourceSignalBand.HIGH -> scheme.primaryContainer to scheme.onPrimaryContainer
+        SourceSignalBand.MEDIUM -> scheme.secondaryContainer to scheme.onSecondaryContainer
+        SourceSignalBand.LOW -> scheme.surfaceVariant to scheme.onSurfaceVariant
+        SourceSignalBand.UNKNOWN -> scheme.surfaceVariant to scheme.onSurfaceVariant
+    }
+}
+
+@Composable
+fun SourceSignalRow(
+    signal: SourceSignal?,
+    modifier: Modifier = Modifier
+) {
+    if (signal == null) return
+    Column(modifier = modifier.fillMaxWidth()) {
+        Text(
+            text = "${signal.label}: ${signal.tierLabel}",
+            style = MaterialTheme.typography.labelSmall,
+            color = MaterialTheme.colorScheme.secondary,
+            maxLines = 2,
+            overflow = TextOverflow.Ellipsis
+        )
+        Text(
+            text = TrustTransparencyUiLogic.scoreBandShortLabel(signal.scoreBand),
+            style = MaterialTheme.typography.labelSmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis
+        )
     }
 }
 
@@ -218,6 +309,10 @@ fun SourceListItemCard(
                 color = MaterialTheme.colorScheme.primary,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis
+            )
+            SourceSignalRow(
+                signal = source.sourceSignal,
+                modifier = Modifier.padding(top = 4.dp)
             )
             Spacer(modifier = Modifier.height(4.dp))
             Text(

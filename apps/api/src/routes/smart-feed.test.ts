@@ -267,5 +267,9 @@ describe('Smart Feed Route', () => {
     expect(response.debugStats.sourceScoreShadow.readOnly).toBe(true);
     expect(response.debugStats.sourceScoreShadow.version).toBe('v0');
     expect(response.stats.publishedCount).toBeGreaterThan(0);
+    if (response.items[0]?.sourceSignal) {
+      expect(response.items[0].sourceSignal.label).toBe('Kaynak sinyali');
+      expect(response.items[0].sourceSignal.disclaimer).toContain('garanti etmez');
+    }
   });
 });

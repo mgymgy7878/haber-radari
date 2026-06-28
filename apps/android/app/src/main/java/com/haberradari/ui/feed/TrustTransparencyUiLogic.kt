@@ -6,6 +6,8 @@ import com.haberradari.data.model.Importance
 import com.haberradari.data.model.PublishDecision
 import com.haberradari.data.model.SmartDigest
 import com.haberradari.data.model.SmartDigestStatus
+import com.haberradari.data.model.SourceSignal
+import com.haberradari.data.model.SourceSignalBand
 
 /** v0.6.6 — güven, kaynak şeffaflığı ve digest durum etiketleri. */
 object TrustTransparencyUiLogic {
@@ -74,5 +76,41 @@ object TrustTransparencyUiLogic {
         Importance.HIGH -> "Yüksek"
         Importance.MEDIUM -> "Orta"
         Importance.LOW -> "Düşük"
+    }
+
+    fun sourceSignalFeedChipLabel(signal: SourceSignal?): String? {
+        if (signal == null) return null
+        return "Kaynak sinyali: ${scoreBandShortLabel(signal.scoreBand)}"
+    }
+
+    fun scoreBandShortLabel(band: SourceSignalBand): String = when (band) {
+        SourceSignalBand.HIGH -> "yüksek profil"
+        SourceSignalBand.MEDIUM -> "orta profil"
+        SourceSignalBand.LOW -> "düşük profil"
+        SourceSignalBand.UNKNOWN -> "belirsiz profil"
+    }
+
+    fun sourceSignalWhyShownLines(signal: SourceSignal?): List<WhyShownLine> {
+        if (signal == null) return emptyList()
+        val lines = mutableListOf<WhyShownLine>()
+        lines += WhyShownLine(signal.label, signal.tierLabel)
+        lines += WhyShownLine("Sinyal bandı", scoreBandShortLabel(signal.scoreBand))
+        signal.reasons.take(3).forEachIndexed { index, reason ->
+            lines += WhyShownLine("Sinyal notu ${index + 1}", reason)
+        }
+        return lines
+    }
+
+    fun containsUnsafeSourceSignalLanguage(text: String): Boolean {
+        val lower = text.lowercase()
+        val banned = listOf(
+            "kesin doğru",
+            "güvenilir haber",
+            "yalan",
+            "manipülasyon",
+            "onaylandı",
+            "kanıtlandı"
+        )
+        return banned.any { lower.contains(it) }
     }
 }
