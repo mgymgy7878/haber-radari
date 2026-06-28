@@ -1,7 +1,8 @@
 import Parser from 'rss-parser';
 import crypto from 'crypto';
-import { RSS_SOURCES, RssSourceConfig } from '../config/rss-sources.js';
+import { RSS_SOURCES } from '../config/rss-sources.js';
 import { RawArticle } from '../models/raw-article.js';
+import type { SourceFetchStatus } from '../source-scoring/source-score-types.js';
 
 const parser = new Parser({
   timeout: 10000, // 10 seconds
@@ -27,6 +28,8 @@ export interface IngestStats {
 export interface IngestResult {
   articles: RawArticle[];
   stats: IngestStats;
+  /** Shadow telemetry — publish kararını etkilemez. */
+  sourceStatuses: SourceFetchStatus[];
 }
 
 export class RssIngestService {
@@ -46,16 +49,23 @@ export class RssIngestService {
     // Fetch only articles from the last 48 hours
     const timeLimit = now - (48 * 60 * 60 * 1000);
 
+    const sourceStatuses: SourceFetchStatus[] = [];
+
     const fetchPromises = enabledSources.map(async (source) => {
+      let skippedMissingMetadataCount = 0;
+      let itemCount = 0;
       try {
         const feed = await parser.parseURL(source.url);
         stats.successfulSourceCount++;
-        
+
         // Take at most 20 items per source
         const items = feed.items.slice(0, 20);
-        
+
         for (const item of items) {
-          if (!item.link || !item.title) continue;
+          if (!item.link || !item.title) {
+            skippedMissingMetadataCount++;
+            continue;
+          }
           
           if (seenUrls.has(item.link)) {
             stats.duplicateDroppedCount++;
@@ -96,10 +106,30 @@ export class RssIngestService {
           
           articles.push(rawArticle);
           stats.rawArticleCount++;
+          itemCount++;
         }
+
+        sourceStatuses.push({
+          sourceId: source.id,
+          sourceName: source.name,
+          sourceUrl: source.url,
+          success: true,
+          fetchedAt: now,
+          itemCount,
+          skippedMissingMetadataCount,
+        });
       } catch (error) {
         console.error(`Failed to fetch RSS source ${source.name} (${source.url}):`, error);
         stats.failedSourceCount++;
+        sourceStatuses.push({
+          sourceId: source.id,
+          sourceName: source.name,
+          sourceUrl: source.url,
+          success: false,
+          fetchedAt: now,
+          itemCount: 0,
+          skippedMissingMetadataCount,
+        });
       }
     });
 
@@ -114,7 +144,8 @@ export class RssIngestService {
 
     return {
       articles: limitedArticles,
-      stats
+      stats,
+      sourceStatuses,
     };
   }
 }

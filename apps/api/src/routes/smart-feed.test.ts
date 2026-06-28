@@ -10,8 +10,10 @@ vi.mock('../services/rss-ingest.js', () => {
       async fetchAll() {
         return {
           stats: { rawArticleCount: 20, sourceCount: 1, successfulSourceCount: 1, failedSourceCount: 0 },
+          sourceStatuses: [],
           articles: Array.from({ length: 20 }).map((_, i) => ({
             id: `id-${i}`,
+            sourceId: 'aa_guncel',
             sourceName: 'Mock',
             originalTitle: i === 0 ? 'Deprem uyarısı geldi' : `UniqueWordA${i} UniqueWordB${i} UniqueWordC${i} UniqueWordD${i}`,
             shortDescription: 'desc',
@@ -245,5 +247,25 @@ describe('Smart Feed Route', () => {
     expect(response.latestRssPreview.length).toBeGreaterThan(0);
 
     (await import('../engine/publish-gate.js')).PublishGate.prototype.evaluate = originalEvaluate;
+  });
+
+  it('debugStats.sourceScoreShadow read-only shadow katmanı ekler; publish sayısı değişmez', async () => {
+    const mockReply = {
+      send: vi.fn().mockReturnThis(),
+      status: vi.fn().mockReturnThis(),
+    };
+
+    const mockReq = {
+      query: { bypassCache: '1' },
+      log: { error: vi.fn() },
+    } as any;
+
+    await smartFeedRoute(mockReq, mockReply as any);
+    const response = mockReply.send.mock.calls[0][0];
+
+    expect(response.debugStats.sourceScoreShadow).toBeDefined();
+    expect(response.debugStats.sourceScoreShadow.readOnly).toBe(true);
+    expect(response.debugStats.sourceScoreShadow.version).toBe('v0');
+    expect(response.stats.publishedCount).toBeGreaterThan(0);
   });
 });
