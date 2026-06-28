@@ -81,6 +81,7 @@ export function containsSportContext(text: string): boolean {
     'müsabaka',
     'voleybol',
     'tenis',
+    'ralli',
   ];
   if (sportTokens.some((t) => containsToken(text, t))) {
     return true;

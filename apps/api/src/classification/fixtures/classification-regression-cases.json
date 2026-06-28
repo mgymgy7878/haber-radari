@@ -1,0 +1,202 @@
+{
+  "version": "v0",
+  "description": "PR #21 sonrası Türkçe substring false-positive regression kalkanı",
+  "cases": [
+    {
+      "id": "win-kazandi",
+      "label": "kazandı → kaza/afet tetiklememeli",
+      "title": "Formula 1'de sezonun 8. etabı Avusturya Grand Prix'sini George Russell kazandı",
+      "summary": "Mercedes'in Büyük Britanyalı pilotu George Russell kazandı.",
+      "textMatch": {
+        "containsAccidentSignal": false,
+        "containsSportContext": true,
+        "containsDisasterAlertSignal": false,
+        "containsCriticalDisasterSeverity": false,
+        "containsEnvironmentSignal": false
+      },
+      "category": {
+        "fallbackCategory": "Güncel",
+        "expectedCategory": "Spor / Motor sporları"
+      },
+      "publishGate": {
+        "contentType": "SPORTS",
+        "decisionNot": "PUBLISH_MAIN",
+        "reasonNot": "Ana akışa alınma nedeni: Tek kaynaklı ama kritik olay bildirimi"
+      }
+    },
+    {
+      "id": "win-kazanan",
+      "label": "kazanan → kaza/afet tetiklememeli",
+      "title": "Galatasaray derbiyi kazanan taraf oldu",
+      "summary": "Maç sonrası kazanan takım soyunma odasında kutlama yaptı.",
+      "textMatch": {
+        "containsAccidentSignal": false,
+        "containsDisasterAlertSignal": false
+      },
+      "publishGate": {
+        "decisionNot": "PUBLISH_MAIN",
+        "reasonNot": "Ana akışa alınma nedeni: Tek kaynaklı ama kritik olay bildirimi"
+      }
+    },
+    {
+      "id": "win-kazanmak",
+      "label": "kazanmak → kaza/afet tetiklememeli",
+      "title": "Takım şampiyonluğu kazanmak için kritik maça çıkıyor",
+      "summary": "Teknik direktör kazanmak için taktik değiştirdi.",
+      "textMatch": {
+        "containsAccidentSignal": false,
+        "containsDisasterAlertSignal": false
+      }
+    },
+    {
+      "id": "real-trafik-kazasi",
+      "label": "trafik kazası → gerçek kaza sinyali",
+      "title": "Ankara yolunda trafik kazası meydana geldi",
+      "summary": "Kazada 2 kişi yaralandı.",
+      "textMatch": {
+        "containsAccidentSignal": true,
+        "containsDisasterAlertSignal": true,
+        "containsCriticalDisasterSeverity": true
+      },
+      "category": {
+        "fallbackCategory": "Güncel",
+        "expectedCategory": "Afet"
+      },
+      "publishGate": {
+        "contentType": "DISASTER_ALERT",
+        "decision": "PUBLISH_MAIN",
+        "reason": "Ana akışa alınma nedeni: Tek kaynaklı ama kritik olay bildirimi"
+      }
+    },
+    {
+      "id": "balikesir-deprem",
+      "label": "Balıkesir deprem → Afet / Deprem",
+      "title": "Balıkesir'de 4 büyüklüğünde deprem",
+      "summary": "Balıkesir'de saat 15.56'da 4 büyüklüğünde deprem meydana geldi.",
+      "textMatch": {
+        "containsEnvironmentSignal": false,
+        "containsEarthquakeSignal": true,
+        "containsDisasterAlertSignal": true,
+        "containsCriticalDisasterSeverity": true
+      },
+      "category": {
+        "fallbackCategory": "Manşet",
+        "expectedCategory": "Afet / Deprem"
+      },
+      "publishGate": {
+        "contentType": "DISASTER_ALERT",
+        "decision": "PUBLISH_MAIN",
+        "reason": "Ana akışa alınma nedeni: Tek kaynaklı ama kritik olay bildirimi"
+      }
+    },
+    {
+      "id": "balikesir-alone",
+      "label": "Balıkesir tek başına → balık/çevre tetiklememeli",
+      "title": "Balıkesir'de kültür festivali başladı",
+      "summary": "Balıkesir'de yerel sanatçılar sahne aldı.",
+      "textMatch": {
+        "containsEnvironmentSignal": false,
+        "containsDisasterAlertSignal": false,
+        "containsEarthquakeSignal": false
+      },
+      "category": {
+        "fallbackCategory": "Güncel",
+        "expectedCategory": "Güncel"
+      }
+    },
+    {
+      "id": "real-balik-context",
+      "label": "balık ölümü → çevre/halk sağlığı",
+      "title": "Denizde balık ölümü araştırılıyor",
+      "summary": "Uzmanlar balık ölümünün çevresel nedenlerini inceliyor.",
+      "textMatch": {
+        "containsEnvironmentSignal": true,
+        "containsDisasterAlertSignal": false
+      },
+      "category": {
+        "fallbackCategory": "Güncel",
+        "expectedCategory": "Çevre / Halk Sağlığı"
+      }
+    },
+    {
+      "id": "formula1-not-afet",
+      "label": "Formula 1 → Spor / Motor sporları; Afet değil",
+      "title": "Formula 1'de sezonun 8. etabı Avusturya Grand Prix'sini George Russell kazandı",
+      "summary": "Formula 1 Dünya Şampiyonası'nda sezonun 8. yarışı tamamlandı.",
+      "textMatch": {
+        "containsSportContext": true,
+        "containsDisasterAlertSignal": false
+      },
+      "category": {
+        "fallbackCategory": "Güncel",
+        "expectedCategory": "Spor / Motor sporları"
+      },
+      "publishGate": {
+        "contentType": "SPORTS",
+        "decisionNot": "PUBLISH_MAIN"
+      }
+    },
+    {
+      "id": "rally-kazasi-sport-context",
+      "label": "ralli kazası → spor bağlamında kritik ana akışa çıkmamalı",
+      "title": "Ralli şampiyonasında kaza: sürücü yaralandı",
+      "summary": "Türkiye Ralli Şampiyonası etabında meydana gelen kazada sürücü hafif yaralandı.",
+      "textMatch": {
+        "containsAccidentSignal": true,
+        "containsSportContext": true
+      },
+      "publishGate": {
+        "decisionNot": "PUBLISH_MAIN",
+        "reasonNot": "Ana akışa alınma nedeni: Tek kaynaklı ama kritik olay bildirimi"
+      }
+    },
+    {
+      "id": "buyuk-britanyali-not-critical",
+      "label": "Büyük Britanyalı → büyük/kritik şiddet tetiklememeli",
+      "title": "Formula 1'de George Russell birinci oldu",
+      "summary": "Mercedes'in Büyük Britanyalı pilotu George Russell podyuma çıktı.",
+      "textMatch": {
+        "containsCriticalDisasterSeverity": false,
+        "containsSportContext": true
+      }
+    },
+    {
+      "id": "real-itfaiye-kaza",
+      "label": "gerçek kaza/yaralanma → Afet kalır",
+      "title": "İzmir'de kaza ihbarına giden itfaiye aracının devrilmesi sonucu 2 itfaiyeci yaralandı",
+      "summary": "İzmir'in Bergama ilçesinde devrilen itfaiye aracındaki 2 personel yaralandı.",
+      "textMatch": {
+        "containsAccidentSignal": true,
+        "containsDisasterAlertSignal": true,
+        "containsCriticalDisasterSeverity": true
+      },
+      "category": {
+        "fallbackCategory": "Güncel",
+        "expectedCategory": "Afet"
+      },
+      "publishGate": {
+        "contentType": "DISASTER_ALERT",
+        "decision": "PUBLISH_MAIN"
+      }
+    },
+    {
+      "id": "deprem-magnitude-critical",
+      "label": "deprem şiddeti → kritik afet korunur",
+      "title": "Muğla açıklarında 5.2 büyüklüğünde deprem",
+      "summary": "AFAD depremin 5.2 büyüklüğünde olduğunu duyurdu.",
+      "textMatch": {
+        "containsEarthquakeSignal": true,
+        "containsCriticalDisasterSeverity": true
+      },
+      "category": {
+        "fallbackCategory": "Son Dakika",
+        "expectedCategory": "Afet / Deprem"
+      },
+      "publishGate": {
+        "contentType": "DISASTER_ALERT",
+        "decision": "PUBLISH_MAIN",
+        "reason": "Ana akışa alınma nedeni: Tek kaynaklı ama kritik olay bildirimi"
+      }
+    }
+  ]
+}
