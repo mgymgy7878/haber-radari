@@ -1,0 +1,30 @@
+{
+  "capturedAt": "2026-06-28T01:10:00+03:00",
+  "branch": "feat/source-signal-trust-ux-v0",
+  "commit": "533f6a9",
+  "device": "M2101K6G Android 13",
+  "buildMarker": "0.6.7-debug / versionCode 67",
+  "endpoint": "GET /api/v1/smart-feed?bypassCache=1",
+  "checks": {
+    "items[0].sourceSignal.label": "Kaynak sinyali",
+    "items[0].sourceSignal.disclaimer.present": true,
+    "debugStats.sourceScoreShadow.readOnly": true,
+    "publishBehaviorChanged": false
+  },
+  "deviceUiVerified": {
+    "feedTrustChip": "Kaynak sinyali: yüksek profil",
+    "detailWhyShownDisclaimer": "Bu sinyal haberin doğruluğunu tek başına garanti etmez.",
+    "detailSourceRow": "Kaynak sinyali: Ajans / kaynak sağlayıcı"
+  },
+  "screenshots": [
+    "evidence/v0.6.7-source-signal-feed-trust.png",
+    "evidence/v0.6.7-source-signal-detail-why-shown.png",
+    "evidence/v0.6.7-source-signal-detail-sources.png"
+  ],
+  "safetyFlags": {
+    "realExternalCallExecuted_unitTests": false,
+    "realExternalCallExecuted_smokeAndDevice": true,
+    "productionApiKeyUsed": false,
+    "operatorApprovalUsed": false
+  }
+}
