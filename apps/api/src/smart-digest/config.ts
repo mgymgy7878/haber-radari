@@ -1,5 +1,6 @@
 import path from 'path';
 import { fileURLToPath } from 'url';
+import { readOperatorApprovalFromEnv } from './operator-approval.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -7,6 +8,8 @@ export interface SmartDigestConfig {
   enabled: boolean;
   provider: 'mock' | 'external';
   externalEnabled: boolean;
+  requireOperatorApproval: boolean;
+  operatorApproved: boolean;
   cacheDir: string;
   budgetDir: string;
   cacheTtlMs: number;
@@ -20,6 +23,8 @@ export interface SmartDigestConfig {
   model: string;
   apiKey: string;
   apiUrl: string;
+  logPrompts: boolean;
+  logResponses: boolean;
 }
 
 function envFlag(name: string, defaultValue: boolean): boolean {
@@ -36,19 +41,23 @@ export function loadSmartDigestConfig(overrides?: Partial<SmartDigestConfig>): S
     enabled: envFlag('LLM_DIGEST_ENABLED', false),
     provider: process.env.LLM_DIGEST_PROVIDER === 'external' ? 'external' : 'mock',
     externalEnabled: envFlag('LLM_DIGEST_EXTERNAL_ENABLED', false),
+    requireOperatorApproval: envFlag('LLM_DIGEST_REQUIRE_OPERATOR_APPROVAL', true),
+    operatorApproved: readOperatorApprovalFromEnv(),
     cacheDir: process.env.LLM_DIGEST_CACHE_DIR ?? defaultCacheDir,
     budgetDir: process.env.LLM_DIGEST_BUDGET_DIR ?? defaultBudgetDir,
     cacheTtlMs: Number(process.env.LLM_DIGEST_CACHE_TTL_MS ?? 24 * 60 * 60 * 1000),
-    promptVersion: process.env.LLM_DIGEST_PROMPT_VERSION ?? 'v0.6.1',
-    digestVersion: process.env.LLM_DIGEST_VERSION ?? 'v0.6.1',
+    promptVersion: process.env.LLM_DIGEST_PROMPT_VERSION ?? 'v0.6.3',
+    digestVersion: process.env.LLM_DIGEST_VERSION ?? 'v0.6.3',
     simulateProviderFailure: envFlag('LLM_DIGEST_SIMULATE_FAILURE', false),
-    dailyLimit: Number(process.env.LLM_DIGEST_DAILY_LIMIT ?? 20),
-    perRequestLimit: Number(process.env.LLM_DIGEST_PER_REQUEST_LIMIT ?? 3),
+    dailyLimit: Number(process.env.LLM_DIGEST_DAILY_LIMIT ?? 5),
+    perRequestLimit: Number(process.env.LLM_DIGEST_PER_REQUEST_LIMIT ?? 1),
     requireCache: envFlag('LLM_DIGEST_REQUIRE_CACHE', true),
     timeoutMs: Number(process.env.LLM_DIGEST_TIMEOUT_MS ?? 8000),
-    model: process.env.LLM_DIGEST_MODEL ?? 'gpt-4o-mini',
+    model: process.env.LLM_DIGEST_MODEL ?? '',
     apiKey: process.env.LLM_DIGEST_API_KEY ?? '',
     apiUrl: process.env.LLM_DIGEST_API_URL ?? 'https://api.openai.com/v1/chat/completions',
+    logPrompts: envFlag('LLM_DIGEST_LOG_PROMPTS', false),
+    logResponses: envFlag('LLM_DIGEST_LOG_RESPONSES', false),
     ...overrides,
   };
 }

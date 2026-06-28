@@ -22,6 +22,7 @@ export interface SmartDigestInput {
   publishDecision: string;
   publishReason: string | null;
   sourceCount: number;
+  uniqueSourceCount?: number;
   sourceNames: string[];
   publishedAt: number;
   sources: SmartDigestSourceInput[];
@@ -62,6 +63,7 @@ export interface SmartDigestStats {
   generated: number;
   failed: number;
   budgetDenied: number;
+  approvalDenied: number;
 }
 
 /** Smart Feed response stats (v0.6.1). */
@@ -73,6 +75,7 @@ export interface SmartDigestFeedStats {
   cachedCount: number;
   failedCount: number;
   budgetDeniedCount: number;
+  approvalDeniedCount: number;
   externalCallCount: number;
 }
 
@@ -89,6 +92,8 @@ export interface BudgetDayStats {
   cacheHits: number;
   failures: number;
   budgetDenied: number;
+  approvalDenied: number;
+  lastUpdatedAt: string;
 }
 
 export interface MockDigestPayload {

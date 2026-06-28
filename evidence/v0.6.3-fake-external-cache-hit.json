@@ -1,0 +1,29 @@
+{
+  "digest": {
+    "status": "CACHED",
+    "summary": "Bu metadata tabanlı özet — evidence pilot",
+    "keyPoints": [
+      "Nokta 1",
+      "Nokta 2"
+    ],
+    "whyItMatters": "Pilot kanıtı",
+    "confidence": "HIGH",
+    "sourcePolicy": "METADATA_ONLY",
+    "modelProvider": "external",
+    "generatedAt": "2026-06-28T13:36:40.359Z",
+    "cacheKey": "72b203b535a1f85bab868c5c06ebd773d5742f843f0ab8d1e79037311514dc8c"
+  },
+  "feedStats": {
+    "enabled": true,
+    "provider": "external",
+    "eligibleCount": 0,
+    "generatedCount": 0,
+    "cachedCount": 1,
+    "failedCount": 0,
+    "budgetDeniedCount": 0,
+    "approvalDeniedCount": 0,
+    "externalCallCount": 0
+  },
+  "fetchCallCount": 1,
+  "realExternalCallExecuted": false
+}

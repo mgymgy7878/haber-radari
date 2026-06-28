@@ -5,6 +5,7 @@ import { normalizeSmartDigestInput } from './normalize-input.js';
 import { isEligibleForExternalDigest } from './eligibility.js';
 import { SmartDigestBudgetGuard } from './budget-guard.js';
 import { logProviderEvent } from './provider-log.js';
+import { isOperatorApprovalGranted } from './operator-approval.js';
 import { MockSmartDigestProvider } from './providers/mock-smart-digest-provider.js';
 import { ExternalSmartDigestProvider } from './providers/external-smart-digest-provider.js';
 import { SmartDigestProvider } from './providers/smart-digest-provider.js';
@@ -164,6 +165,32 @@ export class SmartDigestService {
 
     this.feedStats.eligibleCount += 1;
 
+    if (!isOperatorApprovalGranted(this.config)) {
+      this.stats.approvalDenied += 1;
+      this.feedStats.approvalDeniedCount += 1;
+      this.feedStats.failedCount += 1;
+      await this.budgetGuard.recordApprovalDenied();
+      logProviderEvent({
+        cacheKey,
+        provider: 'external',
+        status: 'FAILED',
+        errorCode: 'OPERATOR_APPROVAL_REQUIRED',
+      });
+      return this.failedDigest(cacheKey, 'OPERATOR_APPROVAL_REQUIRED', 'external');
+    }
+
+    if (!this.config.apiKey) {
+      this.stats.failed += 1;
+      this.feedStats.failedCount += 1;
+      logProviderEvent({
+        cacheKey,
+        provider: 'external',
+        status: 'FAILED',
+        errorCode: 'PROVIDER_CONFIG_MISSING',
+      });
+      return this.failedDigest(cacheKey, 'PROVIDER_CONFIG_MISSING', 'external');
+    }
+
     const budget = await this.budgetGuard.canMakeExternalCall();
     if (!budget.allowed) {
       this.stats.budgetDenied += 1;
@@ -280,6 +307,7 @@ function emptyStats(): SmartDigestStats {
     generated: 0,
     failed: 0,
     budgetDenied: 0,
+    approvalDenied: 0,
   };
 }
 
@@ -295,6 +323,7 @@ function emptyFeedStats(
     cachedCount: 0,
     failedCount: 0,
     budgetDeniedCount: 0,
+    approvalDeniedCount: 0,
     externalCallCount: 0,
   };
 }
@@ -307,6 +336,7 @@ export function buildDigestInputFromClusterItem(params: {
   publishDecision: string;
   publishReason: string | null;
   sourceCount: number;
+  uniqueSourceCount?: number;
   importance?: string;
   evidenceStatus?: string;
   contentType?: string;
@@ -338,6 +368,7 @@ export function buildDigestInputFromClusterItem(params: {
     publishDecision: params.publishDecision,
     publishReason: params.publishReason,
     sourceCount: params.sourceCount,
+    uniqueSourceCount: params.uniqueSourceCount ?? params.sourceCount,
     sourceNames,
     publishedAt: publishedAt === Number.MAX_SAFE_INTEGER ? 0 : publishedAt,
     sources,

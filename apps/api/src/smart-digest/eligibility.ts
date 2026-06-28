@@ -13,8 +13,9 @@ export function isEligibleForExternalDigest(
   const ageMs = nowMs - (input.publishedAt || 0);
   if (input.publishedAt > 0 && ageMs > RECENT_MAX_AGE_MS) return false;
 
+  const uniqueSources = input.uniqueSourceCount ?? input.sourceCount;
   const importance = (input.importance ?? '').toUpperCase();
-  if (input.sourceCount >= 2) return true;
+  if (uniqueSources >= 2) return true;
   if (HIGH_IMPORTANCE.has(importance)) return true;
 
   return false;
