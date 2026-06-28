@@ -1,0 +1,18 @@
+{
+  "contractVersion": "v0.6.0",
+  "firstRunStatus": "MOCKED",
+  "secondRunStatus": "CACHED",
+  "cacheKey": "cb6f8fa6e4ec1b0f6a6d4946f84c06f8a51ed1bed294122f8d69d8c14a547467",
+  "cacheKeyMatch": true,
+  "summaryMatch": true,
+  "statsAfterSecondRun": {
+    "requested": 2,
+    "cacheHits": 1,
+    "cacheMisses": 1,
+    "disabled": 0,
+    "mocked": 1,
+    "cached": 1,
+    "generated": 0,
+    "failed": 0
+  }
+}

@@ -8,13 +8,14 @@
     "build": "tsc",
     "start": "node dist/server.js",
     "typecheck": "tsc --noEmit",
-    "test": "vitest"
+    "test": "vitest run src"
   },
   "dependencies": {
     "@fastify/cors": "^10.0.2",
     "@haber-radari/connectors": "workspace:*",
     "@haber-radari/news-core": "workspace:*",
-    "fastify": "^5.2.1"
+    "fastify": "^5.2.1",
+    "rss-parser": "^3.13.0"
   },
   "devDependencies": {
     "@types/node": "^22.10.5",

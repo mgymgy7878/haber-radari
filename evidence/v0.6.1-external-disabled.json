@@ -1,0 +1,27 @@
+{
+  "contractVersion": "v0.6.1",
+  "llmDigestEnabled": false,
+  "llmDigestExternalEnabled": false,
+  "realExternalCallMade": false,
+  "smartDigest": {
+    "status": "DISABLED",
+    "summary": null,
+    "keyPoints": [],
+    "whyItMatters": null,
+    "confidence": "LOW",
+    "sourcePolicy": "METADATA_ONLY",
+    "modelProvider": "disabled",
+    "cacheKey": "f96f738463937e1b86485796fc724ea11db4885ae6cd2a65266d7f92235f65df",
+    "generatedAt": null
+  },
+  "feedStats": {
+    "enabled": false,
+    "provider": "disabled",
+    "eligibleCount": 0,
+    "generatedCount": 0,
+    "cachedCount": 0,
+    "failedCount": 0,
+    "budgetDeniedCount": 0,
+    "externalCallCount": 0
+  }
+}
