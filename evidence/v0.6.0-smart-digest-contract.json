@@ -1,0 +1,62 @@
+{
+  "contractVersion": "v0.6.0",
+  "llmDigestEnabled": true,
+  "provider": "mock",
+  "realLlmCallMade": false,
+  "inputPolicy": "METADATA_ONLY",
+  "inputSample": {
+    "clusterId": "evidence-cluster-1",
+    "title": "Merkez Bankası faiz kararını açıkladı",
+    "shortDescription": "TCMB politika faizini sabit tuttu.",
+    "category": "Ekonomi",
+    "publishDecision": "PUBLISH_MAIN",
+    "publishReason": "Çok kaynaklı doğrulama",
+    "sourceCount": 2,
+    "sourceNames": [
+      "AA",
+      "TRT"
+    ],
+    "publishedAt": 1782649264742,
+    "sources": [
+      {
+        "sourceName": "AA",
+        "title": "Merkez Bankası faiz kararını açıkladı",
+        "shortDescription": "AA kısa açıklama",
+        "originalUrl": "https://example.com/aa",
+        "publishedAt": 1782649265742
+      },
+      {
+        "sourceName": "TRT",
+        "title": "Merkez Bankası faiz kararını açıkladı",
+        "shortDescription": "TRT kısa açıklama",
+        "originalUrl": "https://example.com/trt",
+        "publishedAt": 1782649264742
+      }
+    ]
+  },
+  "smartDigest": {
+    "status": "MOCKED",
+    "summary": "[AI metadata özeti • mock 5eb0445f] Merkez Bankası faiz kararını açıkladı. TCMB politika faizini sabit tuttu. Kaynaklar: AA, TRT. Orijinal haber linkleri korunur; tam metin kullanılmaz.",
+    "keyPoints": [
+      "2 kaynak doğrulaması (AA, TRT)",
+      "Yayın nedeni: Çok kaynaklı doğrulama",
+      "Kategori: Ekonomi"
+    ],
+    "whyItMatters": "Bu olay Ekonomi başlığında 2 kaynakla izleniyor; metadata tabanlı AI özeti yalnızca başlık ve kısa açıklamalardan üretildi.",
+    "confidence": "MEDIUM",
+    "sourcePolicy": "METADATA_ONLY",
+    "modelProvider": "mock",
+    "generatedAt": "2026-06-28T12:21:05.763Z",
+    "cacheKey": "cb6f8fa6e4ec1b0f6a6d4946f84c06f8a51ed1bed294122f8d69d8c14a547467"
+  },
+  "stats": {
+    "requested": 2,
+    "cacheHits": 1,
+    "cacheMisses": 1,
+    "disabled": 0,
+    "mocked": 1,
+    "cached": 1,
+    "generated": 0,
+    "failed": 0
+  }
+}

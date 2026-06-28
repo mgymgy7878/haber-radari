@@ -1,0 +1,20 @@
+{
+  "contractVersion": "v0.6.1",
+  "firstRunStatus": "GENERATED",
+  "secondRunStatus": "CACHED",
+  "cacheKey": "6aee72051a0874efd15b1f446ef5333c1fdbce4365c9a3a815fc854e38ca9851",
+  "cacheKeyMatch": true,
+  "fetchCallCount": 1,
+  "realExternalCallMade": true,
+  "note": "fetch simulated via injectable adapter — no production API key used",
+  "feedStats": {
+    "enabled": true,
+    "provider": "external",
+    "eligibleCount": 1,
+    "generatedCount": 1,
+    "cachedCount": 1,
+    "failedCount": 0,
+    "budgetDeniedCount": 0,
+    "externalCallCount": 1
+  }
+}

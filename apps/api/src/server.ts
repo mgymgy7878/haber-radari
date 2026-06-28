@@ -18,6 +18,7 @@ import {
   refreshEvents,
   refreshSocialSignalsCache,
 } from "./store.js";
+import { smartFeedRoute } from "./routes/smart-feed.js";
 
 const PORT = Number(process.env.PORT ?? 3001);
 const HOST = process.env.HOST ?? "0.0.0.0";
@@ -161,6 +162,8 @@ app.get("/api/ingest/preview", async () => {
     };
   }
 });
+
+app.get("/api/v1/smart-feed", smartFeedRoute);
 
 import { MockAiReaderService } from "@haber-radari/news-core";
 

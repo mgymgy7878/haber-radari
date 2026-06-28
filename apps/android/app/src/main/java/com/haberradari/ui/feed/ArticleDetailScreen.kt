@@ -10,15 +10,21 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
+import com.haberradari.config.FeatureConfig
 import com.haberradari.data.model.Article
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ArticleDetailScreen(
     article: Article,
+    viewModel: ArticleDetailViewModel,
     onBackClick: () -> Unit,
     onOpenOriginal: (Article) -> Unit
 ) {
+    val summaryState by viewModel.summaryState.collectAsState()
     Scaffold(
         topBar = {
             TopAppBar(
@@ -70,11 +76,17 @@ fun ArticleDetailScreen(
 
             Spacer(modifier = Modifier.height(24.dp))
 
-            // "Ne oldu?" başlığı
+            // "Kaynak açıklaması" başlığı
             Text(
-                text = "Ne oldu?",
+                text = "Kaynak açıklaması",
                 style = MaterialTheme.typography.titleMedium,
                 color = MaterialTheme.colorScheme.secondary
+            )
+            
+            Text(
+                text = "Bu metin kaynağın RSS açıklamasından alınmıştır; AI doğrulaması değildir.",
+                style = MaterialTheme.typography.labelSmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
             )
 
             Spacer(modifier = Modifier.height(8.dp))
@@ -94,7 +106,60 @@ fun ArticleDetailScreen(
                 )
             }
 
-            Spacer(modifier = Modifier.height(32.dp))
+            Spacer(modifier = Modifier.height(24.dp))
+
+            if (FeatureConfig.isAiReaderEnabled) {
+                Text(
+                    text = "AI Özet (Beta)",
+                    style = MaterialTheme.typography.titleMedium,
+                    color = MaterialTheme.colorScheme.secondary
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+
+                when (val state = summaryState) {
+                    is AiSummaryState.Idle -> {
+                        Button(
+                            onClick = { viewModel.getSummary(article) },
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            Text("Yapay Zeka ile Özetle")
+                        }
+                    }
+                    is AiSummaryState.Loading -> {
+                        Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
+                            CircularProgressIndicator()
+                        }
+                    }
+                    is AiSummaryState.Success -> {
+                        Card(
+                            modifier = Modifier.fillMaxWidth(),
+                            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)
+                        ) {
+                            Column(modifier = Modifier.padding(16.dp)) {
+                                Text(
+                                    text = state.summary.detailedAiSummary ?: state.summary.shortAiSummary,
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                                )
+                            }
+                        }
+                    }
+                    is AiSummaryState.Error -> {
+                        Column {
+                            Text(
+                                text = state.message,
+                                color = MaterialTheme.colorScheme.error,
+                                style = MaterialTheme.typography.bodyMedium
+                            )
+                            Spacer(modifier = Modifier.height(4.dp))
+                            Button(onClick = { viewModel.getSummary(article) }) {
+                                Text("Tekrar Dene")
+                            }
+                        }
+                    }
+                }
+                Spacer(modifier = Modifier.height(32.dp))
+            }
 
             // Orijinal site butonu
             Button(

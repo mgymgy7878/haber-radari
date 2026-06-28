@@ -1,0 +1,32 @@
+{
+  "contractVersion": "v0.6.1",
+  "llmDigestEnabled": true,
+  "provider": "mock",
+  "realExternalCallMade": false,
+  "inputPolicy": "METADATA_ONLY",
+  "smartDigest": {
+    "status": "MOCKED",
+    "summary": "[AI metadata özeti • mock 2a34b6d2] Merkez Bankası faiz kararını açıkladı. TCMB politika faizini sabit tuttu. Kaynaklar: AA, TRT. Orijinal haber linkleri korunur; tam metin kullanılmaz.",
+    "keyPoints": [
+      "2 kaynak doğrulaması (AA, TRT)",
+      "Yayın nedeni: Çok kaynaklı doğrulama",
+      "Kategori: Ekonomi"
+    ],
+    "whyItMatters": "Bu olay Ekonomi başlığında 2 kaynakla izleniyor; metadata tabanlı AI özeti yalnızca başlık ve kısa açıklamalardan üretildi.",
+    "confidence": "MEDIUM",
+    "sourcePolicy": "METADATA_ONLY",
+    "modelProvider": "mock",
+    "generatedAt": "2026-06-28T12:27:44.307Z",
+    "cacheKey": "f96f738463937e1b86485796fc724ea11db4885ae6cd2a65266d7f92235f65df"
+  },
+  "feedStats": {
+    "enabled": true,
+    "provider": "mock",
+    "eligibleCount": 0,
+    "generatedCount": 1,
+    "cachedCount": 0,
+    "failedCount": 0,
+    "budgetDeniedCount": 0,
+    "externalCallCount": 0
+  }
+}

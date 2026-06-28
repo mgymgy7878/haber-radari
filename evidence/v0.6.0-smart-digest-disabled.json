@@ -1,0 +1,37 @@
+{
+  "contractVersion": "v0.6.0",
+  "llmDigestEnabled": false,
+  "inputFieldsUsed": [
+    "clusterId",
+    "title",
+    "shortDescription",
+    "category",
+    "publishDecision",
+    "publishReason",
+    "sourceCount",
+    "sourceNames",
+    "publishedAt",
+    "sources",
+    "importance",
+    "evidenceStatus",
+    "contentType",
+    "topicQuality"
+  ],
+  "forbiddenFieldsExcluded": [
+    "fullText",
+    "body",
+    "contentHtml",
+    "articleText"
+  ],
+  "smartDigest": {
+    "status": "DISABLED",
+    "summary": null,
+    "keyPoints": [],
+    "whyItMatters": null,
+    "confidence": "LOW",
+    "sourcePolicy": "METADATA_ONLY",
+    "modelProvider": "disabled",
+    "cacheKey": "cb6f8fa6e4ec1b0f6a6d4946f84c06f8a51ed1bed294122f8d69d8c14a547467",
+    "generatedAt": null
+  }
+}

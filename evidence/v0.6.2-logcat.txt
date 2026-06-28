@@ -1,0 +1,30 @@
+﻿--------- beginning of main
+06-28 15:42:41.411 31083 31083 D NewsFlow: Curated Card clicked, selecting item: Fransa'n─▒n do─şusunda para┼ş├╝t├ğ├╝leri ta┼ş─▒yan sivil u├ğa─ş─▒n d├╝┼şmesi sonucu 11 ki┼şi ├Âld├╝
+06-28 15:51:33.770  8704  8704 D NewsFlow: MainActivity onCreate started: 1782651093770
+06-28 15:51:33.867  8704  8704 D NewsFlow: refreshFeeds start: 1782651093867
+06-28 15:51:34.595  8704 18176 I SmartFeedSource: Requested URL: http://127.0.0.1:3001/api/v1/smart-feed?includeWatchlist=1&includeLatest=1&includeRaw=1&includeNoise=1
+06-28 15:51:34.599  8704 18174 D NewsFlow: NewsRepository refreshFeeds started with 3 sources
+06-28 15:51:37.978  8704 18209 D NewsFlow: DB insert end for NTV T├╝rkiye: 11 ms
+06-28 15:51:39.126  8704  8704 D NewsFlow: refreshFeeds start: 1782651099126
+06-28 15:51:39.154  8704 18207 D NewsFlow: NewsRepository refreshFeeds started with 3 sources
+06-28 15:51:40.343  8704 18176 D NewsFlow: DB insert end for BBC T├╝rk├ğe: 12 ms
+06-28 15:51:40.349  8704 18211 I SmartFeedSource: Requested URL: http://127.0.0.1:3001/api/v1/smart-feed?includeWatchlist=1&includeLatest=1&includeRaw=1&includeNoise=1
+06-28 15:51:41.742  8704 18207 D NewsFlow: DB insert end for NTV T├╝rkiye: 6 ms
+06-28 15:51:43.570  8704 18206 D NewsFlow: DB insert end for BBC T├╝rk├ğe: 7 ms
+06-28 15:51:49.139  8704 18176 D NewsFlow: DB insert end for Habert├╝rk: 21 ms
+06-28 15:51:49.157  8704 18176 I SmartFeedSource: Requested URL: http://127.0.0.1:3001/api/v1/smart-feed?includeWatchlist=1&includeLatest=1&includeRaw=1&includeNoise=1
+06-28 15:51:49.178  8704  8704 D NewsFlow: refreshFeeds end: 1782651109178
+06-28 15:51:49.179  8704 18207 I SmartFeedSource: Requested URL: http://127.0.0.1:3001/api/v1/smart-feed?includeWatchlist=1&includeLatest=1&bypassCache=1&includeRaw=1&includeNoise=1
+06-28 15:51:52.492  8704 18206 D NewsFlow: DB insert end for Habert├╝rk: 12 ms
+06-28 15:51:52.498  8704  8704 D NewsFlow: refreshFeeds end: 1782651112498
+06-28 15:51:52.499  8704 18206 I SmartFeedSource: Requested URL: http://127.0.0.1:3001/api/v1/smart-feed?includeWatchlist=1&includeLatest=1&bypassCache=1&includeRaw=1&includeNoise=1
+06-28 15:51:54.514  8704  8704 D NewsFlow: Curated detail id=5a3b5a7b-435a-460f-a675-1501092b90bc articles=1 unique=1 lead=Fransa'n─▒n do─şusunda para┼ş├╝t├ğ├╝leri ta┼ş─▒yan sivil u├ğa─ş─▒n d├╝┼şmesi sonucu 11 ki┼şi ├Âld├╝
+06-28 15:52:50.259  8709  8709 D NewsFlow: MainActivity onCreate started: 1782651170259
+06-28 15:52:50.363  8709  8709 D NewsFlow: refreshFeeds start: 1782651170363
+06-28 15:52:51.181  8709 19342 I SmartFeedSource: Requested URL: http://127.0.0.1:3001/api/v1/smart-feed?includeWatchlist=1&includeLatest=1&includeRaw=1&includeNoise=1
+06-28 15:52:51.186  8709 19341 D NewsFlow: NewsRepository refreshFeeds started with 3 sources
+06-28 15:52:53.593  8709  8709 D NewsFlow: Curated detail id=f43e671c-d75d-4ecc-a812-6af45c0224af articles=1 unique=1 lead=Fransa'n─▒n do─şusunda para┼ş├╝t├ğ├╝leri ta┼ş─▒yan sivil u├ğa─ş─▒n d├╝┼şmesi sonucu 11 ki┼şi ├Âld├╝
+06-28 15:52:55.633  8709 19342 D NewsFlow: DB insert end for NTV T├╝rkiye: 13 ms
+06-28 15:52:55.643  8709 19359 I SmartFeedSource: Requested URL: http://127.0.0.1:3001/api/v1/smart-feed?includeWatchlist=1&includeLatest=1&includeRaw=1&includeNoise=1
+06-28 15:52:58.441  8709 19343 D NewsFlow: DB insert end for BBC T├╝rk├ğe: 9 ms
+06-28 15:52:58.457  8709 19342 I SmartFeedSource: Requested URL: http://127.0.0.1:3001/api/v1/smart-feed?includeWatchlist=1&includeLatest=1&includeRaw=1&includeNoise=1

@@ -24,5 +24,7 @@ ios/
 **/build/
 local.properties
 
-# IDE local files
+# API runtime caches
+apps/api/.cache/
+
 .idea/
