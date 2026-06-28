@@ -58,7 +58,7 @@ function mockExternalFetch() {
         {
           message: {
             content: JSON.stringify({
-              summary: '[external] Metadata özeti',
+              summary: 'Bu metadata tabanlı özet — external pilot',
               keyPoints: ['Nokta 1', 'Nokta 2'],
               whyItMatters: 'Ekonomi gündeminde önemli',
               confidence: 'HIGH',
@@ -68,6 +68,54 @@ function mockExternalFetch() {
       ],
     }),
   }) as unknown as typeof fetch;
+}
+
+function externalServiceConfig(
+  cacheDir: string,
+  budgetDir: string,
+  overrides: Record<string, unknown> = {}
+) {
+  return {
+    enabled: true,
+    provider: 'external' as const,
+    externalEnabled: true,
+    requireOperatorApproval: true,
+    operatorApproved: true,
+    apiKey: 'test-key-abc',
+    cacheDir,
+    budgetDir,
+    ...overrides,
+  };
+}
+
+function externalProviderConfig(
+  cacheDir: string,
+  budgetDir: string,
+  overrides: Record<string, unknown> = {}
+) {
+  return {
+    enabled: true,
+    provider: 'external' as const,
+    externalEnabled: true,
+    requireOperatorApproval: true,
+    operatorApproved: true,
+    cacheDir,
+    budgetDir,
+    apiKey: 'test-key-abc',
+    apiUrl: 'https://example.com/v1/chat',
+    model: 'test-model',
+    timeoutMs: 5000,
+    requireCache: true,
+    dailyLimit: 20,
+    perRequestLimit: 3,
+    promptVersion: 'v0.6.3',
+    digestVersion: 'v0.6.3',
+    simulateProviderFailure: false,
+    cacheTtlMs: 60_000,
+    logPrompts: false,
+    logResponses: false,
+    ...overrides,
+  };
 }
 
 describe('SmartDigestService v0.6.1', () => {
@@ -116,24 +164,7 @@ describe('SmartDigestService v0.6.1', () => {
   it('3. external provider env kapalı → external call yok', async () => {
     const fetchFn = mockExternalFetch();
     const external = new ExternalSmartDigestProvider(
-      {
-        enabled: true,
-        provider: 'external',
-        externalEnabled: false,
-        cacheDir,
-        budgetDir,
-        apiKey: 'test-key',
-        apiUrl: 'https://example.com/v1/chat',
-        model: 'test',
-        timeoutMs: 5000,
-        requireCache: true,
-        dailyLimit: 20,
-        perRequestLimit: 3,
-        promptVersion: 'v0.6.1',
-        digestVersion: 'v0.6.1',
-        simulateProviderFailure: false,
-        cacheTtlMs: 60_000,
-      },
+      externalProviderConfig(cacheDir, budgetDir, { externalEnabled: false }) as any,
       fetchFn
     );
     const service = new SmartDigestService(
@@ -152,28 +183,11 @@ describe('SmartDigestService v0.6.1', () => {
   it('4. external enabled + cache miss → provider çağrılır', async () => {
     const fetchFn = mockExternalFetch();
     const external = new ExternalSmartDigestProvider(
-      {
-        enabled: true,
-        provider: 'external',
-        externalEnabled: true,
-        cacheDir,
-        budgetDir,
-        apiKey: 'test-key-abc',
-        apiUrl: 'https://example.com/v1/chat',
-        model: 'test-model',
-        timeoutMs: 5000,
-        requireCache: true,
-        dailyLimit: 20,
-        perRequestLimit: 3,
-        promptVersion: 'v0.6.1',
-        digestVersion: 'v0.6.1',
-        simulateProviderFailure: false,
-        cacheTtlMs: 60_000,
-      },
+      externalProviderConfig(cacheDir, budgetDir) as any,
       fetchFn
     );
     const service = new SmartDigestService(
-      { enabled: true, provider: 'external', externalEnabled: true, cacheDir, budgetDir },
+      externalServiceConfig(cacheDir, budgetDir),
       undefined,
       { externalProvider: external, budgetGuard: new SmartDigestBudgetGuard(budgetDir, 20) }
     );
@@ -189,28 +203,11 @@ describe('SmartDigestService v0.6.1', () => {
   it('5. same input second run → cache hit, provider çağrılmaz', async () => {
     const fetchFn = mockExternalFetch();
     const external = new ExternalSmartDigestProvider(
-      {
-        enabled: true,
-        provider: 'external',
-        externalEnabled: true,
-        cacheDir,
-        budgetDir,
-        apiKey: 'test-key',
-        apiUrl: 'https://example.com/v1/chat',
-        model: 'test',
-        timeoutMs: 5000,
-        requireCache: true,
-        dailyLimit: 20,
-        perRequestLimit: 3,
-        promptVersion: 'v0.6.1',
-        digestVersion: 'v0.6.1',
-        simulateProviderFailure: false,
-        cacheTtlMs: 60_000,
-      },
+      externalProviderConfig(cacheDir, budgetDir, { apiKey: 'test-key' }) as any,
       fetchFn
     );
     const service = new SmartDigestService(
-      { enabled: true, provider: 'external', externalEnabled: true, cacheDir, budgetDir },
+      externalServiceConfig(cacheDir, budgetDir, { apiKey: 'test-key' }),
       undefined,
       { externalProvider: external, budgetGuard: new SmartDigestBudgetGuard(budgetDir, 20) }
     );
@@ -229,28 +226,11 @@ describe('SmartDigestService v0.6.1', () => {
     await budgetGuard.recordExternalCall();
 
     const external = new ExternalSmartDigestProvider(
-      {
-        enabled: true,
-        provider: 'external',
-        externalEnabled: true,
-        cacheDir,
-        budgetDir,
-        apiKey: 'key',
-        apiUrl: 'https://example.com/v1/chat',
-        model: 'm',
-        timeoutMs: 5000,
-        requireCache: true,
-        dailyLimit: 1,
-        perRequestLimit: 3,
-        promptVersion: 'v0.6.1',
-        digestVersion: 'v0.6.1',
-        simulateProviderFailure: false,
-        cacheTtlMs: 60_000,
-      },
+      externalProviderConfig(cacheDir, budgetDir, { apiKey: 'key', dailyLimit: 1, model: 'm' }) as any,
       fetchFn
     );
     const service = new SmartDigestService(
-      { enabled: true, provider: 'external', externalEnabled: true, cacheDir, budgetDir, dailyLimit: 1 },
+      externalServiceConfig(cacheDir, budgetDir, { apiKey: 'key', dailyLimit: 1 }),
       undefined,
       { externalProvider: external, budgetGuard }
     );
@@ -265,35 +245,15 @@ describe('SmartDigestService v0.6.1', () => {
   it('7. per-request limit exceeded → yalnızca limit kadar external call', async () => {
     const fetchFn = mockExternalFetch();
     const external = new ExternalSmartDigestProvider(
-      {
-        enabled: true,
-        provider: 'external',
-        externalEnabled: true,
-        cacheDir,
-        budgetDir,
+      externalProviderConfig(cacheDir, budgetDir, {
         apiKey: 'key',
-        apiUrl: 'https://example.com/v1/chat',
         model: 'm',
-        timeoutMs: 5000,
-        requireCache: true,
-        dailyLimit: 20,
         perRequestLimit: 1,
-        promptVersion: 'v0.6.1',
-        digestVersion: 'v0.6.1',
-        simulateProviderFailure: false,
-        cacheTtlMs: 60_000,
-      },
+      }) as any,
       fetchFn
     );
     const service = new SmartDigestService(
-      {
-        enabled: true,
-        provider: 'external',
-        externalEnabled: true,
-        cacheDir,
-        budgetDir,
-        perRequestLimit: 1,
-      },
+      externalServiceConfig(cacheDir, budgetDir, { apiKey: 'key', perRequestLimit: 1 }),
       undefined,
       { externalProvider: external, budgetGuard: new SmartDigestBudgetGuard(budgetDir, 20) }
     );
@@ -315,28 +275,15 @@ describe('SmartDigestService v0.6.1', () => {
   it('8. provider timeout/failure → FAILED, endpoint logic continues', async () => {
     const fetchFn = vi.fn().mockRejectedValue(new Error('timeout')) as unknown as typeof fetch;
     const external = new ExternalSmartDigestProvider(
-      {
-        enabled: true,
-        provider: 'external',
-        externalEnabled: true,
-        cacheDir,
-        budgetDir,
+      externalProviderConfig(cacheDir, budgetDir, {
         apiKey: 'key',
-        apiUrl: 'https://example.com/v1/chat',
         model: 'm',
         timeoutMs: 100,
-        requireCache: true,
-        dailyLimit: 20,
-        perRequestLimit: 3,
-        promptVersion: 'v0.6.1',
-        digestVersion: 'v0.6.1',
-        simulateProviderFailure: false,
-        cacheTtlMs: 60_000,
-      },
+      }) as any,
       fetchFn
     );
     const service = new SmartDigestService(
-      { enabled: true, provider: 'external', externalEnabled: true, cacheDir, budgetDir },
+      externalServiceConfig(cacheDir, budgetDir, { apiKey: 'key' }),
       undefined,
       { externalProvider: external, budgetGuard: new SmartDigestBudgetGuard(budgetDir, 20) }
     );
@@ -360,28 +307,11 @@ describe('SmartDigestService v0.6.1', () => {
     const secret = 'super-secret-api-key-xyz';
     const fetchFn = vi.fn().mockRejectedValue(new Error(`Bearer ${secret} invalid`));
     const external = new ExternalSmartDigestProvider(
-      {
-        enabled: true,
-        provider: 'external',
-        externalEnabled: true,
-        cacheDir,
-        budgetDir,
-        apiKey: secret,
-        apiUrl: 'https://example.com/v1/chat',
-        model: 'm',
-        timeoutMs: 5000,
-        requireCache: true,
-        dailyLimit: 20,
-        perRequestLimit: 3,
-        promptVersion: 'v0.6.1',
-        digestVersion: 'v0.6.1',
-        simulateProviderFailure: false,
-        cacheTtlMs: 60_000,
-      },
+      externalProviderConfig(cacheDir, budgetDir, { apiKey: secret, model: 'm' }) as any,
       fetchFn as unknown as typeof fetch
     );
     const service = new SmartDigestService(
-      { enabled: true, provider: 'external', externalEnabled: true, cacheDir, budgetDir },
+      externalServiceConfig(cacheDir, budgetDir, { apiKey: secret }),
       undefined,
       { externalProvider: external, budgetGuard: new SmartDigestBudgetGuard(budgetDir, 20) }
     );
@@ -435,5 +365,305 @@ describe('SmartDigestService v0.6.1', () => {
       generatedAt: new Date().toISOString(),
     });
     expect((await cache.get('abc'))?.digest.summary).toBe('test');
+  });
+});
+
+describe('SmartDigestService v0.6.3 controlled pilot', () => {
+  let cacheDir: string;
+  let budgetDir: string;
+
+  beforeEach(async () => {
+    cacheDir = path.join(os.tmpdir(), `sd-v063-${Date.now()}-${Math.random()}`);
+    budgetDir = path.join(os.tmpdir(), `sd-budget-v063-${Date.now()}-${Math.random()}`);
+    await fs.mkdir(cacheDir, { recursive: true });
+    await fs.mkdir(budgetDir, { recursive: true });
+    resetProviderLogs();
+  });
+
+  afterEach(async () => {
+    await fs.rm(cacheDir, { recursive: true, force: true }).catch(() => undefined);
+    await fs.rm(budgetDir, { recursive: true, force: true }).catch(() => undefined);
+  });
+
+  it('1. external enabled, operator approval yok → OPERATOR_APPROVAL_REQUIRED', async () => {
+    const fetchFn = mockExternalFetch();
+    const service = new SmartDigestService(
+      {
+        enabled: true,
+        provider: 'external',
+        externalEnabled: true,
+        requireOperatorApproval: true,
+        operatorApproved: false,
+        cacheDir,
+        budgetDir,
+        apiKey: 'test-key',
+      },
+      undefined,
+      {
+        externalProvider: new ExternalSmartDigestProvider(
+          externalProviderConfig(cacheDir, budgetDir) as any,
+          fetchFn
+        ),
+        budgetGuard: new SmartDigestBudgetGuard(budgetDir, 5),
+      }
+    );
+    service.beginBatch();
+    const digest = await service.getDigest(sampleInput());
+
+    expect(digest.status).toBe('FAILED');
+    expect(digest.errorCode).toBe('OPERATOR_APPROVAL_REQUIRED');
+    expect(fetchFn).not.toHaveBeenCalled();
+    expect(service.getFeedStats().approvalDeniedCount).toBe(1);
+    const budget = await new SmartDigestBudgetGuard(budgetDir, 5).getTodayStats();
+    expect(budget.approvalDenied).toBe(1);
+    expect(budget.lastUpdatedAt).toBeTruthy();
+  });
+
+  it('2. operator approval var, API key yok → PROVIDER_CONFIG_MISSING', async () => {
+    const fetchFn = mockExternalFetch();
+    const service = new SmartDigestService(
+      {
+        enabled: true,
+        provider: 'external',
+        externalEnabled: true,
+        operatorApproved: true,
+        apiKey: '',
+        cacheDir,
+        budgetDir,
+      },
+      undefined,
+      {
+        externalProvider: new ExternalSmartDigestProvider(
+          externalProviderConfig(cacheDir, budgetDir, { apiKey: '' }) as any,
+          fetchFn
+        ),
+        budgetGuard: new SmartDigestBudgetGuard(budgetDir, 5),
+      }
+    );
+    service.beginBatch();
+    const digest = await service.getDigest(sampleInput());
+
+    expect(digest.status).toBe('FAILED');
+    expect(digest.errorCode).toBe('PROVIDER_CONFIG_MISSING');
+    expect(fetchFn).not.toHaveBeenCalled();
+  });
+
+  it('3. approval + key + cache miss + budget → injectable fake external', async () => {
+    const fetchFn = mockExternalFetch();
+    const service = new SmartDigestService(
+      externalServiceConfig(cacheDir, budgetDir),
+      undefined,
+      {
+        externalProvider: new ExternalSmartDigestProvider(
+          externalProviderConfig(cacheDir, budgetDir) as any,
+          fetchFn
+        ),
+        budgetGuard: new SmartDigestBudgetGuard(budgetDir, 5),
+      }
+    );
+    service.beginBatch();
+    const digest = await service.getDigest(sampleInput());
+
+    expect(digest.status).toBe('GENERATED');
+    expect(digest.modelProvider).toBe('external');
+    expect(fetchFn).toHaveBeenCalledTimes(1);
+    expect(service.getFeedStats().externalCallCount).toBe(1);
+  });
+
+  it('4. same input second run → CACHED, external çağrı yok', async () => {
+    const fetchFn = mockExternalFetch();
+    const service = new SmartDigestService(
+      externalServiceConfig(cacheDir, budgetDir),
+      undefined,
+      {
+        externalProvider: new ExternalSmartDigestProvider(
+          externalProviderConfig(cacheDir, budgetDir) as any,
+          fetchFn
+        ),
+        budgetGuard: new SmartDigestBudgetGuard(budgetDir, 5),
+      }
+    );
+    service.beginBatch();
+    const input = sampleInput();
+    await service.getDigest(input);
+    const second = await service.getDigest(input);
+
+    expect(second.status).toBe('CACHED');
+    expect(fetchFn).toHaveBeenCalledTimes(1);
+  });
+
+  it('5. daily limit exceeded → BUDGET_EXCEEDED', async () => {
+    const fetchFn = mockExternalFetch();
+    const budgetGuard = new SmartDigestBudgetGuard(budgetDir, 5);
+    for (let i = 0; i < 5; i += 1) {
+      await budgetGuard.recordExternalCall();
+    }
+    const service = new SmartDigestService(
+      externalServiceConfig(cacheDir, budgetDir, { apiKey: 'key', dailyLimit: 5 }),
+      undefined,
+      {
+        externalProvider: new ExternalSmartDigestProvider(
+          externalProviderConfig(cacheDir, budgetDir) as any,
+          fetchFn
+        ),
+        budgetGuard,
+      }
+    );
+    service.beginBatch();
+    const digest = await service.getDigest(sampleInput());
+
+    expect(digest.errorCode).toBe('BUDGET_EXCEEDED');
+    expect(fetchFn).not.toHaveBeenCalled();
+  });
+
+  it('6. per-request limit → yalnızca 1 external call', async () => {
+    const fetchFn = mockExternalFetch();
+    const service = new SmartDigestService(
+      externalServiceConfig(cacheDir, budgetDir, { perRequestLimit: 1 }),
+      undefined,
+      {
+        externalProvider: new ExternalSmartDigestProvider(
+          externalProviderConfig(cacheDir, budgetDir, { perRequestLimit: 1 }) as any,
+          fetchFn
+        ),
+        budgetGuard: new SmartDigestBudgetGuard(budgetDir, 5),
+      }
+    );
+    service.beginBatch();
+    await service.getDigest(sampleInput({ clusterId: 'a' }));
+    await service.getDigest(sampleInput({ clusterId: 'b', title: 'Farklı başlık' }));
+
+    expect(fetchFn).toHaveBeenCalledTimes(1);
+    expect(service.getFeedStats().externalCallCount).toBe(1);
+  });
+
+  it('7. forbidden full text field → reject', () => {
+    const polluted = { ...sampleInput(), fullText: 'tam metin' } as SmartDigestInput & {
+      fullText: string;
+    };
+    expect(() => normalizeSmartDigestInput(polluted)).toThrow(/Forbidden digest field/);
+  });
+
+  it('9. provider timeout → FAILED, servis devam eder', async () => {
+    const fetchFn = vi.fn().mockRejectedValue(new Error('timeout')) as unknown as typeof fetch;
+    const service = new SmartDigestService(
+      externalServiceConfig(cacheDir, budgetDir, { apiKey: 'key' }),
+      undefined,
+      {
+        externalProvider: new ExternalSmartDigestProvider(
+          externalProviderConfig(cacheDir, budgetDir) as any,
+          fetchFn
+        ),
+        budgetGuard: new SmartDigestBudgetGuard(budgetDir, 5),
+      }
+    );
+    service.beginBatch();
+    const digest = await service.getDigest(sampleInput());
+
+    expect(digest.status).toBe('FAILED');
+    expect(digest.errorCode).toBe('DIGEST_PROVIDER_FAILED');
+  });
+
+  it('10. API key redaction — loglarda secret yok', async () => {
+    const secret = 'pilot-secret-key-v063';
+    const fetchFn = vi.fn().mockRejectedValue(new Error(`Bearer ${secret} invalid`));
+    const service = new SmartDigestService(
+      externalServiceConfig(cacheDir, budgetDir, { apiKey: secret }),
+      undefined,
+      {
+        externalProvider: new ExternalSmartDigestProvider(
+          externalProviderConfig(cacheDir, budgetDir, { apiKey: secret }) as any,
+          fetchFn as unknown as typeof fetch
+        ),
+        budgetGuard: new SmartDigestBudgetGuard(budgetDir, 5),
+      }
+    );
+    service.beginBatch();
+    await service.getDigest(sampleInput());
+
+    const logs = JSON.stringify(getProviderLogs());
+    expect(logs).not.toContain(secret);
+    expect(logs).not.toContain('Bearer');
+  });
+
+  it('11. prompt/response logging kapalı — ham içerik loglanmaz', async () => {
+    const debugSpy = vi.spyOn(console, 'debug').mockImplementation(() => undefined);
+    const fetchFn = mockExternalFetch();
+    const service = new SmartDigestService(
+      externalServiceConfig(cacheDir, budgetDir, { logPrompts: false, logResponses: false }),
+      undefined,
+      {
+        externalProvider: new ExternalSmartDigestProvider(
+          externalProviderConfig(cacheDir, budgetDir, {
+            logPrompts: false,
+            logResponses: false,
+          }) as any,
+          fetchFn
+        ),
+        budgetGuard: new SmartDigestBudgetGuard(budgetDir, 5),
+      }
+    );
+    service.beginBatch();
+    await service.getDigest(sampleInput());
+
+    expect(debugSpy).not.toHaveBeenCalled();
+    const logs = JSON.stringify(getProviderLogs());
+    expect(logs).not.toContain('Merkez Bankası');
+    debugSpy.mockRestore();
+  });
+
+  it('12. smartDigestStats externalCallCount doğru', async () => {
+    const fetchFn = mockExternalFetch();
+    const service = new SmartDigestService(
+      externalServiceConfig(cacheDir, budgetDir),
+      undefined,
+      {
+        externalProvider: new ExternalSmartDigestProvider(
+          externalProviderConfig(cacheDir, budgetDir) as any,
+          fetchFn
+        ),
+        budgetGuard: new SmartDigestBudgetGuard(budgetDir, 5),
+      }
+    );
+    service.beginBatch();
+    const input = sampleInput();
+    await service.getDigest(input);
+    await service.getDigest(input);
+
+    expect(service.getFeedStats().externalCallCount).toBe(1);
+    expect(service.getFeedStats().cachedCount).toBe(1);
+  });
+
+  it('uniqueSourceCount < 2 ve düşük önem → NOT_ELIGIBLE', async () => {
+    const fetchFn = mockExternalFetch();
+    const service = new SmartDigestService(
+      {
+        enabled: true,
+        provider: 'external',
+        externalEnabled: true,
+        operatorApproved: true,
+        cacheDir,
+        budgetDir,
+      },
+      undefined,
+      {
+        externalProvider: new ExternalSmartDigestProvider(
+          externalProviderConfig(cacheDir, budgetDir) as any,
+          fetchFn
+        ),
+        budgetGuard: new SmartDigestBudgetGuard(budgetDir, 5),
+      }
+    );
+    service.beginBatch();
+    const digest = await service.getDigest(
+      sampleInput({
+        uniqueSourceCount: 1,
+        sourceCount: 1,
+        importance: 'LOW',
+      })
+    );
+
+    expect(digest.errorCode).toBe('NOT_ELIGIBLE_FOR_EXTERNAL');
+    expect(fetchFn).not.toHaveBeenCalled();
   });
 });

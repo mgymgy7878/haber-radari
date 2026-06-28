@@ -6,6 +6,18 @@ function todayKey(date = new Date()): string {
   return date.toISOString().slice(0, 10);
 }
 
+function emptyDayStats(date: string): BudgetDayStats {
+  return {
+    date,
+    externalCalls: 0,
+    cacheHits: 0,
+    failures: 0,
+    budgetDenied: 0,
+    approvalDenied: 0,
+    lastUpdatedAt: new Date().toISOString(),
+  };
+}
+
 export class SmartDigestBudgetGuard {
   constructor(
     private readonly budgetDir: string,
@@ -19,21 +31,24 @@ export class SmartDigestBudgetGuard {
   private async readDay(date: string): Promise<BudgetDayStats> {
     try {
       const raw = await fs.readFile(this.filePath(date), 'utf8');
-      return JSON.parse(raw) as BudgetDayStats;
-    } catch {
+      const parsed = JSON.parse(raw) as Partial<BudgetDayStats>;
       return {
+        ...emptyDayStats(date),
+        ...parsed,
         date,
-        externalCalls: 0,
-        cacheHits: 0,
-        failures: 0,
-        budgetDenied: 0,
       };
+    } catch {
+      return emptyDayStats(date);
     }
   }
 
   private async writeDay(stats: BudgetDayStats): Promise<void> {
+    const payload: BudgetDayStats = {
+      ...stats,
+      lastUpdatedAt: new Date().toISOString(),
+    };
     await fs.mkdir(this.budgetDir, { recursive: true });
-    await fs.writeFile(this.filePath(stats.date), JSON.stringify(stats, null, 2), 'utf8');
+    await fs.writeFile(this.filePath(payload.date), JSON.stringify(payload, null, 2), 'utf8');
   }
 
   async getTodayStats(): Promise<BudgetDayStats> {
@@ -76,13 +91,14 @@ export class SmartDigestBudgetGuard {
     await this.writeDay(stats);
   }
 
+  async recordApprovalDenied(): Promise<void> {
+    const date = todayKey();
+    const stats = await this.readDay(date);
+    stats.approvalDenied += 1;
+    await this.writeDay(stats);
+  }
+
   async resetToday(): Promise<void> {
-    await this.writeDay({
-      date: todayKey(),
-      externalCalls: 0,
-      cacheHits: 0,
-      failures: 0,
-      budgetDenied: 0,
-    });
+    await this.writeDay(emptyDayStats(todayKey()));
   }
 }

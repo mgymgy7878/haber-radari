@@ -1,5 +1,6 @@
 import { SmartDigestConfig } from '../config.js';
 import { normalizeSmartDigestInput } from '../normalize-input.js';
+import { normalizeProviderOutput } from '../output-guard.js';
 import { sanitizeProviderError } from '../provider-log.js';
 import { SmartDigestInput, SmartDigestProviderResult } from '../types.js';
 import { FetchFn, SmartDigestProvider } from './smart-digest-provider.js';
@@ -62,6 +63,9 @@ export class ExternalSmartDigestProvider implements SmartDigestProvider {
 
     const normalized = normalizeSmartDigestInput(input);
     const prompt = buildMetadataPrompt(normalized);
+    if (this.config.logPrompts) {
+      console.debug('[smart-digest] prompt length:', prompt.length);
+    }
 
     const response = await this.fetchFn(this.config.apiUrl, {
       method: 'POST',
@@ -96,6 +100,10 @@ export class ExternalSmartDigestProvider implements SmartDigestProvider {
       throw new Error('EXTERNAL_EMPTY_RESPONSE');
     }
 
-    return parseProviderJson(content);
+    if (this.config.logResponses) {
+      console.debug('[smart-digest] response length:', content.length);
+    }
+
+    return normalizeProviderOutput(parseProviderJson(content));
   }
 }

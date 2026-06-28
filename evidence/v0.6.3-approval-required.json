@@ -1,0 +1,27 @@
+{
+  "digest": {
+    "status": "FAILED",
+    "summary": null,
+    "keyPoints": [],
+    "whyItMatters": null,
+    "confidence": "LOW",
+    "sourcePolicy": "METADATA_ONLY",
+    "modelProvider": "external",
+    "cacheKey": "444298033faecfb6e1ce8f7093b29f1e43135396792578bf63db519482f72689",
+    "generatedAt": null,
+    "errorCode": "OPERATOR_APPROVAL_REQUIRED"
+  },
+  "feedStats": {
+    "enabled": true,
+    "provider": "external",
+    "eligibleCount": 1,
+    "generatedCount": 0,
+    "cachedCount": 0,
+    "failedCount": 1,
+    "budgetDeniedCount": 0,
+    "approvalDeniedCount": 1,
+    "externalCallCount": 0
+  },
+  "fetchCallCount": 0,
+  "realExternalCallExecuted": false
+}
