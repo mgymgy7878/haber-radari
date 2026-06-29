@@ -1,0 +1,14 @@
+﻿{
+    "sourceRegistryVersion":  "v0",
+    "legalContentGuardrailDryRunReadOnly":  true,
+    "evaluatedItemCount":  1,
+    "wouldStripItemCount":  1,
+    "wouldStripFieldCount":  7,
+    "sourceMatchedCount":  1,
+    "sourceUnmatchedCount":  0,
+    "publishedCount":  1,
+    "itemsLength":  1,
+    "publishBehaviorChanged":  false,
+    "sourceSignalPublishDryRunReadOnly":  true,
+    "sourceScoreShadowReadOnly":  true
+}

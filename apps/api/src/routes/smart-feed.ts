@@ -10,6 +10,8 @@ import {
 import { buildSourceScoreShadow } from '../source-scoring/shadow-score-builder.js';
 import { attachSourceSignalsToItems } from '../source-scoring/source-signal-mapper.js';
 import { buildSourceSignalPublishDryRun } from '../source-scoring/source-signal-publish-dry-run.js';
+import { buildLegalContentGuardrailDryRun } from '../source-registry/legal-content-guardrail-dry-run.js';
+import { loadSourceRegistryV0 } from '../source-registry/source-registry-loader.js';
 
 let cachedFeed: any = null;
 let cacheTimestamp = 0;
@@ -264,6 +266,11 @@ export async function smartFeedRoute(req: FastifyRequest, reply: FastifyReply) {
       leadArticleIdsByCluster,
     });
 
+    const legalContentGuardrailDryRun = buildLegalContentGuardrailDryRun({
+      items: itemsWithSourceSignal,
+      registry: loadSourceRegistryV0(),
+    });
+
     const candidateClusterCount = clusters.length;
     const totalAllocated = publishedCount + hiddenCount;
     
@@ -307,6 +314,7 @@ export async function smartFeedRoute(req: FastifyRequest, reply: FastifyReply) {
         engineBuildTag: "smart-feed-stats-ssot-v0.3",
         sourceScoreShadow,
         sourceSignalPublishDryRun,
+        legalContentGuardrailDryRun,
       },
       items: itemsWithSourceSignal,
       smartDigestStats,
