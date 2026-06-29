@@ -42,7 +42,7 @@ data class FeedStatsDto(
 data class AiCuratedNewsItemDto(
     val id: String,
     val aiTitle: String,
-    val aiSummary: String,
+    val aiSummary: String? = null,
     val category: String,
     val importance: String, // enum string mapping
     val confidence: Float,

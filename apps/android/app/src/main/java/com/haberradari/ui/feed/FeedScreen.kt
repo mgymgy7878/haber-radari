@@ -401,7 +401,7 @@ private fun buildRssDetailItem(rssItem: com.haberradari.domain.repository.Watchl
     return AiCuratedNewsItem(
         id = rssItem.id,
         aiTitle = rssItem.title,
-        aiSummary = rssItem.shortDescription ?: "",
+        aiSummary = AiSummaryUiLogic.normalizeSummary(rssItem.shortDescription),
         category = rssItem.category,
         importance = Importance.LOW,
         confidence = 0f,
@@ -856,15 +856,16 @@ fun AiCuratedNewsItemCard(
                 color = MaterialTheme.colorScheme.onSurface
             )
             
-            Spacer(modifier = Modifier.height(4.dp))
-            
-            Text(
-                text = item.aiSummary,
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                maxLines = 3,
-                overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis
-            )
+            AiSummaryUiLogic.safeSummaryOrNull(item.aiSummary)?.let { summary ->
+                Spacer(modifier = Modifier.height(4.dp))
+                Text(
+                    text = summary,
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    maxLines = 3,
+                    overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis
+                )
+            }
 
             if (TrustTransparencyUiLogic.shouldShowSmartDigestBlock(item.publishDecision)) {
                 SmartDigestSection(

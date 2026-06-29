@@ -123,7 +123,7 @@ class RemoteAiCuratedFeedRepository(
             AiCuratedNewsItem(
                 id = itemDto.id,
                 aiTitle = itemDto.aiTitle,
-                aiSummary = itemDto.aiSummary,
+                aiSummary = com.haberradari.ui.feed.AiSummaryUiLogic.normalizeSummary(itemDto.aiSummary),
                 category = itemDto.category,
                 importance = mapImportance(itemDto.importance),
                 confidence = itemDto.confidence,
