@@ -4,6 +4,13 @@ Haber Radarı faz kanıtları. Git'te izlenen dosyalar aşağıdadır.
 
 > **Not:** `evidence/` altında eski fazlara ait untracked dosyalar (v0.5.x cihaz logları, smart-feed runtime dump'ları vb.) PR kapsamına alınmayabilir; yalnızca ilgili faz PR'ında commit edilen kanıtlar SSOT sayılır.
 
+## Architecture / compliance (plan)
+
+| Belge | Özet |
+|-------|------|
+| [source-registry-ssot-v0-plan.md](../docs/architecture/source-registry-ssot-v0-plan.md) | SSOT v0 hazırlık planı |
+| [source-registry-ssot-v0-plan (evidence)](architecture/source-registry-ssot-v0-plan.md) | Plan PR kanıt özeti |
+
 ## v0.6.x — Smart Feed + Smart Digest
 
 | Faz | Özet | Ana dosyalar |
