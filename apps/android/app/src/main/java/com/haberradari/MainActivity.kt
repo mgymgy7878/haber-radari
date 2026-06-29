@@ -19,11 +19,11 @@ import com.haberradari.ui.feed.ArticleDetailScreen
 import com.haberradari.ui.feed.AiCuratedDetailScreen
 import com.haberradari.ui.feed.FeedScreen
 import com.haberradari.ui.feed.FeedViewModel
-import com.haberradari.ui.feed.SourceHealthScreen
+import com.haberradari.ui.feed.SourceManagementScreen
+import com.haberradari.ui.feed.SourceManagementViewModel
 import com.haberradari.config.FeatureConfig
 import com.haberradari.domain.repository.MockAiCuratedFeedRepository
 import com.haberradari.domain.repository.RemoteAiCuratedFeedRepository
-import com.haberradari.ui.feed.SourceHealthViewModel
 import com.haberradari.ui.feed.ArticleDetailViewModel
 import com.haberradari.ui.theme.HaberRadariTheme
 
@@ -43,7 +43,7 @@ sealed class Screen {
 class MainActivity : ComponentActivity() {
 
     private lateinit var feedViewModel: FeedViewModel
-    private lateinit var healthViewModel: SourceHealthViewModel
+    private lateinit var sourceManagementViewModel: SourceManagementViewModel
     private lateinit var articleDetailViewModel: ArticleDetailViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -85,7 +85,7 @@ class MainActivity : ComponentActivity() {
             MockAiCuratedFeedRepository()
         }
         feedViewModel = FeedViewModel(app.repository, aiRepo)
-        healthViewModel = SourceHealthViewModel(app.repository)
+        sourceManagementViewModel = SourceManagementViewModel(app.repository)
         articleDetailViewModel = ArticleDetailViewModel(app.aiReaderRepository)
 
         setContent {
@@ -139,9 +139,9 @@ class MainActivity : ComponentActivity() {
                             )
                         }
                         is Screen.Health -> {
-                            SourceHealthScreen(
-                                viewModel = healthViewModel,
-                                onBackClick = { currentScreen = Screen.Feed }
+                            SourceManagementScreen(
+                                viewModel = sourceManagementViewModel,
+                                onBackClick = { currentScreen = Screen.Feed },
                             )
                         }
                     }

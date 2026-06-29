@@ -87,6 +87,11 @@ class SourceSeedRefreshPolicyTest {
             )
         }
 
+        override suspend fun updateSourceEnabled(id: String, enabled: Boolean) {
+            val existing = sources[id] ?: return
+            sources[id] = existing.copy(enabled = enabled)
+        }
+
         fun seedExisting(source: Source) {
             sources[source.id] = source
         }

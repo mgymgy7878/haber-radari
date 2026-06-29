@@ -123,6 +123,16 @@ class NewsRepository(
     fun getSourcesFlow(): Flow<List<Source>> = sourceDao.getAllSources()
 
     /**
+     * Kullanıcı kaynak aç/kapat tercihi.
+     * DISABLED / NEEDS_REVIEW kaynaklarda enabled değişmez.
+     */
+    suspend fun setSourceEnabled(sourceId: String, enabled: Boolean) = withContext(Dispatchers.IO) {
+        val existing = sourceDao.getSourceById(sourceId) ?: return@withContext
+        if (existing.legalMode.blocksProductionIngest()) return@withContext
+        sourceDao.updateSourceEnabled(sourceId, enabled)
+    }
+
+    /**
      * Varsayılan RSS kaynaklarını veritabanına yükler.
      *
      * 1. Eksik seed satırları INSERT IGNORE ile eklenir (fresh install).

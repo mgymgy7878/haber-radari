@@ -70,6 +70,11 @@ class DefaultSourceSeedTest {
                 authorityLevel = authorityLevel,
             )
         }
+
+        override suspend fun updateSourceEnabled(id: String, enabled: Boolean) {
+            val existing = sources[id] ?: return
+            sources[id] = existing.copy(enabled = enabled)
+        }
         
         fun forceUpdateSource(source: Source) {
             // Helper to simulate a manual Room UPDATE
