@@ -1,4 +1,4 @@
-import type { RssSourceConfig } from '../config/rss-sources.js';
+import type { RssSourceConfig } from '../config/rss-source-config.js';
 import { AuthorityTier } from './source-score-types.js';
 
 const TIER_BASE_SCORE: Record<AuthorityTier, number> = {
