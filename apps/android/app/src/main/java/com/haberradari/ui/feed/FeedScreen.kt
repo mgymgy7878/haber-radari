@@ -181,9 +181,19 @@ private fun FeedContentBody(
             isRefreshing = isRefreshing,
         )
 
-        if (state.lastError != null) {
+        if (state.refreshOutcome == FeedRefreshUiLogic.RefreshOutcome.SKIPPED_NO_ACTIVE_SOURCES) {
+            NoActiveSourcesBanner(
+                message = state.lastError ?: FeedRefreshUiLogic.noActiveSourcesMessage(),
+                onRefresh = onRefresh,
+            )
+        } else if (state.lastError != null && state.isShowingCachedData) {
             CachedErrorBanner(
                 cacheAgeText = state.cacheAgeText,
+                errorMessage = state.lastError,
+                onRetry = onRefresh,
+            )
+        } else if (state.lastError != null) {
+            ErrorOnlyBanner(
                 errorMessage = state.lastError,
                 onRetry = onRefresh,
             )
@@ -333,6 +343,16 @@ private fun FeedStatusBar(
                 style = MaterialTheme.typography.labelSmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
+            if (!isRefreshing) {
+                FeedRefreshUiLogic.formatRefreshOutcomeLabel(state.refreshOutcome)?.let { outcomeLabel ->
+                    Text(
+                        text = outcomeLabel,
+                        style = MaterialTheme.typography.labelSmall,
+                        color = MaterialTheme.colorScheme.secondary,
+                        modifier = Modifier.padding(top = 2.dp),
+                    )
+                }
+            }
             Text(
                 text = TrustTransparencyUiLogic.SOURCE_SIGNAL_DISCLAIMER,
                 style = MaterialTheme.typography.labelSmall,
@@ -386,10 +406,9 @@ private fun CachedErrorBanner(
         modifier = Modifier.fillMaxWidth(),
         color = MaterialTheme.colorScheme.errorContainer
     ) {
-        val ageInfo = if (cacheAgeText != null) " ($cacheAgeText)" else ""
         Column(modifier = Modifier.padding(12.dp)) {
             Text(
-                text = "Backend bağlantısı alınamadı, son kayıtlı haberler gösteriliyor.$ageInfo",
+                text = FeedRefreshUiLogic.cachedErrorBannerMessage(cacheAgeText),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onErrorContainer
             )
@@ -410,14 +429,59 @@ private fun CachedErrorBanner(
 }
 
 @Composable
+private fun ErrorOnlyBanner(
+    errorMessage: String?,
+    onRetry: () -> Unit,
+) {
+    androidx.compose.material3.Surface(
+        modifier = Modifier.fillMaxWidth(),
+        color = MaterialTheme.colorScheme.errorContainer
+    ) {
+        Column(modifier = Modifier.padding(12.dp)) {
+            Text(
+                text = errorMessage ?: "Haberler yenilenemedi.",
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onErrorContainer
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+            Button(onClick = onRetry) {
+                Text(stringResource(id = com.haberradari.R.string.retry))
+            }
+        }
+    }
+}
+
+@Composable
+private fun NoActiveSourcesBanner(
+    message: String,
+    onRefresh: () -> Unit,
+) {
+    androidx.compose.material3.Surface(
+        modifier = Modifier.fillMaxWidth(),
+        color = MaterialTheme.colorScheme.secondaryContainer
+    ) {
+        Column(modifier = Modifier.padding(12.dp)) {
+            Text(
+                text = message,
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSecondaryContainer
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+            Button(onClick = onRefresh) {
+                Text(stringResource(id = com.haberradari.R.string.refresh))
+            }
+        }
+    }
+}
+
+@Composable
 private fun CachedDataBanner(cacheAgeText: String?) {
     androidx.compose.material3.Surface(
         modifier = Modifier.fillMaxWidth(),
         color = MaterialTheme.colorScheme.tertiaryContainer
     ) {
-        val ageInfo = if (cacheAgeText != null) " ($cacheAgeText)" else ""
         Text(
-            text = "Son kayıtlı haberler gösteriliyor.$ageInfo",
+            text = FeedRefreshUiLogic.cachedContentBannerMessage(cacheAgeText),
             modifier = Modifier.padding(12.dp),
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onTertiaryContainer

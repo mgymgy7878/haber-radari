@@ -75,7 +75,7 @@ object FeedUsabilityUiLogic {
     fun emptyStateMessage(kind: FeedEmptyKind): String = when (kind) {
         FeedEmptyKind.NONE -> ""
         FeedEmptyKind.NO_ENABLED_SOURCES ->
-            "Tüm kaynaklar kapalı veya inceleme bekliyor. Kaynak Sağlığı ekranından kaynakları yönetebilirsiniz."
+            "Tüm kaynaklar kapalı veya inceleme bekliyor. Kaynak Yönetimi ekranından kaynakları açabilirsiniz."
         FeedEmptyKind.NO_NEWS ->
             "Aktif kaynaklar tarandı ancak gösterilecek haber bulunamadı. Yenilemeyi deneyin."
     }

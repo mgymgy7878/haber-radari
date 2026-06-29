@@ -46,6 +46,8 @@ data class FeedUiState(
     val enabledSourceCount: Int = 0,
     /** Son başarılı feed güncelleme zamanı (epoch ms). */
     val lastUpdatedAt: Long? = null,
+    /** Son manuel/otomatik yenileme sonucu — UI geri bildirimi. */
+    val refreshOutcome: FeedRefreshUiLogic.RefreshOutcome? = null,
 )
 
 class FeedViewModel(
@@ -139,6 +141,15 @@ class FeedViewModel(
     }
 
     private suspend fun fetchCuratedFeed(articles: List<Article>, forceRefresh: Boolean = false) {
+        val enabledCount = repository.countEnabledIngestSources()
+        if (FeedRefreshUiLogic.shouldSkipNetworkRefresh(enabledCount)) {
+            _uiState.value = _uiState.value.copy(
+                isInitialLoading = false,
+                isRemoteLoading = false,
+            )
+            return
+        }
+
         _uiState.value = _uiState.value.copy(isRemoteLoading = true)
         try {
             val result = aiFeedRepository.getCuratedFeed(articles, forceRefresh)
@@ -163,38 +174,20 @@ class FeedViewModel(
                 rawPreview = result.rawPreview,
                 noisePreview = result.noisePreview,
                 lastUpdatedAt = result.generatedAt.takeIf { it > 0 } ?: System.currentTimeMillis(),
+                refreshOutcome = FeedRefreshUiLogic.RefreshOutcome.SUCCESS,
             )
         } catch (e: Exception) {
             val errorMsg = mapErrorMessage(e)
-
             val cached = aiFeedRepository.getCachedFeed()
-            if (cached != null) {
-                _uiState.value = _uiState.value.copy(
-                    curatedItems = cached.items,
-                    latestRssPreview = cached.latestRssPreview,
-                    isInitialLoading = false,
-                    lastError = errorMsg,
-                    isShowingCachedData = true,
-                    cacheAgeText = formatCacheAge(cached.generatedAt),
-                    totalAnalyzed = cached.totalScanned,
-                    publishedCount = cached.publishedCount,
-                    hiddenCount = cached.hiddenCount,
-                    candidateClusterCount = cached.candidateClusterCount,
-                    invariantOk = cached.invariantOk,
-                    invariantError = cached.invariantError,
-                    source = cached.source,
-                    isFallbackUsed = true,
-                    fallbackReason = cached.fallbackReason ?: e.message,
-                    watchlistPreview = cached.watchlistPreview,
-                    rawPreview = cached.rawPreview,
-                    noisePreview = cached.noisePreview,
-                    lastUpdatedAt = cached.generatedAt,
+            _uiState.value = if (cached != null) {
+                FeedRefreshUiLogic.applyCachedSnapshot(
+                    _uiState.value,
+                    cached,
+                    errorMessage = errorMsg,
+                    formatCacheAge = ::formatCacheAge,
                 )
             } else {
-                _uiState.value = _uiState.value.copy(
-                    isInitialLoading = false,
-                    lastError = errorMsg
-                )
+                FeedRefreshUiLogic.mergeErrorPreservingContent(_uiState.value, errorMsg)
             }
         } finally {
             _uiState.value = _uiState.value.copy(isRemoteLoading = false)
@@ -205,42 +198,39 @@ class FeedViewModel(
         android.util.Log.d("NewsFlow", "refreshFeeds start: ${System.currentTimeMillis()}")
         viewModelScope.launch {
             _isRefreshing.value = true
-            // İçeriği temizleme — rapid refresh sırasında gövde görünür kalmalı
-            _uiState.value = _uiState.value.copy(lastError = null, isRemoteLoading = true)
+            _uiState.value = _uiState.value.copy(isRemoteLoading = true)
             try {
-                // Ensure default sources are seeded before refresh
                 repository.seedDefaultSources()
+
+                val enabledCount = repository.countEnabledIngestSources()
+                if (FeedRefreshUiLogic.shouldSkipNetworkRefresh(enabledCount)) {
+                    _uiState.value = _uiState.value.copy(
+                        lastError = FeedRefreshUiLogic.noActiveSourcesMessage(),
+                        isRemoteLoading = false,
+                        refreshOutcome = FeedRefreshUiLogic.RefreshOutcome.SKIPPED_NO_ACTIVE_SOURCES,
+                    )
+                    return@launch
+                }
+
                 repository.refreshFeeds()
                 android.util.Log.d("NewsFlow", "refreshFeeds end: ${System.currentTimeMillis()}")
                 fetchCuratedFeed(_uiState.value.articles, forceRefresh = true)
             } catch (e: Exception) {
                 val errorMsg = mapErrorMessage(e)
                 val cached = aiFeedRepository.getCachedFeed()
-                if (cached != null) {
-                    _uiState.value = _uiState.value.copy(
-                        curatedItems = cached.items,
-                        latestRssPreview = cached.latestRssPreview,
-                        lastError = errorMsg,
-                        isInitialLoading = false,
-                        isRemoteLoading = false,
-                        isShowingCachedData = true,
-                        cacheAgeText = formatCacheAge(cached.generatedAt),
-                        totalAnalyzed = cached.totalScanned,
-                        publishedCount = cached.publishedCount,
-                        hiddenCount = cached.hiddenCount,
-                        watchlistPreview = cached.watchlistPreview,
-                        rawPreview = cached.rawPreview,
-                        lastUpdatedAt = cached.generatedAt,
+                _uiState.value = if (cached != null) {
+                    FeedRefreshUiLogic.applyCachedSnapshot(
+                        _uiState.value,
+                        cached,
+                        errorMessage = errorMsg,
+                        formatCacheAge = ::formatCacheAge,
                     )
                 } else {
-                    _uiState.value = _uiState.value.copy(
-                        lastError = errorMsg,
-                        isInitialLoading = false,
-                        isRemoteLoading = false
-                    )
+                    FeedRefreshUiLogic.mergeErrorPreservingContent(_uiState.value, errorMsg)
                 }
             } finally {
                 _isRefreshing.value = false
+                _uiState.value = _uiState.value.copy(isRemoteLoading = false)
             }
         }
     }
