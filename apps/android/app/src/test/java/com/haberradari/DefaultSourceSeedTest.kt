@@ -5,7 +5,9 @@ import com.haberradari.data.local.FeedHealthDao
 import com.haberradari.data.local.SourceDao
 import com.haberradari.data.model.Article
 import com.haberradari.data.model.FeedHealth
+import com.haberradari.data.model.LegalMode
 import com.haberradari.data.model.Source
+import com.haberradari.data.model.SourceAuthority
 import com.haberradari.data.repository.NewsRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
@@ -30,7 +32,7 @@ class DefaultSourceSeedTest {
         override fun getAllSources(): Flow<List<Source>> = flowOf(sources.values.toList())
 
         override suspend fun getEnabledSources(): List<Source> {
-            return sources.values.filter { it.enabled && it.legalMode.name != "DISABLED" }
+            return sources.values.filter { it.enabled && !it.legalMode.blocksProductionIngest() }
         }
 
         override suspend fun insertSource(source: Source) {
@@ -76,10 +78,28 @@ class DefaultSourceSeedTest {
         override fun getAllHealthFlow(): Flow<List<FeedHealth>> = flowOf(emptyList())
     }
 
+    private val testSeedLoader: suspend () -> List<Source> = {
+        listOf(
+            Source(
+                id = "ntv-turkiye",
+                name = "NTV Türkiye",
+                feedUrl = "https://www.ntv.com.tr/turkiye.rss",
+                legalMode = LegalMode.TITLE_LINK_ONLY,
+                category = "türkiye",
+                authorityLevel = SourceAuthority.GENERAL_MEDIA,
+            ),
+        )
+    }
+
     @Test
     fun `seedDefaultSources does not overwrite disabled source state`() = runBlocking {
         val fakeDao = FakeSourceDao()
-        val repo = NewsRepository(FakeArticleDao(), fakeDao, FakeFeedHealthDao())
+        val repo = NewsRepository(
+            FakeArticleDao(),
+            fakeDao,
+            FakeFeedHealthDao(),
+            defaultSeedLoader = testSeedLoader,
+        )
         
         // 1. Initial seed (first app run)
         repo.seedDefaultSources()

@@ -17,7 +17,7 @@ interface SourceDao {
      * Aktif kaynaklar — DISABLED ve kullanıcı tarafından kapatılmış olanlar hariç.
      * RSS sync yalnızca bu listeyi kullanır.
      */
-    @Query("SELECT * FROM sources WHERE legalMode != 'DISABLED' AND enabled = 1")
+    @Query("SELECT * FROM sources WHERE legalMode NOT IN ('DISABLED', 'NEEDS_REVIEW') AND enabled = 1")
     suspend fun getEnabledSources(): List<Source>
 
     /** Kaynak ekleme/güncelleme */

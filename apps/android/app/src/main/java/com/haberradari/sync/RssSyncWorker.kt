@@ -35,7 +35,10 @@ class RssSyncWorker(
             val repository = NewsRepository(
                 articleDao = database.articleDao(),
                 sourceDao = database.sourceDao(),
-                feedHealthDao = database.feedHealthDao()
+                feedHealthDao = database.feedHealthDao(),
+                defaultSeedLoader = {
+                    com.haberradari.data.registry.AndroidSeedRegistryDeriver.deriveDefaultSeeds(applicationContext)
+                },
             )
 
             val newCount = repository.refreshFeeds()

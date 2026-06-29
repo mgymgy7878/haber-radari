@@ -30,7 +30,8 @@ class NewsRepository(
     private val articleDao: ArticleDao,
     private val sourceDao: SourceDao,
     private val feedHealthDao: FeedHealthDao,
-    private val httpClient: HttpClient = HttpClient()
+    private val httpClient: HttpClient = HttpClient(),
+    private val defaultSeedLoader: suspend () -> List<Source>,
 ) {
     /** Makale akışı — UI bu Flow'u observe eder */
     fun getArticles(): Flow<List<Article>> = articleDao.getAllArticles()
@@ -60,8 +61,8 @@ class NewsRepository(
         var newArticlesCount = 0
 
         for (source in enabledSources) {
-            // DISABLED kaynak kontrolü (double-check — DAO zaten filtreliyor)
-            if (source.legalMode == LegalMode.DISABLED) continue
+            // DISABLED / NEEDS_REVIEW double-check — DAO zaten filtreliyor
+            if (source.legalMode.blocksProductionIngest()) continue
 
             try {
                 val xml = fetchRssXml(source.feedUrl)
@@ -126,32 +127,7 @@ class NewsRepository(
      * Mevcut kaynakları ezmez (REPLACE strategy ile günceller).
      */
     suspend fun seedDefaultSources() = withContext(Dispatchers.IO) {
-        val defaults = listOf(
-            Source(
-                id = "ntv-turkiye",
-                name = "NTV Türkiye",
-                feedUrl = "https://www.ntv.com.tr/turkiye.rss",
-                legalMode = LegalMode.RSS_METADATA_ONLY,
-                category = "türkiye",
-                authorityLevel = com.haberradari.data.model.SourceAuthority.GENERAL_MEDIA
-            ),
-            Source(
-                id = "bbc-turkce",
-                name = "BBC Türkçe",
-                feedUrl = "https://feeds.bbci.co.uk/turkce/rss.xml",
-                legalMode = LegalMode.RSS_METADATA_ONLY,
-                category = "dünya",
-                authorityLevel = com.haberradari.data.model.SourceAuthority.GENERAL_MEDIA
-            ),
-            Source(
-                id = "haberturk",
-                name = "Habertürk",
-                feedUrl = "https://www.haberturk.com/rss",
-                legalMode = LegalMode.RSS_METADATA_ONLY,
-                category = "genel",
-                authorityLevel = com.haberradari.data.model.SourceAuthority.GENERAL_MEDIA
-            )
-        )
+        val defaults = defaultSeedLoader()
         sourceDao.insertSources(defaults)
     }
 

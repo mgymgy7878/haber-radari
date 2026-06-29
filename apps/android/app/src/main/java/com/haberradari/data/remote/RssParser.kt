@@ -85,8 +85,8 @@ object RssParser {
      * @return Article listesi — DISABLED kaynaklarda boş liste
      */
     fun toArticles(items: List<RssItem>, source: Source): List<Article> {
-        // DISABLED kaynaktan asla makale üretme
-        if (source.legalMode == LegalMode.DISABLED) {
+        // DISABLED / NEEDS_REVIEW kaynaktan asla makale üretme
+        if (source.legalMode.blocksProductionIngest()) {
             return emptyList()
         }
 

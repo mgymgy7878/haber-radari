@@ -31,8 +31,18 @@ enum class LegalMode {
     LICENSED,
 
     /**
+     * Hukuki inceleme bekliyor — production ingest/fetch kapalı.
+     * Kaynak seed listesinde görünebilir (parity) ancak RSS sync atlanır.
+     */
+    NEEDS_REVIEW,
+
+    /**
      * Bu kaynaktan hiç veri çekilmez.
      * Kaynak listesinde görünür ama fetch atlanır.
      */
-    DISABLED
+    DISABLED;
+
+    /** Production RSS fetch/ingest için kapalı modlar. */
+    fun blocksProductionIngest(): Boolean =
+        this == DISABLED || this == NEEDS_REVIEW
 }
