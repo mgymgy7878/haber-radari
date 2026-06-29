@@ -13,7 +13,7 @@
 | B2 | KVKK aydınlatma | OPEN — draft: `kvkk-aydinlatma-draft-v0.md` |
 | B3 | Data Safety form | OPEN — draft: `data-safety-draft-v0.md` |
 | B4 | News self-declaration | OPEN — draft: `news-declaration-draft-v0.md` |
-| B5 | Cleartext / HTTPS | OPEN (`usesCleartextTraffic=true` debug) |
+| B5 | Cleartext / HTTPS | OPEN — plan: `release-https-cleartext-hardening-plan-v0.md` |
 | B6 | Mobile API/LLM keys | PASS (server-side only) |
 | B7 | Forbidden product language | REVIEW |
 | B8 | PR #36 device smoke | BLOCKED |

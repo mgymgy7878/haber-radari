@@ -31,7 +31,7 @@ Paralel ürün işleri:
 | B2 | KVKK aydınlatma metni | Taslak v0 oluşturuldu (`kvkk-aydinlatma-draft-v0.md`); **hukuk teyidi yok** | TR kullanıcı için gerekli |
 | B3 | Data Safety beyanı | Taslak v0 (`data-safety-draft-v0.md`); **Play Console submission pending** | Play formu gerçek akışla uyumlu olmalı |
 | B4 | News & Magazine declaration | Taslak v0 (`news-declaration-draft-v0.md`); **Play Console submission pending** | Haber kategorisi beyanı |
-| B5 | HTTPS / cleartext | `usesCleartextTraffic="true"` (debug) | Production release build’de kapalı |
+| B5 | HTTPS / cleartext | **OPEN** — `usesCleartextTraffic="true"` (main manifest); hardening plan: [release-https-cleartext-hardening-plan-v0.md](./release-https-cleartext-hardening-plan-v0.md) | Production release build’de kapalı |
 | B6 | Mobil API/LLM key | Şu an uyumlu görünüyor | Sürekli denetim |
 | B7 | Yanıltıcı ürün dili | Çoğunlukla uyumlu; denetim gerekli | Store + in-app metin review |
 | B8 | PR #36 cihaz smoke | Beklemede | Fallback merge gate |
@@ -116,7 +116,7 @@ Haber uygulaması olarak Play self-declaration gerektirir.
 | Production release | Henüz yapılandırılmamış | **HTTPS zorunlu**, cleartext kapalı |
 | API base URL | `FeatureConfig.smartFeedBaseUrl` debug HTTP | Production HTTPS endpoint |
 
-**Blocker:** Release build’de `usesCleartextTraffic=false` + network security config ile yalnızca HTTPS (veya pinning politikası — teyit gerekir).
+**Blocker:** Release build’de `usesCleartextTraffic=false` + network security config ile yalnızca HTTPS (veya pinning politikası — teyit gerekir). Uygulama planı: [release-https-cleartext-hardening-plan-v0.md](./release-https-cleartext-hardening-plan-v0.md) — **B5 hâlâ OPEN**.
 
 ---
 
