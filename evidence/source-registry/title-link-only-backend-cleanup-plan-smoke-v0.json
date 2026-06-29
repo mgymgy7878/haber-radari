@@ -1,0 +1,41 @@
+{
+  "version": "v0",
+  "readOnly": true,
+  "mainHeadNote": "71a8886 post PR #34",
+  "enabledSources": [
+    { "sourceId": "ntv_son_dakika", "name": "NTV", "legalMode": "TITLE_LINK_ONLY", "publishEligible": true },
+    { "sourceId": "haberturk_ekonomi", "name": "Habertürk", "legalMode": "TITLE_LINK_ONLY", "publishEligible": true }
+  ],
+  "disabledSources": [
+    { "sourceId": "aa_guncel", "disabledReason": "registry_legal_mode_disabled_no_license" },
+    { "sourceId": "trt_haber", "disabledReason": "registry_needs_review_pending" }
+  ],
+  "titleLinkOnlySources": ["ntv_son_dakika", "haberturk_ekonomi"],
+  "aiSummaryLineage": [
+    "rss: contentSnippet|content|summary",
+    "rss-ingest: RawArticle.shortDescription",
+    "smart-feed: items[].aiSummary = leadArticle.shortDescription",
+    "android: AiCuratedFeedDto.aiSummary (required)"
+  ],
+  "androidAiSummaryReferences": [
+    "apps/android/.../AiCuratedFeedDto.kt: aiSummary String required",
+    "apps/android/.../FeedScreen.kt: text = item.aiSummary (no empty guard)",
+    "apps/android/.../AiCuratedDetailScreen.kt: text = item.aiSummary"
+  ],
+  "backendAiSummaryReferences": [
+    "apps/api/src/services/rss-ingest.ts: shortDescription from RSS description",
+    "apps/api/src/routes/smart-feed.ts: aiSummary = bestSummary"
+  ],
+  "forbiddenFieldsTitleLinkOnly": [
+    "description", "summary", "body", "fullText", "contentHtml", "rawHtml",
+    "articleText", "scrapedText", "image", "video", "audio", "caption"
+  ],
+  "cleanupRequiresAndroidFallback": true,
+  "recommendedNextPr": [
+    "1_android_fallback_pr_with_debug_apk",
+    "2_backend_dto_cleanup_ntv_haberturk_only",
+    "3_active_legal_guard_binding_last"
+  ],
+  "activeCleanupInThisPr": false,
+  "publishBehaviorChanged": false
+}
