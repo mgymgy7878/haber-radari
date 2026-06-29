@@ -1,0 +1,240 @@
+﻿{
+    "smokeAt":  "2026-06-29T12:07:46.6046079+03:00",
+    "publishedCount":  2,
+    "itemsLength":  2,
+    "publishBehaviorChanged":  false,
+    "legalContentGuardrailDryRun":  {
+                                        "readOnly":  true,
+                                        "rcaVersion":  "v0",
+                                        "overallRecommendedFix":  "source_registry_mode_review",
+                                        "evaluatedItemCount":  2,
+                                        "wouldStripItemCount":  2,
+                                        "wouldStripFieldCount":  14,
+                                        "sourceUnmatchedCount":  0,
+                                        "decisions":  [
+                                                          {
+                                                              "itemId":  "9ebcac67-0e00-4855-90ab-d358e6cb86a0",
+                                                              "sourceName":  "Anadolu Ajansı",
+                                                              "sourceId":  "aa_guncel",
+                                                              "legalMode":  "DISABLED",
+                                                              "dryRunOnly":  true,
+                                                              "wouldStrip":  true,
+                                                              "fieldsPresent":  [
+                                                                                    "title",
+                                                                                    "summary",
+                                                                                    "shortDescription",
+                                                                                    "description",
+                                                                                    "sourceName",
+                                                                                    "canonicalUrl",
+                                                                                    "publishedAt"
+                                                                                ],
+                                                              "forbiddenFieldsPresent":  [
+                                                                                             "summary",
+                                                                                             "description"
+                                                                                         ],
+                                                              "wouldStripFields":  [
+                                                                                       "title",
+                                                                                       "summary",
+                                                                                       "shortDescription",
+                                                                                       "description",
+                                                                                       "sourceName",
+                                                                                       "canonicalUrl",
+                                                                                       "publishedAt"
+                                                                                   ],
+                                                              "allowedFields":  [
+
+                                                                                ],
+                                                              "reasonCode":  "not_production_eligible",
+                                                              "visibleInItemPayload":  [
+                                                                                           "title",
+                                                                                           "summary",
+                                                                                           "shortDescription",
+                                                                                           "sourceName",
+                                                                                           "canonicalUrl",
+                                                                                           "publishedAt"
+                                                                                       ],
+                                                              "itemPayloadFieldCount":  19,
+                                                              "forbiddenFieldDetails":  [
+                                                                                            {
+                                                                                                "field":  "title",
+                                                                                                "forbidden":  false,
+                                                                                                "wouldStrip":  true,
+                                                                                                "fieldLocation":  "item_payload",
+                                                                                                "userVisible":  true,
+                                                                                                "itemPayloadPath":  "aiTitle",
+                                                                                                "auditDerivedOnly":  false
+                                                                                            },
+                                                                                            {
+                                                                                                "field":  "summary",
+                                                                                                "forbidden":  true,
+                                                                                                "wouldStrip":  true,
+                                                                                                "fieldLocation":  "item_payload",
+                                                                                                "userVisible":  true,
+                                                                                                "itemPayloadPath":  "aiSummary",
+                                                                                                "auditDerivedOnly":  false
+                                                                                            },
+                                                                                            {
+                                                                                                "field":  "shortDescription",
+                                                                                                "forbidden":  false,
+                                                                                                "wouldStrip":  true,
+                                                                                                "fieldLocation":  "item_payload",
+                                                                                                "userVisible":  true,
+                                                                                                "itemPayloadPath":  "aiSummary",
+                                                                                                "auditDerivedOnly":  false
+                                                                                            },
+                                                                                            {
+                                                                                                "field":  "description",
+                                                                                                "forbidden":  true,
+                                                                                                "wouldStrip":  true,
+                                                                                                "fieldLocation":  "internal_only",
+                                                                                                "userVisible":  false,
+                                                                                                "itemPayloadPath":  "aiSummary (audit-derived duplicate)",
+                                                                                                "auditDerivedOnly":  true
+                                                                                            },
+                                                                                            {
+                                                                                                "field":  "sourceName",
+                                                                                                "forbidden":  false,
+                                                                                                "wouldStrip":  true,
+                                                                                                "fieldLocation":  "source_payload",
+                                                                                                "userVisible":  true,
+                                                                                                "itemPayloadPath":  "sources[0].sourceName",
+                                                                                                "auditDerivedOnly":  false
+                                                                                            },
+                                                                                            {
+                                                                                                "field":  "canonicalUrl",
+                                                                                                "forbidden":  false,
+                                                                                                "wouldStrip":  true,
+                                                                                                "fieldLocation":  "source_payload",
+                                                                                                "userVisible":  true,
+                                                                                                "itemPayloadPath":  "sources[0].url",
+                                                                                                "auditDerivedOnly":  false
+                                                                                            },
+                                                                                            {
+                                                                                                "field":  "publishedAt",
+                                                                                                "forbidden":  false,
+                                                                                                "wouldStrip":  true,
+                                                                                                "fieldLocation":  "source_payload",
+                                                                                                "userVisible":  true,
+                                                                                                "itemPayloadPath":  "sources[0].publishedAt",
+                                                                                                "auditDerivedOnly":  false
+                                                                                            }
+                                                                                        ],
+                                                              "fieldLocation":  "item_payload",
+                                                              "recommendedFix":  "source_registry_mode_review",
+                                                              "rcaSummary":  "item=9ebcac67-0e00-4855-90ab-d358e6cb86a0 source=Anadolu Ajansı (aa_guncel, DISABLED): wouldStrip=[title, summary, shortDescription, description, sourceName, canonicalUrl, publishedAt]; userVisible=[title, summary, shortDescription, sourceName, canonicalUrl, publishedAt]; fix=source_registry_mode_review"
+                                                          },
+                                                          {
+                                                              "itemId":  "05e9c6ea-78f5-4056-b75e-69e6c4c82afc",
+                                                              "sourceName":  "Anadolu Ajansı",
+                                                              "sourceId":  "aa_guncel",
+                                                              "legalMode":  "DISABLED",
+                                                              "dryRunOnly":  true,
+                                                              "wouldStrip":  true,
+                                                              "fieldsPresent":  [
+                                                                                    "title",
+                                                                                    "summary",
+                                                                                    "shortDescription",
+                                                                                    "description",
+                                                                                    "sourceName",
+                                                                                    "canonicalUrl",
+                                                                                    "publishedAt"
+                                                                                ],
+                                                              "forbiddenFieldsPresent":  [
+                                                                                             "summary",
+                                                                                             "description"
+                                                                                         ],
+                                                              "wouldStripFields":  [
+                                                                                       "title",
+                                                                                       "summary",
+                                                                                       "shortDescription",
+                                                                                       "description",
+                                                                                       "sourceName",
+                                                                                       "canonicalUrl",
+                                                                                       "publishedAt"
+                                                                                   ],
+                                                              "allowedFields":  [
+
+                                                                                ],
+                                                              "reasonCode":  "not_production_eligible",
+                                                              "visibleInItemPayload":  [
+                                                                                           "title",
+                                                                                           "summary",
+                                                                                           "shortDescription",
+                                                                                           "sourceName",
+                                                                                           "canonicalUrl",
+                                                                                           "publishedAt"
+                                                                                       ],
+                                                              "itemPayloadFieldCount":  18,
+                                                              "forbiddenFieldDetails":  [
+                                                                                            {
+                                                                                                "field":  "title",
+                                                                                                "forbidden":  false,
+                                                                                                "wouldStrip":  true,
+                                                                                                "fieldLocation":  "item_payload",
+                                                                                                "userVisible":  true,
+                                                                                                "itemPayloadPath":  "aiTitle",
+                                                                                                "auditDerivedOnly":  false
+                                                                                            },
+                                                                                            {
+                                                                                                "field":  "summary",
+                                                                                                "forbidden":  true,
+                                                                                                "wouldStrip":  true,
+                                                                                                "fieldLocation":  "item_payload",
+                                                                                                "userVisible":  true,
+                                                                                                "itemPayloadPath":  "aiSummary",
+                                                                                                "auditDerivedOnly":  false
+                                                                                            },
+                                                                                            {
+                                                                                                "field":  "shortDescription",
+                                                                                                "forbidden":  false,
+                                                                                                "wouldStrip":  true,
+                                                                                                "fieldLocation":  "item_payload",
+                                                                                                "userVisible":  true,
+                                                                                                "itemPayloadPath":  "aiSummary",
+                                                                                                "auditDerivedOnly":  false
+                                                                                            },
+                                                                                            {
+                                                                                                "field":  "description",
+                                                                                                "forbidden":  true,
+                                                                                                "wouldStrip":  true,
+                                                                                                "fieldLocation":  "internal_only",
+                                                                                                "userVisible":  false,
+                                                                                                "itemPayloadPath":  "aiSummary (audit-derived duplicate)",
+                                                                                                "auditDerivedOnly":  true
+                                                                                            },
+                                                                                            {
+                                                                                                "field":  "sourceName",
+                                                                                                "forbidden":  false,
+                                                                                                "wouldStrip":  true,
+                                                                                                "fieldLocation":  "source_payload",
+                                                                                                "userVisible":  true,
+                                                                                                "itemPayloadPath":  "sources[0].sourceName",
+                                                                                                "auditDerivedOnly":  false
+                                                                                            },
+                                                                                            {
+                                                                                                "field":  "canonicalUrl",
+                                                                                                "forbidden":  false,
+                                                                                                "wouldStrip":  true,
+                                                                                                "fieldLocation":  "source_payload",
+                                                                                                "userVisible":  true,
+                                                                                                "itemPayloadPath":  "sources[0].url",
+                                                                                                "auditDerivedOnly":  false
+                                                                                            },
+                                                                                            {
+                                                                                                "field":  "publishedAt",
+                                                                                                "forbidden":  false,
+                                                                                                "wouldStrip":  true,
+                                                                                                "fieldLocation":  "source_payload",
+                                                                                                "userVisible":  true,
+                                                                                                "itemPayloadPath":  "sources[0].publishedAt",
+                                                                                                "auditDerivedOnly":  false
+                                                                                            }
+                                                                                        ],
+                                                              "fieldLocation":  "item_payload",
+                                                              "recommendedFix":  "source_registry_mode_review",
+                                                              "rcaSummary":  "item=05e9c6ea-78f5-4056-b75e-69e6c4c82afc source=Anadolu Ajansı (aa_guncel, DISABLED): wouldStrip=[title, summary, shortDescription, description, sourceName, canonicalUrl, publishedAt]; userVisible=[title, summary, shortDescription, sourceName, canonicalUrl, publishedAt]; fix=source_registry_mode_review"
+                                                          }
+                                                      ]
+                                    },
+    "pr29BaselineNote":  "PR #29 smoke: evaluatedItemCount=1, wouldStripFieldCount=7 per item; current feed may have more published items"
+}
