@@ -11,6 +11,13 @@ Haber Radarı faz kanıtları. Git'te izlenen dosyalar aşağıdadır.
 | [source-registry-ssot-v0-plan.md](../docs/architecture/source-registry-ssot-v0-plan.md) | SSOT v0 hazırlık planı |
 | [source-registry-ssot-v0-plan (evidence)](architecture/source-registry-ssot-v0-plan.md) | Plan PR kanıt özeti |
 
+## Play / B5 HTTPS (prod readiness)
+
+| Belge | Özet |
+|-------|------|
+| [prod-https-tls-readiness-b5-v0.md](play/prod-https-tls-readiness-b5-v0.md) | B5 audit — `PROD_HTTPS_PENDING` |
+| [ops-prod-https-tls-plan-v0.md](play/ops-prod-https-tls-plan-v0.md) | Ops plan (canlı değişiklik yok) — implementation öncesi checklist |
+
 ## v0.6.x — Smart Feed + Smart Digest
 
 | Faz | Özet | Ana dosyalar |
