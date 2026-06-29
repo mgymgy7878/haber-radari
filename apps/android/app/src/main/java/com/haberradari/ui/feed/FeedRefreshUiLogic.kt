@@ -24,10 +24,18 @@ object FeedRefreshUiLogic {
         return "Son kayıtlı haberler gösteriliyor.$age"
     }
 
-    fun cachedErrorBannerMessage(cacheAgeText: String?): String {
+    fun cachedModeBannerTitle(): String = "Önbellek modu"
+
+    fun cachedModeBannerDescription(cacheAgeText: String?): String {
         val age = cacheAgeText?.takeIf { it.isNotBlank() }?.let { " ($it)" }.orEmpty()
-        return "Bağlantı alınamadı; son kayıtlı haberler gösteriliyor.$age"
+        return "Backend bağlantısı alınamadı; son kayıtlı haberler gösteriliyor.$age"
     }
+
+    fun cachedModeRetryHint(): String = "Yenile ile tekrar deneyebilirsin."
+
+    /** Geriye dönük test uyumu — birleşik metin. */
+    fun cachedErrorBannerMessage(cacheAgeText: String?): String =
+        "${cachedModeBannerTitle()}\n${cachedModeBannerDescription(cacheAgeText)}"
 
     fun errorWithCachedContentMessage(errorMessage: String, cacheAgeText: String?): String {
         val age = cacheAgeText?.takeIf { it.isNotBlank() }?.let { " ($it)" }.orEmpty()
@@ -92,7 +100,7 @@ object FeedRefreshUiLogic {
 
     fun formatRefreshOutcomeLabel(outcome: RefreshOutcome?): String? = when (outcome) {
         RefreshOutcome.SUCCESS -> "Yenileme tamamlandı"
-        RefreshOutcome.FAILED_SHOWING_CACHE -> "Yenileme başarısız — önbellek korundu"
+        RefreshOutcome.FAILED_SHOWING_CACHE -> "Önbellek modu"
         RefreshOutcome.FAILED_NO_CACHE -> "Yenileme başarısız"
         RefreshOutcome.SKIPPED_NO_ACTIVE_SOURCES -> "Yenileme atlandı — aktif kaynak yok"
         null -> null

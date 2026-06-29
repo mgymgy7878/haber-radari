@@ -189,7 +189,6 @@ private fun FeedContentBody(
         } else if (state.lastError != null && state.isShowingCachedData) {
             CachedErrorBanner(
                 cacheAgeText = state.cacheAgeText,
-                errorMessage = state.lastError,
                 onRetry = onRefresh,
             )
         } else if (state.lastError != null) {
@@ -399,29 +398,32 @@ private fun PersonalFeedEmptyState(
 @Composable
 private fun CachedErrorBanner(
     cacheAgeText: String?,
-    errorMessage: String?,
     onRetry: () -> Unit,
 ) {
     androidx.compose.material3.Surface(
         modifier = Modifier.fillMaxWidth(),
-        color = MaterialTheme.colorScheme.errorContainer
+        color = MaterialTheme.colorScheme.secondaryContainer,
     ) {
         Column(modifier = Modifier.padding(12.dp)) {
             Text(
-                text = FeedRefreshUiLogic.cachedErrorBannerMessage(cacheAgeText),
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onErrorContainer
+                text = FeedRefreshUiLogic.cachedModeBannerTitle(),
+                style = MaterialTheme.typography.titleSmall,
+                color = MaterialTheme.colorScheme.onSecondaryContainer,
             )
-            if (!errorMessage.isNullOrBlank()) {
-                Spacer(modifier = Modifier.height(2.dp))
-                Text(
-                    text = errorMessage,
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onErrorContainer.copy(alpha = 0.8f)
-                )
-            }
+            Spacer(modifier = Modifier.height(4.dp))
+            Text(
+                text = FeedRefreshUiLogic.cachedModeBannerDescription(cacheAgeText),
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSecondaryContainer,
+            )
+            Spacer(modifier = Modifier.height(4.dp))
+            Text(
+                text = FeedRefreshUiLogic.cachedModeRetryHint(),
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSecondaryContainer.copy(alpha = 0.85f),
+            )
             Spacer(modifier = Modifier.height(8.dp))
-            Button(onClick = onRetry) {
+            androidx.compose.material3.OutlinedButton(onClick = onRetry) {
                 Text(stringResource(id = com.haberradari.R.string.retry))
             }
         }

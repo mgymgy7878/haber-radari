@@ -91,10 +91,37 @@ class FeedRefreshUiLogicTest {
     }
 
     @Test
-    fun `cached error banner message includes cache hint`() {
-        val msg = FeedRefreshUiLogic.cachedErrorBannerMessage("3 dk önce güncellendi")
-        assertTrue(msg.contains("Bağlantı alınamadı"))
+    fun `cached mode banner title and description`() {
+        assertEquals("Önbellek modu", FeedRefreshUiLogic.cachedModeBannerTitle())
+        val desc = FeedRefreshUiLogic.cachedModeBannerDescription("3 dk önce güncellendi")
+        assertTrue(desc.contains("Backend bağlantısı alınamadı"))
+        assertTrue(desc.contains("son kayıtlı haberler"))
+        assertTrue(desc.contains("3 dk önce"))
+        assertEquals("Yenile ile tekrar deneyebilirsin.", FeedRefreshUiLogic.cachedModeRetryHint())
+    }
+
+    @Test
+    fun `cached error banner message uses cache mode copy`() {
+        val msg = FeedRefreshUiLogic.cachedErrorBannerMessage(null)
+        assertTrue(msg.contains("Önbellek modu"))
+        assertTrue(msg.contains("Backend bağlantısı alınamadı"))
         assertTrue(msg.contains("son kayıtlı haberler"))
+    }
+
+    @Test
+    fun `cached mode copy avoids verification language`() {
+        val risky = listOf("doğrulandı", "kesin doğru", "kanıtlandı", "yalan haber")
+        val texts = listOf(
+            FeedRefreshUiLogic.cachedModeBannerTitle(),
+            FeedRefreshUiLogic.cachedModeBannerDescription(null),
+            FeedRefreshUiLogic.cachedModeRetryHint(),
+            FeedRefreshUiLogic.formatRefreshOutcomeLabel(FeedRefreshUiLogic.RefreshOutcome.FAILED_SHOWING_CACHE)!!,
+        )
+        texts.forEach { text ->
+            risky.forEach { term ->
+                assertFalse(text.lowercase().contains(term))
+            }
+        }
     }
 
     @Test

@@ -53,7 +53,7 @@ object FeedUsabilityUiLogic {
     fun formatConnectionStatusLabel(status: FeedConnectionStatus): String = when (status) {
         FeedConnectionStatus.LIVE -> "Canlı akış"
         FeedConnectionStatus.CACHED -> "Önbellekten gösteriliyor"
-        FeedConnectionStatus.ERROR_WITH_CACHE -> "Bağlantı hatası — önbellek"
+        FeedConnectionStatus.ERROR_WITH_CACHE -> "Önbellek modu"
         FeedConnectionStatus.ERROR -> "Bağlantı hatası"
         FeedConnectionStatus.REFRESHING -> "Yenileniyor…"
     }
