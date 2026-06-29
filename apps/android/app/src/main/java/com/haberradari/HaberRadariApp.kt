@@ -1,6 +1,7 @@
 package com.haberradari
 
 import android.app.Application
+import com.haberradari.config.FeatureConfig
 import com.haberradari.data.local.AppDatabase
 import com.haberradari.data.repository.NewsRepository
 import com.haberradari.sync.RssSyncWorker
@@ -32,6 +33,8 @@ class HaberRadariApp : Application() {
 
     override fun onCreate() {
         super.onCreate()
+
+        FeatureConfig.assertReleaseSmartFeedUrlPolicy()
 
         // Veritabanı başlat
         database = AppDatabase.getInstance(this)
