@@ -13,6 +13,7 @@ import { buildSourceSignalPublishDryRun } from '../source-scoring/source-signal-
 import { buildLegalContentGuardrailDryRun } from '../source-registry/legal-content-guardrail-dry-run.js';
 import { buildTitleLinkOnlySummaryPolicyAudit } from '../source-registry/title-link-only-summary-policy-audit.js';
 import { loadSourceRegistryV0 } from '../source-registry/source-registry-loader.js';
+import { suppressUserVisibleSummaryForSource } from '../source-registry/title-link-only-payload-policy.js';
 
 let cachedFeed: any = null;
 let cacheTimestamp = 0;
@@ -43,6 +44,7 @@ export async function smartFeedRoute(req: FastifyRequest, reply: FastifyReply) {
     const publishGate = new PublishGate();
 
     const ingestResult = await ingestService.fetchAll();
+    const sourceRegistry = loadSourceRegistryV0();
     
     const latestRssPreview: any[] = [];
     if (includeLatest) {
@@ -59,7 +61,11 @@ export async function smartFeedRoute(req: FastifyRequest, reply: FastifyReply) {
                 topicQuality: "NORMAL",
                 sourceCount: 1,
                 reasonCode: "LatestRss",
-                shortDescription: a.shortDescription,
+                shortDescription: suppressUserVisibleSummaryForSource(
+                  sourceRegistry,
+                  a.sourceId,
+                  a.shortDescription,
+                ),
                 originalUrl: a.originalUrl,
                 publishedAt: a.publishedAt,
                 sourceNames: [a.sourceName]
@@ -89,7 +95,11 @@ export async function smartFeedRoute(req: FastifyRequest, reply: FastifyReply) {
         const sortedArticles = sortClusterArticles(cluster.articles);
         const leadArticle = sortedArticles[0];
         const bestTitle = leadArticle.originalTitle;
-        const bestSummary = leadArticle.shortDescription;
+        const bestSummary = suppressUserVisibleSummaryForSource(
+          sourceRegistry,
+          leadArticle.sourceId,
+          leadArticle.shortDescription,
+        );
         const combinedText = (bestTitle + ' ' + bestSummary).toLowerCase();
         const clusterUniqueSourceCount = uniqueSourceCount(cluster.articles);
 
@@ -152,7 +162,11 @@ export async function smartFeedRoute(req: FastifyRequest, reply: FastifyReply) {
               sourceNames: Array.from(new Set(cluster.articles.map(a => a.sourceName))),
               originalUrl: cluster.articles[0].originalUrl,
               publishedAt: cluster.articles[0].publishedAt,
-              shortDescription: cluster.articles[0].shortDescription,
+              shortDescription: suppressUserVisibleSummaryForSource(
+                sourceRegistry,
+                cluster.articles[0].sourceId,
+                cluster.articles[0].shortDescription,
+              ),
               reasonCode: evaluation.reason
            });
         }
@@ -269,12 +283,12 @@ export async function smartFeedRoute(req: FastifyRequest, reply: FastifyReply) {
 
     const legalContentGuardrailDryRun = buildLegalContentGuardrailDryRun({
       items: itemsWithSourceSignal,
-      registry: loadSourceRegistryV0(),
+      registry: sourceRegistry,
     });
 
     const titleLinkOnlySummaryPolicyAudit = buildTitleLinkOnlySummaryPolicyAudit({
       items: itemsWithSourceSignal,
-      registry: loadSourceRegistryV0(),
+      registry: sourceRegistry,
     });
 
     const candidateClusterCount = clusters.length;

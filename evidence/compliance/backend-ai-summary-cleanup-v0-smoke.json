@@ -1,0 +1,44 @@
+{
+  "generatedAt": 1782748745501,
+  "health": "200",
+  "endpoint": "/api/v1/smart-feed?bypassCache=1&includeLatest=1",
+  "latestRssPreviewSample": [
+    {
+      "id": "e1d73c4547166a08985d6486971212b1",
+      "title": "Son dakika deprem mi oldu? Az önce deprem nerede oldu? İstanbul, Ankara, İzmir v",
+      "shortDescription": "",
+      "originalUrl": "https://www.ntv.com.tr/turkiye/son-dakika-deprem-mi-oldu-az-once-deprem-nerede-oldu-istanbul-ankara-izmir-ve-il-il-afad-son-depremler-29-haziran-2026-1730561",
+      "sourceNames": [
+        "NTV"
+      ]
+    },
+    {
+      "id": "3adbfd0a483c43f5f49b4e65913b778c",
+      "title": "Küresel ölçekte iş gücünü azaltma eğilimi sürüyor",
+      "shortDescription": "",
+      "originalUrl": "https://www.haberturk.com/kuresel-olcekte-is-gucunu-azaltma-egilimi-devam-ediyor-3894922-ekonomi",
+      "sourceNames": [
+        "Habertürk"
+      ]
+    },
+    {
+      "id": "5107a55d6d775fed37bedea4305da5be",
+      "title": "AB'de 150 euroluk gümrük muafiyeti kalkıyor",
+      "shortDescription": "",
+      "originalUrl": "https://www.haberturk.com/ab-de-150-euroluk-gumruk-muafiyeti-1-temmuz-da-kalkiyor-3894921-ekonomi",
+      "sourceNames": [
+        "Habertürk"
+      ]
+    },
+    {
+      "id": "56eb05fabbc270e8d787ed3c2b031009",
+      "title": "Çulhacı: Dijitalleşmenin ve yapay zekanın hayatın her alanını dönüştürdüğü bir ç",
+      "shortDescription": "",
+      "originalUrl": "https://www.haberturk.com/culhaci-dijitallesmenin-ve-yapay-zekanin-hayatin-her-alanini-donusturdugu-bir-cagdayiz-3894905-ekonomi",
+      "sourceNames": [
+        "Habertürk"
+      ]
+    }
+  ],
+  "forbiddenFieldScan": "none"
+}

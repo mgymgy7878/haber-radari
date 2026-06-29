@@ -136,6 +136,7 @@ describe('Smart Feed Route', () => {
 
     expect(response.latestRssPreview).toBeDefined();
     expect(response.latestRssPreview.length).toBe(20);
+    expect(response.latestRssPreview[0].shortDescription).toBe('');
     expect(response.latestRssPreview[0].smartDigest).toBeUndefined();
   });
 
@@ -176,6 +177,7 @@ describe('Smart Feed Route', () => {
 
     expect(response.items.length).toBeGreaterThan(0);
     expect(response.items[0].smartDigest.status).toBe('DISABLED');
+    expect(response.items[0].aiSummary).toBe('');
     expect(response.items[0].fullText).toBeUndefined();
     expect(response.smartDigestStats.enabled).toBe(false);
     expect(response.smartDigestStats.provider).toBe('disabled');
@@ -298,6 +300,27 @@ describe('Smart Feed Route', () => {
     expect(response.debugStats.titleLinkOnlySummaryPolicyAudit.version).toBe('v0');
     for (const decision of response.debugStats.titleLinkOnlySummaryPolicyAudit.decisions) {
       expect(decision.dryRunOnly).toBe(true);
+    }
+    expect(response.debugStats.titleLinkOnlySummaryPolicyAudit.userVisibleSummaryItemCount).toBe(0);
+  });
+
+  it('rawPreview shortDescription suppressed for TITLE_LINK_ONLY source', async () => {
+    const mockReply = {
+      send: vi.fn().mockReturnThis(),
+      status: vi.fn().mockReturnThis(),
+    };
+
+    const mockReq = {
+      query: { bypassCache: '1', includeRaw: '1' },
+      log: { error: vi.fn() },
+    } as any;
+
+    await smartFeedRoute(mockReq, mockReply as any);
+    const response = mockReply.send.mock.calls[0][0];
+
+    const rawWithDesc = response.rawPreview?.find((i: any) => i.shortDescription !== undefined);
+    if (rawWithDesc) {
+      expect(rawWithDesc.shortDescription).toBe('');
     }
   });
 });
