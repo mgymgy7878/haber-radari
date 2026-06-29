@@ -11,8 +11,8 @@
 |----|---------|--------|
 | B1 | Privacy Policy URL | OPEN — draft: `privacy-policy-draft-v0.md` |
 | B2 | KVKK aydınlatma | OPEN — draft: `kvkk-aydinlatma-draft-v0.md` |
-| B3 | Data Safety form | OPEN — inventory: `data-inventory-v0.md` |
-| B4 | News declaration | OPEN |
+| B3 | Data Safety form | OPEN — draft: `data-safety-draft-v0.md` |
+| B4 | News self-declaration | OPEN — draft: `news-declaration-draft-v0.md` |
 | B5 | Cleartext / HTTPS | OPEN (`usesCleartextTraffic=true` debug) |
 | B6 | Mobile API/LLM keys | PASS (server-side only) |
 | B7 | Forbidden product language | REVIEW |
