@@ -150,9 +150,10 @@ describe('source-registry runtime drift snapshot (read-only)', () => {
     expect(apiIds).not.toContain('ntv_turkiye');
   });
 
-  it('aa_guncel runtime enabled=true — hedef DISABLED ile çelişir (dokümantasyon)', () => {
+  it('aa_guncel runtime enabled=false — registry DISABLED ile uyumlu', () => {
     const aa = RSS_SOURCES.find((s) => s.id === 'aa_guncel');
-    expect(aa?.enabled).toBe(true);
+    expect(aa?.enabled).toBe(false);
+    expect(aa?.disabledReason).toBe('registry_legal_mode_disabled_no_license');
     const target = loadFixtures().find(
       (f) => f.sourceId === 'aa_guncel' && f.legalMode === 'DISABLED',
     );

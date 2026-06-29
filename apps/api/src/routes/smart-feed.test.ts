@@ -13,13 +13,17 @@ vi.mock('../services/rss-ingest.js', () => {
           sourceStatuses: [],
           articles: Array.from({ length: 20 }).map((_, i) => ({
             id: `id-${i}`,
-            sourceId: 'aa_guncel',
-            sourceName: 'Mock',
+            sourceId: 'ntv_son_dakika',
+            sourceName: 'NTV',
+            sourceUrl: 'https://www.ntv.com.tr/son-dakika.rss',
             originalTitle: i === 0 ? 'Deprem uyarısı geldi' : `UniqueWordA${i} UniqueWordB${i} UniqueWordC${i} UniqueWordD${i}`,
             shortDescription: 'desc',
             categoryHint: 'Gündem',
             publishedAt: Date.now() - i * 1000,
             originalUrl: `http://example.com/${i}`,
+            fetchedAt: Date.now(),
+            language: 'tr',
+            country: 'TR',
           })),
         };
       }
@@ -36,7 +40,8 @@ vi.mock('../engine/publish-gate.js', () => {
       RAW_ONLY: 'RAW_ONLY',
       FILTERED_OUT: 'FILTERED_OUT',
     },
-    ContentType: { GENERAL: 'GENERAL' },
+    ContentType: { GENERAL: 'GENERAL', DISASTER_ALERT: 'DISASTER_ALERT' },
+    TopicQuality: { CRITICAL: 'CRITICAL', NORMAL: 'NORMAL' },
     PublishGate: class {
       evaluate(cluster: any) {
         if (cluster.articles[0].originalTitle.includes('Deprem')) {
