@@ -27,9 +27,9 @@ Paralel ürün işleri:
 
 | # | Blocker | Mevcut durum | Release gate |
 |---|---------|--------------|--------------|
-| B1 | Privacy Policy URL | Yok / doğrulanmamış | Play Console’da zorunlu |
-| B2 | KVKK aydınlatma metni | Yok / doğrulanmamış | TR kullanıcı için gerekli |
-| B3 | Data Safety beyanı | Yapılmadı | Play formu gerçek akışla uyumlu olmalı |
+| B1 | Privacy Policy URL | Taslak v0 oluşturuldu (`privacy-policy-draft-v0.md`); **canlı URL yok** | Play Console’da zorunlu |
+| B2 | KVKK aydınlatma metni | Taslak v0 oluşturuldu (`kvkk-aydinlatma-draft-v0.md`); **hukuk teyidi yok** | TR kullanıcı için gerekli |
+| B3 | Data Safety beyanı | Envanter taslağı (`data-inventory-v0.md`); form yapılmadı | Play formu gerçek akışla uyumlu olmalı |
 | B4 | News & Magazine declaration | Yapılmadı | Haber kategorisi beyanı |
 | B5 | HTTPS / cleartext | `usesCleartextTraffic="true"` (debug) | Production release build’de kapalı |
 | B6 | Mobil API/LLM key | Şu an uyumlu görünüyor | Sürekli denetim |
@@ -52,7 +52,7 @@ Dokümanda açıkça yer alması gereken konular (hukuk danışmanı teyidi gere
 - Çocuklara yönelik politika (hedef kitle 13+ ise)
 - RSS/metadata ve harici haber linklerine yönlendirme politikası
 
-**Blocker:** Yayın öncesi canlı URL + Play Console alanı doldurulmalı.
+**Blocker:** Yayın öncesi canlı URL + Play Console alanı doldurulmalı. Taslak: [privacy-policy-draft-v0.md](./privacy-policy-draft-v0.md) — **B1 hâlâ OPEN**.
 
 ---
 
@@ -68,7 +68,7 @@ Türkiye’deki kullanıcılar için KVKK kapsamında **aydınlatma metni** gere
 | Aktarım | Yurt içi / yurt dışı (hosting, analytics) |
 | m.11 hakları | Silme, düzeltme, itiraz — süreç tanımı |
 
-Hesap sistemi olmadığında bile cihaz/cache/analytics verisi KVKK kapsamına girebilir — **hukuk danışmanı teyidi gerekir**.
+Hesap sistemi olmadığında bile cihaz/cache/analytics verisi KVKK kapsamına girebilir — **hukuk danışmanı teyidi gerekir**. Taslak: [kvkk-aydinlatma-draft-v0.md](./kvkk-aydinlatma-draft-v0.md) — **B2 hâlâ OPEN**.
 
 ---
 
