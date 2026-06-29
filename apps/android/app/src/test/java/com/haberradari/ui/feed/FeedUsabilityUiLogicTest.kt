@@ -67,6 +67,14 @@ class FeedUsabilityUiLogicTest {
     }
 
     @Test
+    fun `connection status label for cache mode is neutral`() {
+        val label = FeedUsabilityUiLogic.formatConnectionStatusLabel(
+            FeedUsabilityUiLogic.FeedConnectionStatus.ERROR_WITH_CACHE,
+        )
+        assertEquals("Önbellek modu", label)
+    }
+
+    @Test
     fun `connection status ERROR_WITH_CACHE when error and cache`() {
         val state = FeedUiState(lastError = "fail", isShowingCachedData = true)
         assertEquals(
