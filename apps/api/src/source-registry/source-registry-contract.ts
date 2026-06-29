@@ -97,6 +97,7 @@ export function validatePublishEligibility(entry: SourceRegistryEntry): Contract
   const isAgency =
     entry.sourceType === 'AGENCY' ||
     entry.sourceType === 'WIRE' ||
+    entry.sourceType === 'news_agency' ||
     AGENCY_SOURCE_IDS.has(entry.sourceId);
 
   if (isAgency && entry.licenseStatus !== 'active' && entry.publishEligible) {

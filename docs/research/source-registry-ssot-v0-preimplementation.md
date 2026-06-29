@@ -36,6 +36,8 @@ Bu adım yalnızca:
 
 içindir. `RSS_SOURCES`, `rss-ingest.ts`, `PublishGate.evaluate()`, Android seed ve UI **değiştirilmez**. Fixture’lar production config’e import edilmez.
 
+**Implementation v0 (read-only adapter):** `source-registry-v0.json` + loader/validator/legal-field-guard eklendi; production ingest’e **henüz bağlanmadı**. Bkz. [source-registry-ssot-v0-implementation-note.md](./source-registry-ssot-v0-implementation-note.md).
+
 ---
 
 ## 2. Current Registry Map
