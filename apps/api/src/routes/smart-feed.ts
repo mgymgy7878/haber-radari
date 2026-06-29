@@ -11,6 +11,7 @@ import { buildSourceScoreShadow } from '../source-scoring/shadow-score-builder.j
 import { attachSourceSignalsToItems } from '../source-scoring/source-signal-mapper.js';
 import { buildSourceSignalPublishDryRun } from '../source-scoring/source-signal-publish-dry-run.js';
 import { buildLegalContentGuardrailDryRun } from '../source-registry/legal-content-guardrail-dry-run.js';
+import { buildTitleLinkOnlySummaryPolicyAudit } from '../source-registry/title-link-only-summary-policy-audit.js';
 import { loadSourceRegistryV0 } from '../source-registry/source-registry-loader.js';
 
 let cachedFeed: any = null;
@@ -271,6 +272,11 @@ export async function smartFeedRoute(req: FastifyRequest, reply: FastifyReply) {
       registry: loadSourceRegistryV0(),
     });
 
+    const titleLinkOnlySummaryPolicyAudit = buildTitleLinkOnlySummaryPolicyAudit({
+      items: itemsWithSourceSignal,
+      registry: loadSourceRegistryV0(),
+    });
+
     const candidateClusterCount = clusters.length;
     const totalAllocated = publishedCount + hiddenCount;
     
@@ -315,6 +321,7 @@ export async function smartFeedRoute(req: FastifyRequest, reply: FastifyReply) {
         sourceScoreShadow,
         sourceSignalPublishDryRun,
         legalContentGuardrailDryRun,
+        titleLinkOnlySummaryPolicyAudit,
       },
       items: itemsWithSourceSignal,
       smartDigestStats,
