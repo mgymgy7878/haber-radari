@@ -29,8 +29,8 @@ Paralel ürün işleri:
 |---|---------|--------------|--------------|
 | B1 | Privacy Policy URL | Taslak v0 oluşturuldu (`privacy-policy-draft-v0.md`); **canlı URL yok** | Play Console’da zorunlu |
 | B2 | KVKK aydınlatma metni | Taslak v0 oluşturuldu (`kvkk-aydinlatma-draft-v0.md`); **hukuk teyidi yok** | TR kullanıcı için gerekli |
-| B3 | Data Safety beyanı | Envanter taslağı (`data-inventory-v0.md`); form yapılmadı | Play formu gerçek akışla uyumlu olmalı |
-| B4 | News & Magazine declaration | Yapılmadı | Haber kategorisi beyanı |
+| B3 | Data Safety beyanı | Taslak v0 (`data-safety-draft-v0.md`); **Play Console submission pending** | Play formu gerçek akışla uyumlu olmalı |
+| B4 | News & Magazine declaration | Taslak v0 (`news-declaration-draft-v0.md`); **Play Console submission pending** | Haber kategorisi beyanı |
 | B5 | HTTPS / cleartext | `usesCleartextTraffic="true"` (debug) | Production release build’de kapalı |
 | B6 | Mobil API/LLM key | Şu an uyumlu görünüyor | Sürekli denetim |
 | B7 | Yanıltıcı ürün dili | Çoğunlukla uyumlu; denetim gerekli | Store + in-app metin review |
