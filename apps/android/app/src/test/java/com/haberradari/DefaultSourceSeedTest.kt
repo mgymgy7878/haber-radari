@@ -52,6 +52,24 @@ class DefaultSourceSeedTest {
         }
 
         override suspend fun getSourceById(sourceId: String): Source? = sources[sourceId]
+
+        override suspend fun updateSeedMetadata(
+            id: String,
+            name: String,
+            feedUrl: String,
+            legalMode: LegalMode,
+            category: String,
+            authorityLevel: SourceAuthority,
+        ) {
+            val existing = sources[id] ?: return
+            sources[id] = existing.copy(
+                name = name,
+                feedUrl = feedUrl,
+                legalMode = legalMode,
+                category = category,
+                authorityLevel = authorityLevel,
+            )
+        }
         
         fun forceUpdateSource(source: Source) {
             // Helper to simulate a manual Room UPDATE
