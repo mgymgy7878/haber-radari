@@ -2,21 +2,28 @@
 
 > **Tür:** Yayın öncesi compliance blocker listesi (docs-only).  
 > **Hukuki statü:** Bu belge hukuki tavsiye değildir; risk sınıflandırması ve operasyon checklist’idir.  
-> **Son güncelleme:** 2026-06-29
+> **Son güncelleme:** 2026-06-29 (PR #51 sonrası B5 refresh)
 
 ---
 
 ## Executive Summary
 
-Haber Radarı Google Play ve KVKK açısından yayına çıkmadan önce tamamlanması gereken maddeleri bu belgede toplar. Mevcut teknik durumda en kritik blocker’lar: **yayınlanabilir Privacy Policy URL eksikliği**, **KVKK aydınlatma metni**, **Data Safety formunun gerçek veri akışıyla hizalanması**, **News uygulaması self-declaration**, ve **production’da cleartext HTTP’nin kapatılması**.
+Haber Radarı Google Play ve KVKK açısından yayına çıkmadan önce tamamlanması gereken maddeleri bu belgede toplar. Mevcut teknik durumda en kritik blocker’lar: **yayınlanabilir Privacy Policy URL eksikliği**, **KVKK aydınlatma metni**, **Data Safety formunun gerçek veri akışıyla hizalanması**, **News uygulaması self-declaration**, ve **prod HTTPS/TLS + hostname kanıtı (B5)**.
+
+**B5 notu (PR #47 / #50 / #51 sonrası):** Android release cleartext hardening **tamamlandı** (PR #47). B5 formal kapanışı için **prod API hostname + TLS termination + HTTPS smoke evidence** hâlâ eksik — `B5_STATUS=PROD_HTTPS_PENDING`. Sahte PASS yazılmaz.
 
 Paralel ürün işleri:
 
 | PR / iş | Durum |
 |---------|--------|
+| PR #47 Android release cleartext hardening | **Merged** — release NSC deny; debug localhost istisnası |
+| PR #49 Android Room seed legalMode refresh | **Merged** |
+| PR #50 B5 audit evidence | **Merged** — `evidence/play/prod-https-tls-readiness-b5-v0.md` |
+| PR #51 Prod HTTPS/TLS ops plan | **Merged** — `evidence/play/ops-prod-https-tls-plan-v0.md` |
 | PR #36 Android `aiSummary` fallback | **Draft — merge edilmemeli**; cihaz smoke bekleniyor |
 | Backend `aiSummary` cleanup | PR #36 cihaz smoke sonrası |
 | Aktif legal guard binding | Cleanup + Play/KVKK hazırlığı sonrası |
+| `ops/prod-https-tls-implementation-v0` | **Bekliyor** — canlı etki; açık onay gerekir |
 
 Ürün dili çizgisi korunur: **kaynak sinyali**, **kaynak profili**, **kaynak sağlığı**, **orijinal kaynağa yönlendirme**, **yardımcı değerlendirme**.  
 *“Bu sinyal haberin doğruluğunu tek başına garanti etmez.”*
@@ -31,7 +38,7 @@ Paralel ürün işleri:
 | B2 | KVKK aydınlatma metni | Taslak v0 oluşturuldu (`kvkk-aydinlatma-draft-v0.md`); **hukuk teyidi yok** | TR kullanıcı için gerekli |
 | B3 | Data Safety beyanı | Taslak v0 (`data-safety-draft-v0.md`); **Play Console submission pending** | Play formu gerçek akışla uyumlu olmalı |
 | B4 | News & Magazine declaration | Taslak v0 (`news-declaration-draft-v0.md`); **Play Console submission pending** | Haber kategorisi beyanı |
-| B5 | HTTPS / cleartext | **OPEN** — `usesCleartextTraffic="true"` (main manifest); hardening plan: [release-https-cleartext-hardening-plan-v0.md](./release-https-cleartext-hardening-plan-v0.md) | Production release build’de kapalı |
+| B5 | HTTPS / cleartext / prod TLS | **`PROD_HTTPS_PENDING`** — release cleartext **DONE** (PR #47); prod hostname/TLS/smoke **eksik** (PR #50 audit, PR #51 ops plan). Evidence: [prod-https-tls-readiness-b5-v0.md](../../evidence/play/prod-https-tls-readiness-b5-v0.md), [ops-prod-https-tls-plan-v0.md](../../evidence/play/ops-prod-https-tls-plan-v0.md) | Prod HTTPS endpoint + TLS kanıtı + release `-PprodSmartFeedBaseUrl=https://...` |
 | B6 | Mobil API/LLM key | Şu an uyumlu görünüyor | Sürekli denetim |
 | B7 | Yanıltıcı ürün dili | Çoğunlukla uyumlu; denetim gerekli | Store + in-app metin review |
 | B8 | PR #36 cihaz smoke | Beklemede | Fallback merge gate |
@@ -84,7 +91,7 @@ Google Play Data Safety formu, uygulamanın **gerçek** veri pratiğiyle birebir
 | Uygulama etkileşimleri | Room cache, feed fetch logları | “Collected” / “Not shared” — teyit |
 | Cihaz veya diğer tanımlayıcılar | Crash/analytics eklenirse değişir | Şimdilik minimal varsayım |
 | Konum | **Toplanmıyor** (v0) | Formda konum yok |
-| Şifrelenmiş transit | Production HTTPS hedefi | Cleartext debug ≠ production |
+| Şifrelenmiş transit | Release cleartext kapalı (PR #47); prod HTTPS hostname **TBD** | Debug HTTP ≠ production; B5 prod TLS pending |
 
 **Checklist:**
 
@@ -110,13 +117,27 @@ Haber uygulaması olarak Play self-declaration gerektirir.
 
 ## Network security / HTTPS / cleartext
 
-| Ortam | Mevcut | Hedef |
-|-------|--------|-------|
-| Debug APK | `android:usesCleartextTraffic="true"` | Yerel `127.0.0.1:3001` + adb reverse |
-| Production release | Henüz yapılandırılmamış | **HTTPS zorunlu**, cleartext kapalı |
-| API base URL | `FeatureConfig.smartFeedBaseUrl` debug HTTP | Production HTTPS endpoint |
+**Resmi etiket:** `B5_STATUS=PROD_HTTPS_PENDING`
 
-**Blocker:** Release build’de `usesCleartextTraffic=false` + network security config ile yalnızca HTTPS (veya pinning politikası — teyit gerekir). Uygulama planı: [release-https-cleartext-hardening-plan-v0.md](./release-https-cleartext-hardening-plan-v0.md) — **B5 hâlâ OPEN**.
+| Ortam | Mevcut (main, PR #47 sonrası) | Hedef |
+|-------|----------------------------------|-------|
+| **Debug APK** | `networkSecurityConfig`: base deny + `127.0.0.1` / `localhost` / `10.0.2.2` cleartext istisnası; `SMART_FEED_BASE_URL=http://127.0.0.1:3001` | Yerel geliştirme + adb reverse |
+| **Production release** | Main manifest **`usesCleartextTraffic` yok**; main NSC global `cleartextTrafficPermitted=false`; release `SMART_FEED_BASE_URL=""` (veya build-time `-PprodSmartFeedBaseUrl=https://...`) | **HTTPS zorunlu**; cleartext kapalı |
+| **API base URL** | Debug: HTTP localhost; Release: boş veya HTTPS Gradle property | Onaylı prod hostname + TLS |
+
+### B5 alt durumu
+
+| B5 bileşeni | Durum |
+|-------------|--------|
+| Android release cleartext hardening | **DONE** — PR #47 |
+| Debug cleartext prod’a sızıyor mu? | **Hayır** — debug source set only |
+| Prod API hostname | **PENDING** — `PROD_HOSTNAME=TBD` (TEYİT GEREKİR) |
+| TLS / reverse proxy ops | **PENDING** |
+| `/health` HTTPS smoke evidence | **PENDING** |
+| Release build gerçek HTTPS URL evidence | **PENDING** |
+| Play formal B5 PASS | **PENDING** |
+
+**Blocker (kalan):** Prod hostname kararı, DNS, TLS termination, HTTPS smoke (`curl`/`openssl`), release build `-PprodSmartFeedBaseUrl=https://<prod-host>`. Implementation: `ops/prod-https-tls-implementation-v0` (açık onay). Plan: [ops-prod-https-tls-plan-v0.md](../../evidence/play/ops-prod-https-tls-plan-v0.md). Audit: [prod-https-tls-readiness-b5-v0.md](../../evidence/play/prod-https-tls-readiness-b5-v0.md). Eski hardening planı (pre-#47): [release-https-cleartext-hardening-plan-v0.md](./release-https-cleartext-hardening-plan-v0.md) — implementation kanıtı: [release-https-cleartext-hardening-v0.md](../../evidence/compliance/release-https-cleartext-hardening-v0.md).
 
 ---
 
@@ -213,7 +234,7 @@ Yayın (internal / closed / production) öncesi:
 - [ ] KVKK aydınlatma metni erişilebilir
 - [ ] Data Safety formu engineering review ile imzalanmış
 - [ ] News self-declaration tamamlanmış
-- [ ] Release APK: cleartext kapalı, HTTPS endpoint
+- [ ] Release APK: cleartext kapalı (PR #47 **DONE**), prod HTTPS endpoint kanıtı (B5 **PENDING**)
 - [ ] Mobil APK’da API/LLM key yok (doğrulama)
 - [ ] Store + in-app yasak dil taraması PASS
 - [ ] PR #36 cihaz smoke PASS (ayrı gate)
@@ -243,7 +264,7 @@ Yayın (internal / closed / production) öncesi:
 | Q3 | Closed testing önce mi, production sonra mı? | Ürün |
 | Q4 | TR-only mi, global mi? Data Safety farkları | Ürün / hukuk |
 | Q5 | In-app KVKK linki Settings’te mi, onboarding’de mi? | UX / hukuk |
-| Q6 | Production API hostname ve TLS sertifikası | DevOps |
+| Q6 | Production API hostname ve TLS sertifikası | DevOps — [ops-prod-https-tls-plan-v0.md](../../evidence/play/ops-prod-https-tls-plan-v0.md); hostname **TBD** |
 
 ---
 
@@ -251,4 +272,7 @@ Yayın (internal / closed / production) öncesi:
 
 - [Source plan SSOT v1](../research/haber-radari-source-plan-update-v1.md) — Bölüm 6–8
 - [TITLE_LINK_ONLY backend cleanup plan v0](../../evidence/source-registry/title-link-only-backend-cleanup-plan-v0.md)
+- [B5 audit evidence v0](../../evidence/play/prod-https-tls-readiness-b5-v0.md) — PR #50
+- [Ops prod HTTPS/TLS plan v0](../../evidence/play/ops-prod-https-tls-plan-v0.md) — PR #51
+- [Release cleartext hardening evidence v0](../../evidence/compliance/release-https-cleartext-hardening-v0.md) — PR #47
 - PR #36 — Android fallback (cihaz smoke bekliyor)
