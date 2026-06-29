@@ -156,7 +156,7 @@ function defaultFieldMapping(field: string): FieldPayloadMapping {
 
 export function countItemPayloadFields(item: SmartFeedItemForGuardrailAudit): number {
   return Object.keys(item).filter((k) => {
-    const v = (item as Record<string, unknown>)[k];
+    const v = (item as unknown as Record<string, unknown>)[k];
     return v !== undefined && v !== null;
   }).length;
 }

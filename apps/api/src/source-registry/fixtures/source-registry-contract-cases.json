@@ -13,11 +13,29 @@
     "reviewStatus": "pending",
     "publishEligible": false,
     "allowedFields": [],
-    "forbiddenFields": ["description", "summary", "body", "fullText", "contentHtml", "rawHtml", "articleText", "scrapedText", "image", "video", "audio", "caption"],
+    "forbiddenFields": [
+      "description",
+      "summary",
+      "body",
+      "fullText",
+      "contentHtml",
+      "rawHtml",
+      "articleText",
+      "scrapedText",
+      "image",
+      "video",
+      "audio",
+      "caption",
+      "ocrText",
+      "videoTranscript",
+      "aiSummary",
+      "shortDescription"
+    ],
     "licenseStatus": "none",
     "summaryPolicy": "forbidden",
     "imagePolicy": "forbidden",
-    "notes": "Hedef: yazılı lisans yok → DISABLED. Mevcut API runtime enabled=true (drift)."
+    "notes": "Hedef: yazılı lisans yok → DISABLED. Mevcut API runtime enabled=true (drift).",
+    "lastReviewedAt": null
   },
   {
     "sourceId": "aa_guncel",
@@ -28,10 +46,30 @@
     "authorityTier": "PRIMARY_WIRE_OR_AGENCY",
     "reviewStatus": "approved",
     "publishEligible": false,
-    "allowedFields": ["title", "shortDescription", "canonicalUrl", "sourceName", "publishedAt"],
-    "forbiddenFields": ["body", "fullText", "contentHtml", "rawHtml", "articleText", "scrapedText", "image", "video", "audio", "caption"],
+    "allowedFields": [
+      "title",
+      "shortDescription",
+      "canonicalUrl",
+      "sourceName",
+      "publishedAt"
+    ],
+    "forbiddenFields": [
+      "body",
+      "fullText",
+      "contentHtml",
+      "rawHtml",
+      "articleText",
+      "scrapedText",
+      "image",
+      "video",
+      "audio",
+      "caption",
+      "ocrText",
+      "videoTranscript"
+    ],
     "licenseStatus": "pending",
-    "notes": "LICENSED ama licenseStatus!=active → publishEligible=false"
+    "notes": "LICENSED ama licenseStatus!=active → publishEligible=false",
+    "lastReviewedAt": "2026-06-01"
   },
   {
     "sourceId": "dha",
@@ -43,8 +81,27 @@
     "reviewStatus": "pending",
     "publishEligible": false,
     "allowedFields": [],
-    "forbiddenFields": ["description", "summary", "body", "fullText", "contentHtml", "rawHtml", "articleText", "scrapedText", "image", "video", "audio", "caption"],
-    "licenseStatus": "none"
+    "forbiddenFields": [
+      "description",
+      "summary",
+      "body",
+      "fullText",
+      "contentHtml",
+      "rawHtml",
+      "articleText",
+      "scrapedText",
+      "image",
+      "video",
+      "audio",
+      "caption",
+      "ocrText",
+      "videoTranscript",
+      "aiSummary",
+      "shortDescription"
+    ],
+    "licenseStatus": "none",
+    "notes": "SSOT v0 fixture kaydi",
+    "lastReviewedAt": null
   },
   {
     "sourceId": "iha",
@@ -56,8 +113,27 @@
     "reviewStatus": "pending",
     "publishEligible": false,
     "allowedFields": [],
-    "forbiddenFields": ["description", "summary", "body", "fullText", "contentHtml", "rawHtml", "articleText", "scrapedText", "image", "video", "audio", "caption"],
-    "licenseStatus": "none"
+    "forbiddenFields": [
+      "description",
+      "summary",
+      "body",
+      "fullText",
+      "contentHtml",
+      "rawHtml",
+      "articleText",
+      "scrapedText",
+      "image",
+      "video",
+      "audio",
+      "caption",
+      "ocrText",
+      "videoTranscript",
+      "aiSummary",
+      "shortDescription"
+    ],
+    "licenseStatus": "none",
+    "notes": "SSOT v0 fixture kaydi",
+    "lastReviewedAt": null
   },
   {
     "sourceId": "anka",
@@ -69,8 +145,27 @@
     "reviewStatus": "pending",
     "publishEligible": false,
     "allowedFields": [],
-    "forbiddenFields": ["description", "summary", "body", "fullText", "contentHtml", "rawHtml", "articleText", "scrapedText", "image", "video", "audio", "caption"],
-    "licenseStatus": "none"
+    "forbiddenFields": [
+      "description",
+      "summary",
+      "body",
+      "fullText",
+      "contentHtml",
+      "rawHtml",
+      "articleText",
+      "scrapedText",
+      "image",
+      "video",
+      "audio",
+      "caption",
+      "ocrText",
+      "videoTranscript",
+      "aiSummary",
+      "shortDescription"
+    ],
+    "licenseStatus": "none",
+    "notes": "SSOT v0 fixture kaydi",
+    "lastReviewedAt": null
   },
   {
     "sourceId": "reuters",
@@ -82,8 +177,27 @@
     "reviewStatus": "pending",
     "publishEligible": false,
     "allowedFields": [],
-    "forbiddenFields": ["description", "summary", "body", "fullText", "contentHtml", "rawHtml", "articleText", "scrapedText", "image", "video", "audio", "caption"],
-    "licenseStatus": "none"
+    "forbiddenFields": [
+      "description",
+      "summary",
+      "body",
+      "fullText",
+      "contentHtml",
+      "rawHtml",
+      "articleText",
+      "scrapedText",
+      "image",
+      "video",
+      "audio",
+      "caption",
+      "ocrText",
+      "videoTranscript",
+      "aiSummary",
+      "shortDescription"
+    ],
+    "licenseStatus": "none",
+    "notes": "SSOT v0 fixture kaydi",
+    "lastReviewedAt": null
   },
   {
     "sourceId": "ap",
@@ -95,8 +209,27 @@
     "reviewStatus": "pending",
     "publishEligible": false,
     "allowedFields": [],
-    "forbiddenFields": ["description", "summary", "body", "fullText", "contentHtml", "rawHtml", "articleText", "scrapedText", "image", "video", "audio", "caption"],
-    "licenseStatus": "none"
+    "forbiddenFields": [
+      "description",
+      "summary",
+      "body",
+      "fullText",
+      "contentHtml",
+      "rawHtml",
+      "articleText",
+      "scrapedText",
+      "image",
+      "video",
+      "audio",
+      "caption",
+      "ocrText",
+      "videoTranscript",
+      "aiSummary",
+      "shortDescription"
+    ],
+    "licenseStatus": "none",
+    "notes": "SSOT v0 fixture kaydi",
+    "lastReviewedAt": null
   },
   {
     "sourceId": "afp",
@@ -108,8 +241,27 @@
     "reviewStatus": "pending",
     "publishEligible": false,
     "allowedFields": [],
-    "forbiddenFields": ["description", "summary", "body", "fullText", "contentHtml", "rawHtml", "articleText", "scrapedText", "image", "video", "audio", "caption"],
-    "licenseStatus": "none"
+    "forbiddenFields": [
+      "description",
+      "summary",
+      "body",
+      "fullText",
+      "contentHtml",
+      "rawHtml",
+      "articleText",
+      "scrapedText",
+      "image",
+      "video",
+      "audio",
+      "caption",
+      "ocrText",
+      "videoTranscript",
+      "aiSummary",
+      "shortDescription"
+    ],
+    "licenseStatus": "none",
+    "notes": "SSOT v0 fixture kaydi",
+    "lastReviewedAt": null
   },
   {
     "sourceId": "trt_haber",
@@ -124,10 +276,35 @@
     "authorityTier": "PRIMARY_WIRE_OR_AGENCY",
     "reviewStatus": "pending",
     "publishEligible": false,
-    "allowedFields": ["title", "canonicalUrl", "sourceName", "publishedAt", "category"],
-    "forbiddenFields": ["description", "summary", "body", "fullText", "contentHtml", "rawHtml", "articleText", "scrapedText", "image", "video", "audio", "caption"],
+    "allowedFields": [
+      "title",
+      "canonicalUrl",
+      "sourceName",
+      "publishedAt",
+      "category"
+    ],
+    "forbiddenFields": [
+      "description",
+      "summary",
+      "body",
+      "fullText",
+      "contentHtml",
+      "rawHtml",
+      "articleText",
+      "scrapedText",
+      "image",
+      "video",
+      "audio",
+      "caption",
+      "ocrText",
+      "videoTranscript",
+      "aiSummary",
+      "shortDescription"
+    ],
     "summaryPolicy": "forbidden",
-    "notes": "Hedef TITLE_LINK_ONLY; reviewStatus pending → publishEligible=false"
+    "notes": "Hedef TITLE_LINK_ONLY; reviewStatus pending → publishEligible=false",
+    "licenseStatus": "none",
+    "lastReviewedAt": null
   },
   {
     "sourceId": "ntv_son_dakika",
@@ -142,9 +319,35 @@
     "authorityTier": "ESTABLISHED_MEDIA",
     "reviewStatus": "approved",
     "publishEligible": true,
-    "allowedFields": ["title", "canonicalUrl", "sourceName", "publishedAt", "category"],
-    "forbiddenFields": ["description", "summary", "body", "fullText", "contentHtml", "rawHtml", "articleText", "scrapedText", "image", "video", "audio", "caption"],
-    "summaryPolicy": "forbidden"
+    "allowedFields": [
+      "title",
+      "canonicalUrl",
+      "sourceName",
+      "publishedAt",
+      "category"
+    ],
+    "forbiddenFields": [
+      "description",
+      "summary",
+      "body",
+      "fullText",
+      "contentHtml",
+      "rawHtml",
+      "articleText",
+      "scrapedText",
+      "image",
+      "video",
+      "audio",
+      "caption",
+      "ocrText",
+      "videoTranscript",
+      "aiSummary",
+      "shortDescription"
+    ],
+    "summaryPolicy": "forbidden",
+    "licenseStatus": "none",
+    "notes": "Ticari medya — varsayilan TITLE_LINK_ONLY",
+    "lastReviewedAt": "2026-06-01"
   },
   {
     "sourceId": "ntv_turkiye",
@@ -159,10 +362,35 @@
     "authorityTier": "ESTABLISHED_MEDIA",
     "reviewStatus": "approved",
     "publishEligible": true,
-    "allowedFields": ["title", "canonicalUrl", "sourceName", "publishedAt", "category"],
-    "forbiddenFields": ["description", "summary", "body", "fullText", "contentHtml", "rawHtml", "articleText", "scrapedText", "image", "video", "audio", "caption"],
+    "allowedFields": [
+      "title",
+      "canonicalUrl",
+      "sourceName",
+      "publishedAt",
+      "category"
+    ],
+    "forbiddenFields": [
+      "description",
+      "summary",
+      "body",
+      "fullText",
+      "contentHtml",
+      "rawHtml",
+      "articleText",
+      "scrapedText",
+      "image",
+      "video",
+      "audio",
+      "caption",
+      "ocrText",
+      "videoTranscript",
+      "aiSummary",
+      "shortDescription"
+    ],
     "summaryPolicy": "forbidden",
-    "notes": "Android seed only; API runtime yok (drift)"
+    "notes": "Android seed only; API runtime yok (drift)",
+    "licenseStatus": "none",
+    "lastReviewedAt": "2026-06-01"
   },
   {
     "sourceId": "haberturk_ekonomi",
@@ -177,9 +405,35 @@
     "authorityTier": "ESTABLISHED_MEDIA",
     "reviewStatus": "approved",
     "publishEligible": true,
-    "allowedFields": ["title", "canonicalUrl", "sourceName", "publishedAt", "category"],
-    "forbiddenFields": ["description", "summary", "body", "fullText", "contentHtml", "rawHtml", "articleText", "scrapedText", "image", "video", "audio", "caption"],
-    "summaryPolicy": "forbidden"
+    "allowedFields": [
+      "title",
+      "canonicalUrl",
+      "sourceName",
+      "publishedAt",
+      "category"
+    ],
+    "forbiddenFields": [
+      "description",
+      "summary",
+      "body",
+      "fullText",
+      "contentHtml",
+      "rawHtml",
+      "articleText",
+      "scrapedText",
+      "image",
+      "video",
+      "audio",
+      "caption",
+      "ocrText",
+      "videoTranscript",
+      "aiSummary",
+      "shortDescription"
+    ],
+    "summaryPolicy": "forbidden",
+    "licenseStatus": "none",
+    "notes": "Ticari medya — varsayilan TITLE_LINK_ONLY",
+    "lastReviewedAt": "2026-06-01"
   },
   {
     "sourceId": "haberturk",
@@ -194,10 +448,35 @@
     "authorityTier": "ESTABLISHED_MEDIA",
     "reviewStatus": "approved",
     "publishEligible": true,
-    "allowedFields": ["title", "canonicalUrl", "sourceName", "publishedAt", "category"],
-    "forbiddenFields": ["description", "summary", "body", "fullText", "contentHtml", "rawHtml", "articleText", "scrapedText", "image", "video", "audio", "caption"],
+    "allowedFields": [
+      "title",
+      "canonicalUrl",
+      "sourceName",
+      "publishedAt",
+      "category"
+    ],
+    "forbiddenFields": [
+      "description",
+      "summary",
+      "body",
+      "fullText",
+      "contentHtml",
+      "rawHtml",
+      "articleText",
+      "scrapedText",
+      "image",
+      "video",
+      "audio",
+      "caption",
+      "ocrText",
+      "videoTranscript",
+      "aiSummary",
+      "shortDescription"
+    ],
     "summaryPolicy": "forbidden",
-    "notes": "Android seed RSS_METADATA_ONLY (drift)"
+    "notes": "Android seed RSS_METADATA_ONLY (drift)",
+    "licenseStatus": "none",
+    "lastReviewedAt": "2026-06-01"
   },
   {
     "sourceId": "bbc_turkce",
@@ -212,10 +491,34 @@
     "authorityTier": "ESTABLISHED_MEDIA",
     "reviewStatus": "pending",
     "publishEligible": false,
-    "allowedFields": ["title", "canonicalUrl", "sourceName", "publishedAt"],
-    "forbiddenFields": ["description", "summary", "body", "fullText", "contentHtml", "rawHtml", "articleText", "scrapedText", "image", "video", "audio", "caption"],
+    "allowedFields": [
+      "title",
+      "canonicalUrl",
+      "sourceName",
+      "publishedAt"
+    ],
+    "forbiddenFields": [
+      "description",
+      "summary",
+      "body",
+      "fullText",
+      "contentHtml",
+      "rawHtml",
+      "articleText",
+      "scrapedText",
+      "image",
+      "video",
+      "audio",
+      "caption",
+      "ocrText",
+      "videoTranscript",
+      "aiSummary",
+      "shortDescription"
+    ],
     "summaryPolicy": "forbidden",
-    "notes": "Hedef: NEEDS_REVIEW → onay sonrası TITLE_LINK_ONLY"
+    "notes": "Hedef: NEEDS_REVIEW → onay sonrası TITLE_LINK_ONLY",
+    "licenseStatus": "none",
+    "lastReviewedAt": null
   },
   {
     "sourceId": "afad_official",
@@ -230,9 +533,31 @@
     "authorityTier": "OFFICIAL",
     "reviewStatus": "approved",
     "publishEligible": true,
-    "allowedFields": ["title", "shortDescription", "canonicalUrl", "sourceName", "publishedAt", "category"],
-    "forbiddenFields": ["body", "fullText", "contentHtml", "rawHtml", "articleText", "scrapedText", "image", "video", "audio", "caption"],
+    "allowedFields": [
+      "title",
+      "shortDescription",
+      "canonicalUrl",
+      "sourceName",
+      "publishedAt",
+      "category"
+    ],
+    "forbiddenFields": [
+      "body",
+      "fullText",
+      "contentHtml",
+      "rawHtml",
+      "articleText",
+      "scrapedText",
+      "image",
+      "video",
+      "audio",
+      "caption",
+      "ocrText",
+      "videoTranscript"
+    ],
     "summaryPolicy": "rss_short_only",
-    "notes": "Omurga resmi kaynak örneği — henüz runtime registry’de yok"
+    "notes": "Omurga resmi kaynak örneği — henüz runtime registry’de yok",
+    "licenseStatus": "none",
+    "lastReviewedAt": "2026-06-01"
   }
 ]

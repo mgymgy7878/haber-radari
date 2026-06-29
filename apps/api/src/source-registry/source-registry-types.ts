@@ -1,15 +1,25 @@
-/** Source Registry SSOT v0 — tip sözleşmesi (pre-implementation; production ingest'e bağlı değil). */
+/** Source Registry SSOT v0 — tip sözleşmesi (contract PR; production ingest'e bağlı değil). */
 
-export type LegalMode =
-  | 'DISABLED'
-  | 'NEEDS_REVIEW'
-  | 'TITLE_LINK_ONLY'
-  | 'RSS_METADATA_ONLY'
-  | 'LICENSED';
+import {
+  AGENCY_SOURCE_IDS,
+  LEGAL_MODES,
+  LICENSE_STATUSES,
+  PRODUCTION_FORBIDDEN_FIELDS,
+  REQUIRED_SSOT_V0_FIELDS,
+  REVIEW_STATUSES,
+  RSS_METADATA_ONLY_ALLOWED_FIELDS,
+  RSS_METADATA_ONLY_FORBIDDEN_FIELDS,
+  TITLE_LINK_ONLY_ALLOWED_FIELDS,
+  TITLE_LINK_ONLY_FORBIDDEN_FIELDS,
+  TITLE_LINK_ONLY_SUMMARY_FIELDS,
+  type LegalMode,
+  type LicenseStatus,
+  type ReviewStatus,
+} from './source-registry-schema.js';
 
-export type ReviewStatus = 'pending' | 'approved' | 'rejected';
+export type { LegalMode, LicenseStatus, ReviewStatus };
 
-export type LicenseStatus = 'none' | 'pending' | 'active' | 'expired';
+export { LEGAL_MODES, LICENSE_STATUSES, REVIEW_STATUSES };
 
 export type SourceType =
   | 'AGENCY'
@@ -27,7 +37,6 @@ export type SourceType =
   | 'municipality'
   | 'event_source';
 
-/** Haber feed dışı modül türleri (pre-implementation; runtime bağlı değil). */
 export type ModuleType =
   | 'news_feed'
   | 'market_ticker'
@@ -40,7 +49,6 @@ export type FeedReplacementPolicy =
   | 'lowest_signal_first'
   | 'category_quota_first';
 
-/** Feed retention policy — docs/spec referansı (henüz runtime bağlı değil). */
 export interface FeedRetentionPolicy {
   feedTtlHours: number;
   maxItemsPerCategory: number;
@@ -51,7 +59,6 @@ export interface FeedRetentionPolicy {
   replacementPolicy: FeedReplacementPolicy;
 }
 
-/** Market ticker widget spec (haber kaynağı değil). */
 export interface MarketTickerSourceSpec {
   moduleType: 'market_ticker';
   tickerType: 'fx' | 'gold' | 'crypto' | 'index';
@@ -64,7 +71,6 @@ export interface MarketTickerSourceSpec {
   sourceAttribution: string;
 }
 
-/** Sports widget spec (scraping yok). */
 export interface SportsWidgetSourceSpec {
   moduleType: 'sports_widget';
   sport: string;
@@ -74,7 +80,6 @@ export interface SportsWidgetSourceSpec {
   cacheTtlSeconds: number;
 }
 
-/** Weather widget spec. */
 export interface WeatherWidgetSourceSpec {
   moduleType: 'weather_widget';
   locationMode: 'manual_city' | 'approximate_location';
@@ -84,7 +89,6 @@ export interface WeatherWidgetSourceSpec {
   dataSafetyImpact?: string;
 }
 
-/** Bildirim kuralı spec. */
 export interface NotificationRuleSpec {
   moduleType: 'notification_rule';
   notificationCategory: string;
@@ -105,9 +109,8 @@ export interface SourceRegistryEntry {
   country?: string;
   language?: string;
   category?: string;
-  sourceType?: SourceType;
+  sourceType: SourceType;
   moduleType?: ModuleType;
-  /** İç profil notu; UI’da ideolojik etiket olarak kullanılmaz. */
   sourceProfile?: string;
   editorialProfileReview?: 'pending' | 'reviewed';
   legalMode: LegalMode;
@@ -120,55 +123,22 @@ export interface SourceRegistryEntry {
   summaryPolicy?: 'forbidden' | 'rss_short_only' | 'licensed_only';
   robotsRisk?: 'unknown' | 'low' | 'medium' | 'high';
   termsReviewedAt?: string | null;
-  licenseStatus?: LicenseStatus;
+  /** SSOT v0 — son hukuki/operasyon inceleme tarihi; incelenmediyse null */
+  lastReviewedAt: string | null;
+  licenseStatus: LicenseStatus;
   sourceHealthEnabled?: boolean;
   freshnessSlaMinutes?: number;
-  notes?: string;
+  notes: string;
 }
 
-export const REQUIRED_REGISTRY_FIELDS: Array<keyof SourceRegistryEntry> = [
-  'sourceId',
-  'sourceName',
-  'baseDomain',
-  'legalMode',
-  'authorityTier',
-  'reviewStatus',
-  'publishEligible',
-  'allowedFields',
-  'forbiddenFields',
-];
+export const REQUIRED_REGISTRY_FIELDS = REQUIRED_SSOT_V0_FIELDS;
 
-export const TITLE_LINK_ONLY_ALLOWED_FIELDS = new Set([
-  'title',
-  'canonicalUrl',
-  'originalLink',
-  'sourceName',
-  'publishedAt',
-  'category',
-  'section',
-]);
-
-export const TITLE_LINK_ONLY_FORBIDDEN_FIELDS = [
-  'description',
-  'summary',
-  'body',
-  'fullText',
-  'contentHtml',
-  'rawHtml',
-  'articleText',
-  'scrapedText',
-  'image',
-  'video',
-  'audio',
-  'caption',
-] as const;
-
-export const AGENCY_SOURCE_IDS = new Set([
-  'aa_guncel',
-  'dha',
-  'iha',
-  'anka',
-  'reuters',
-  'ap',
-  'afp',
-]);
+export {
+  AGENCY_SOURCE_IDS,
+  PRODUCTION_FORBIDDEN_FIELDS,
+  TITLE_LINK_ONLY_ALLOWED_FIELDS,
+  TITLE_LINK_ONLY_FORBIDDEN_FIELDS,
+  TITLE_LINK_ONLY_SUMMARY_FIELDS,
+  RSS_METADATA_ONLY_ALLOWED_FIELDS,
+  RSS_METADATA_ONLY_FORBIDDEN_FIELDS,
+};

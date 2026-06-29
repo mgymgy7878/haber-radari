@@ -96,14 +96,17 @@ describe('legal-field-guard', () => {
     const licensed: SourceRegistryEntry = {
       sourceId: 'aa_licensed_test',
       sourceName: 'AA Licensed',
+      sourceType: 'news_agency',
       baseDomain: 'aa.com.tr',
       legalMode: 'LICENSED',
       authorityTier: 'PRIMARY_WIRE_OR_AGENCY',
       reviewStatus: 'approved',
       publishEligible: true,
       licenseStatus: 'active',
+      notes: 'legal-field-guard test',
+      lastReviewedAt: '2026-06-01',
       allowedFields: ['title', 'shortDescription', 'canonicalUrl', 'sourceName', 'publishedAt'],
-      forbiddenFields: ['body', 'fullText', 'contentHtml', 'rawHtml', 'articleText', 'scrapedText'],
+      forbiddenFields: ['body', 'fullText', 'contentHtml', 'rawHtml', 'articleText', 'scrapedText', 'image', 'video', 'audio', 'caption', 'ocrText', 'videoTranscript'],
     };
     expect(() =>
       assertNoForbiddenFields(licensed, {

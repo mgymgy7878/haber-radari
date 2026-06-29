@@ -87,6 +87,7 @@ export interface SmartFeedItemForGuardrailAudit {
   rawHtml?: unknown;
   articleText?: unknown;
   contentHtml?: unknown;
+  smartDigest?: unknown;
 }
 
 const RUNTIME_SOURCE_NAME_TO_ID: Record<string, string> = {
