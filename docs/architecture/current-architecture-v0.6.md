@@ -93,6 +93,8 @@ Runbook: [docs/ops/v0.6.4-real-provider-pilot-runbook.md](../ops/v0.6.4-real-pro
 
 Detay: [smart-feed-api-contract-v0.md](./smart-feed-api-contract-v0.md)
 
+**SSOT hazırlık (implementation öncesi):** [source-registry-ssot-v0-plan.md](./source-registry-ssot-v0-plan.md) — API/Android kaynak drift, migration fazları, acceptance criteria. PR #41 `title-link-only-payload-policy` geçici response sanitize; aktif legal guard değil.
+
 ## Legacy Expo / Radar hattı
 
 **Expo (`apps/mobile`):** Erken MVP — `/api/events`, flash/finance/nearby sekmeleri, sosyal sinyal kartları. Aktif Smart Feed geliştirmesi burada yapılmaz.
