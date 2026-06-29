@@ -1,0 +1,45 @@
+---
+description: Haber Radarı — kaynak, legal, Play/KVKK ve ürün dili kuralları (SSOT v1)
+alwaysApply: true
+---
+
+# Haber Radarı — Proje Kuralları
+
+Aktif karar SSOT: `docs/research/haber-radari-source-plan-update-v1.md`
+
+## İletişim
+
+- Kullanıcıya **Türkçe** yanıt ver.
+
+## Öncelik sırası
+
+Yasal güvenlik > teknik doğruluk > maliyet kontrolü > ürün hızı. Hukuki kesin hüküm verme; risk sınıflandırması yap (`DISABLED`, `NEEDS_REVIEW`, `LICENSED`).
+
+## İçerik yasağı
+
+Tam metin, `rawHtml`, `articleText`, `scrapedText`, görsel, video, audio ve caption **yasak**. Scraping **varsayılan kapalı**.
+
+## Kaynak politikası
+
+- RSS varlığı izin sayılmaz; ToS / robots / lisans kontrolü gerekir.
+- Ajanslar (AA, DHA, İHA, ANKA, Reuters, AP, AFP): lisans yoksa **DISABLED**; lisans varsa yalnızca **LICENSED**.
+- Ticari medya: varsayılan **TITLE_LINK_ONLY** veya **NEEDS_REVIEW**; `RSS_METADATA_ONLY` yalnızca hukuki inceleme olumluysa.
+- Resmi/kurumsal kaynaklar omurga havuzudur; yine de **metadata-only** + link-out + attribution.
+
+## Teknik sınırlar
+
+- LLM mobil istemciye açılmaz; kalıcı **backend proxy** zorunlu; istemcide API/LLM key yok.
+- API ve Android source registry tek SSOT’a indirilecek (çift registry borcu bilinir).
+- PR #25 sonrası dry-run read-only; **aktif publish gate** ayrı onaylı PR ile bağlanır.
+
+## Play / KVKK
+
+Privacy Policy URL, KVKK aydınlatma, Data Safety, News self-declaration, HTTPS/cleartext kapatma ve yanıltıcı ürün dili temizliği korunur.
+
+## Ürün dili yasağı
+
+“Haber doğrulama”, “kesin doğru”, “yalan haber yakalar”, “kanıtlandı” ve benzeri iddialar **yasak**. İzin verilen: sinyal, kaynak profili, neden gösterildi, metadata özeti, link-out.
+
+## Kod görevleri
+
+Kod değişikliği yapılıyorsa FINAL yanıtta şunları belirt: riskler, kabul kriterleri, test/evidence durumu, **kod değişti mi** teyidi. Docs-only görevlerde kod dosyalarına dokunma.

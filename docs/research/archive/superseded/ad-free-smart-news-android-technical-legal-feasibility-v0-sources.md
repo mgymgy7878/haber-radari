@@ -1,3 +1,7 @@
+> STATUS: SUPERSEDED
+> Superseded by: docs/research/haber-radari-source-plan-update-v1.md
+> Bu dosya tarihsel araştırma notudur. Aktif ürün, kaynak, legalMode, Play/KVKK veya publish-gate kararı için kullanılmamalıdır.
+
 # Kaynakça ve Derin Araştırma Eki
 
 > **Ana Belge:** [ADR: Teknik ve Hukuki Fizibilite](./ad-free-smart-news-android-technical-legal-feasibility-v0.md)  

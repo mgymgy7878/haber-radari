@@ -1,3 +1,7 @@
+> STATUS: SUPERSEDED
+> Superseded by: docs/research/haber-radari-source-plan-update-v1.md
+> Bu dosya tarihsel araştırma notudur. Aktif ürün, kaynak, legalMode, Play/KVKK veya publish-gate kararı için kullanılmamalıdır.
+
 # ADR: Reklamsız Akıllı Filtreli Android Haber Uygulaması — Teknik ve Hukuki Fizibilite
 
 **Belge Türü:** Architecture Decision Record (ADR) / Fizibilite Raporu  
