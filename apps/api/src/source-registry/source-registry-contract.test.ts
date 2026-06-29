@@ -1,7 +1,4 @@
 import { describe, it, expect } from 'vitest';
-import { readFileSync } from 'node:fs';
-import { fileURLToPath } from 'node:url';
-import { dirname, join } from 'node:path';
 import { RSS_SOURCES } from '../config/rss-sources.js';
 import type { SourceRegistryEntry } from './source-registry-types.js';
 import {
@@ -15,16 +12,10 @@ import {
   LEGAL_MODE_CONTRACT,
 } from './source-registry-contract.js';
 import { getSourceById, loadSourceRegistryV0 } from './source-registry-loader.js';
-
-const __dirname = dirname(fileURLToPath(import.meta.url));
-const FIXTURE_PATH = join(__dirname, 'fixtures', 'source-registry-contract-cases.json');
-
-function loadFixtures(): SourceRegistryEntry[] {
-  return JSON.parse(readFileSync(FIXTURE_PATH, 'utf-8')) as SourceRegistryEntry[];
-}
+import { loadContractFixtureCases } from './source-registry-fixtures.js';
 
 describe('source-registry SSOT v0 contract', () => {
-  const fixtures = loadFixtures();
+  const fixtures = loadContractFixtureCases();
 
   it('fixture dosyası boş değil', () => {
     expect(fixtures.length).toBeGreaterThan(0);
@@ -142,7 +133,7 @@ describe('source-registry runtime drift snapshot (read-only)', () => {
   });
 
   it('mevcut API kaynak sayısı fixture hedef kümesinden küçük (drift)', () => {
-    const fixtureIds = new Set(loadFixtures().map((f) => f.sourceId));
+    const fixtureIds = new Set(loadContractFixtureCases().map((f) => f.sourceId));
     const apiIds = RSS_SOURCES.map((s) => s.id);
     expect(apiIds.length).toBe(4);
     expect(fixtureIds.has('bbc_turkce')).toBe(true);
@@ -155,7 +146,7 @@ describe('source-registry runtime drift snapshot (read-only)', () => {
     const aa = RSS_SOURCES.find((s) => s.id === 'aa_guncel');
     expect(aa?.enabled).toBe(false);
     expect(aa?.disabledReason).toBe('registry_legal_mode_disabled_no_license');
-    const target = loadFixtures().find(
+    const target = loadContractFixtureCases().find(
       (f) => f.sourceId === 'aa_guncel' && f.legalMode === 'DISABLED',
     );
     expect(target?.publishEligible).toBe(false);
@@ -176,13 +167,17 @@ describe('source-registry contract negative cases', () => {
     const bad: SourceRegistryEntry = {
       sourceId: 'bad_disabled',
       sourceName: 'Bad',
+      sourceType: 'news_media',
       baseDomain: 'bad.example',
       legalMode: 'DISABLED',
       authorityTier: 'UNKNOWN',
       reviewStatus: 'pending',
       publishEligible: true,
-      allowedFields: ['title'],
-      forbiddenFields: ['summary'],
+      allowedFields: [],
+      forbiddenFields: ['summary', 'body', 'fullText', 'contentHtml', 'rawHtml', 'articleText', 'scrapedText', 'image', 'video', 'audio', 'caption', 'ocrText', 'videoTranscript', 'aiSummary', 'shortDescription', 'description'],
+      licenseStatus: 'none',
+      notes: 'negative test',
+      lastReviewedAt: null,
     };
     const violations = validateLegalModeContract(bad);
     expect(violations.some((v) => v.rule === 'publish_eligibility')).toBe(true);
@@ -192,13 +187,17 @@ describe('source-registry contract negative cases', () => {
     const bad: SourceRegistryEntry = {
       sourceId: 'bad_title_link',
       sourceName: 'Bad Media',
+      sourceType: 'COMMERCIAL_MEDIA',
       baseDomain: 'bad.example',
       legalMode: 'TITLE_LINK_ONLY',
       authorityTier: 'ESTABLISHED_MEDIA',
       reviewStatus: 'approved',
       publishEligible: true,
       allowedFields: ['title', 'summary'],
-      forbiddenFields: ['body'],
+      forbiddenFields: ['body', 'fullText', 'contentHtml', 'rawHtml', 'articleText', 'scrapedText', 'image', 'video', 'audio', 'caption', 'ocrText', 'videoTranscript', 'aiSummary', 'shortDescription', 'description'],
+      licenseStatus: 'none',
+      notes: 'negative test',
+      lastReviewedAt: null,
     };
     const violations = validateLegalModeContract(bad);
     expect(violations.length).toBeGreaterThan(0);

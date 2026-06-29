@@ -1,27 +1,9 @@
-import type { LegalMode, ReviewStatus, SourceRegistryEntry } from './source-registry-types.js';
-import { validateLegalModeContract, type ContractViolation } from './source-registry-contract.js';
+import type { SourceRegistryEntry } from './source-registry-types.js';
+import {
+  validateLegalModeContract,
+  type ContractViolation,
+} from './source-registry-contract.js';
 import type { SourceRegistryV0Document } from './source-registry-loader.js';
-
-const LEGAL_MODES: LegalMode[] = [
-  'DISABLED',
-  'NEEDS_REVIEW',
-  'TITLE_LINK_ONLY',
-  'RSS_METADATA_ONLY',
-  'LICENSED',
-];
-
-const REVIEW_STATUSES: ReviewStatus[] = ['pending', 'approved', 'rejected'];
-
-const CORE_FORBIDDEN_FIELDS = [
-  'fullText',
-  'rawHtml',
-  'articleText',
-  'scrapedText',
-  'image',
-  'video',
-  'audio',
-  'caption',
-] as const;
 
 export interface RegistryValidationIssue {
   sourceId: string;
@@ -34,43 +16,7 @@ function toIssue(v: ContractViolation): RegistryValidationIssue {
 }
 
 export function validateSourceRegistryEntry(entry: SourceRegistryEntry): RegistryValidationIssue[] {
-  const issues: RegistryValidationIssue[] = validateLegalModeContract(entry).map(toIssue);
-
-  if (!LEGAL_MODES.includes(entry.legalMode)) {
-    issues.push({
-      sourceId: entry.sourceId,
-      rule: 'legal_mode_enum',
-      message: `Geçersiz legalMode: ${entry.legalMode}`,
-    });
-  }
-
-  if (!REVIEW_STATUSES.includes(entry.reviewStatus)) {
-    issues.push({
-      sourceId: entry.sourceId,
-      rule: 'review_status_enum',
-      message: `Geçersiz reviewStatus: ${entry.reviewStatus}`,
-    });
-  }
-
-  if (!entry.baseDomain?.trim()) {
-    issues.push({
-      sourceId: entry.sourceId,
-      rule: 'base_domain',
-      message: 'baseDomain boş olamaz',
-    });
-  }
-
-  for (const field of CORE_FORBIDDEN_FIELDS) {
-    if (!entry.forbiddenFields.includes(field)) {
-      issues.push({
-        sourceId: entry.sourceId,
-        rule: 'core_forbidden_fields',
-        message: `forbiddenFields içinde ${field} zorunlu`,
-      });
-    }
-  }
-
-  return issues;
+  return validateLegalModeContract(entry).map(toIssue);
 }
 
 export function validateSourceRegistryV0(
