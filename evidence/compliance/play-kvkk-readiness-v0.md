@@ -9,9 +9,9 @@
 
 | ID | Blocker | Status |
 |----|---------|--------|
-| B1 | Privacy Policy URL | OPEN |
-| B2 | KVKK aydınlatma | OPEN |
-| B3 | Data Safety form | OPEN |
+| B1 | Privacy Policy URL | OPEN — draft: `privacy-policy-draft-v0.md` |
+| B2 | KVKK aydınlatma | OPEN — draft: `kvkk-aydinlatma-draft-v0.md` |
+| B3 | Data Safety form | OPEN — inventory: `data-inventory-v0.md` |
 | B4 | News declaration | OPEN |
 | B5 | Cleartext / HTTPS | OPEN (`usesCleartextTraffic=true` debug) |
 | B6 | Mobile API/LLM keys | PASS (server-side only) |
