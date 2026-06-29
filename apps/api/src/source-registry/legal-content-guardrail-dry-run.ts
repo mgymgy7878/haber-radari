@@ -6,6 +6,13 @@ import {
   stripDisallowedFieldsForSource,
   type LegalFieldPayload,
 } from './legal-field-guard.js';
+import {
+  enrichLegalContentGuardrailDecisionWithRca,
+  resolveOverallRcaRecommendation,
+  type LegalContentGuardrailForbiddenFieldDetail,
+  type LegalContentGuardrailFieldLocation,
+  type LegalContentGuardrailRecommendedFix,
+} from './legal-content-guardrail-rca.js';
 
 export const LEGAL_CONTENT_GUARDRAIL_DRY_RUN_DISCLAIMER =
   'Dry-run yalnızca simülasyon; gerçek item payload strip edilmez. Mutlak doğruluk iddiası değildir.';
@@ -17,7 +24,7 @@ export type LegalContentGuardrailReasonCode =
   | 'not_production_eligible'
   | 'source_unmatched';
 
-export interface LegalContentGuardrailDryRunDecision {
+export interface LegalContentGuardrailDryRunBaseDecision {
   itemId: string;
   sourceName: string;
   sourceId?: string;
@@ -31,6 +38,15 @@ export interface LegalContentGuardrailDryRunDecision {
   reasonCode: LegalContentGuardrailReasonCode;
 }
 
+export interface LegalContentGuardrailDryRunDecision extends LegalContentGuardrailDryRunBaseDecision {
+  visibleInItemPayload: string[];
+  itemPayloadFieldCount: number;
+  forbiddenFieldDetails: LegalContentGuardrailForbiddenFieldDetail[];
+  fieldLocation: LegalContentGuardrailFieldLocation;
+  recommendedFix: LegalContentGuardrailRecommendedFix;
+  rcaSummary: string;
+}
+
 export interface LegalContentGuardrailDryRunByLegalMode {
   evaluatedCount: number;
   wouldStripItemCount: number;
@@ -42,6 +58,8 @@ export interface LegalContentGuardrailDryRunPayload {
   readOnly: true;
   disclaimer: string;
   sourceRegistryVersion: string;
+  rcaVersion: 'v0';
+  overallRecommendedFix: LegalContentGuardrailRecommendedFix;
   evaluatedItemCount: number;
   sourceMatchedCount: number;
   sourceUnmatchedCount: number;
@@ -190,7 +208,7 @@ export function evaluateLegalContentGuardrailDryRunForItem(
   );
 
   if (!record) {
-    return {
+    return enrichLegalContentGuardrailDecisionWithRca(item, {
       itemId: item.id,
       sourceName: leadSourceName,
       dryRunOnly: true,
@@ -200,7 +218,7 @@ export function evaluateLegalContentGuardrailDryRunForItem(
       wouldStripFields: [],
       allowedFields: [],
       reasonCode: 'source_unmatched',
-    };
+    });
   }
 
   const allowedFields = getAllowedFieldsForLegalMode(record);
@@ -225,7 +243,7 @@ export function evaluateLegalContentGuardrailDryRunForItem(
     wouldStrip = true;
   }
 
-  return {
+  return enrichLegalContentGuardrailDecisionWithRca(item, {
     itemId: item.id,
     sourceName: leadSourceName,
     sourceId: record.sourceId,
@@ -237,7 +255,7 @@ export function evaluateLegalContentGuardrailDryRunForItem(
     wouldStripFields,
     allowedFields,
     reasonCode,
-  };
+  });
 }
 
 export function buildLegalContentGuardrailDryRun(input: {
@@ -285,6 +303,8 @@ export function buildLegalContentGuardrailDryRun(input: {
     readOnly: true,
     disclaimer: LEGAL_CONTENT_GUARDRAIL_DRY_RUN_DISCLAIMER,
     sourceRegistryVersion: input.registry.version,
+    rcaVersion: 'v0',
+    overallRecommendedFix: resolveOverallRcaRecommendation(decisions),
     evaluatedItemCount: decisions.length,
     sourceMatchedCount,
     sourceUnmatchedCount,

@@ -282,6 +282,11 @@ describe('Smart Feed Route', () => {
     );
     for (const decision of response.debugStats.legalContentGuardrailDryRun.decisions) {
       expect(decision.dryRunOnly).toBe(true);
+      expect(decision.fieldLocation).toBeDefined();
+      expect(decision.recommendedFix).toBeDefined();
+      expect(decision.forbiddenFieldDetails).toBeDefined();
     }
+    expect(response.debugStats.legalContentGuardrailDryRun.rcaVersion).toBe('v0');
+    expect(response.debugStats.legalContentGuardrailDryRun.overallRecommendedFix).toBeDefined();
   });
 });
