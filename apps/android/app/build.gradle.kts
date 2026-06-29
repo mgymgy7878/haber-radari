@@ -41,12 +41,19 @@ android {
     }
 
     buildTypes {
+        debug {
+            buildConfigField("String", "SMART_FEED_BASE_URL", "\"http://127.0.0.1:3001\"")
+        }
         release {
             isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+            // Prod HTTPS URL: Gradle -PprodSmartFeedBaseUrl=https://api.example.com ile verilir.
+            val prodUrl = (project.findProperty("prodSmartFeedBaseUrl") as String?)?.trim().orEmpty()
+            val escapedProdUrl = prodUrl.replace("\\", "\\\\").replace("\"", "\\\"")
+            buildConfigField("String", "SMART_FEED_BASE_URL", "\"$escapedProdUrl\"")
         }
     }
 

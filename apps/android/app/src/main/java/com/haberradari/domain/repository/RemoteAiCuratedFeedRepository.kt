@@ -32,6 +32,7 @@ class RemoteAiCuratedFeedRepository(
         if (!FeatureConfig.aiRemoteFeedEnabled) {
             throw IllegalStateException("Remote feed is disabled by FeatureConfig.")
         }
+        FeatureConfig.assertReleaseSmartFeedUrlPolicy()
 
         return withContext(Dispatchers.IO) {
             if (forceRefresh) {
