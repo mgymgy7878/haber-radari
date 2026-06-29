@@ -51,7 +51,7 @@ fun AiCuratedDetailScreen(
                     SuggestionChip(onClick = { }, label = { Text(item.category) })
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(
-                        text = "Güven: %${(item.confidence * 100).toInt()}",
+                        text = "Yardımcı değerlendirme: %${(item.confidence * 100).toInt()}",
                         style = MaterialTheme.typography.labelMedium,
                         color = MaterialTheme.colorScheme.primary
                     )
@@ -103,7 +103,7 @@ fun AiCuratedDetailScreen(
                         shape = MaterialTheme.shapes.medium
                     ) {
                         Text(
-                            text = item.warningLabel,
+                            text = TrustTransparencyUiLogic.sanitizeTrustDisplayText(item.warningLabel),
                             modifier = Modifier.padding(12.dp),
                             style = MaterialTheme.typography.bodyMedium,
                             color = MaterialTheme.colorScheme.onErrorContainer

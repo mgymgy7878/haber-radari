@@ -338,7 +338,7 @@ class MockSmartFeedAnalyzer {
         return if (status == EvidenceStatus.SINGLE_SOURCE && quality == TopicQuality.CRITICAL) {
             "Ana akışa alınma nedeni: Tek kaynaklı ama kritik olay bildirimi"
         } else if (sourceCount >= 2) {
-            "Ana akışa alınma nedeni: Çok kaynaklı doğrulama"
+            "Ana akışa alınma nedeni: Çok kaynaklı kaynak sinyali"
         } else {
             null
         }
@@ -346,7 +346,7 @@ class MockSmartFeedAnalyzer {
 
     private fun getWarningLabel(decision: PublishDecision, status: EvidenceStatus, quality: TopicQuality): String? {
         if (decision == PublishDecision.PUBLISH_MAIN && status == EvidenceStatus.SINGLE_SOURCE && quality == TopicQuality.CRITICAL) {
-            return "Kritik olay (tek kaynaklı): Doğrulama bekleniyor."
+            return "Kritik olay (tek kaynaklı): Ek kaynak sinyali bekleniyor."
         }
         if (status == EvidenceStatus.LOW_CONFIDENCE) {
             return "Bu haberin başlığı çok genel veya belirsiz ifadeler içeriyor."

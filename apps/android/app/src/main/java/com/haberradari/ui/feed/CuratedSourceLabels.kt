@@ -15,11 +15,11 @@ object CuratedSourceLabels {
     fun evidenceSummary(evidenceStatus: EvidenceStatus, uniqueSourceCount: Int): String {
         val base = when (evidenceStatus) {
             EvidenceStatus.CONFIRMED ->
-                if (uniqueSourceCount >= 2) "Kanıt: çoklu kaynak" else "Kanıt: doğrulandı"
-            EvidenceStatus.PARTIAL -> "Kanıt: kısmi doğrulama"
-            EvidenceStatus.SINGLE_SOURCE -> "Kanıt: tek kaynak"
-            EvidenceStatus.LOW_CONFIDENCE -> "Kanıt: düşük güven"
-            EvidenceStatus.FILTERED -> "Kanıt: filtrelendi"
+                if (uniqueSourceCount >= 2) "Sinyal: çoklu kaynak" else "Kaynak sinyali güçlü"
+            EvidenceStatus.PARTIAL -> "Sinyal: kısmi kaynak profili"
+            EvidenceStatus.SINGLE_SOURCE -> "Sinyal: tek kaynak"
+            EvidenceStatus.LOW_CONFIDENCE -> "Sinyal: düşük profil"
+            EvidenceStatus.FILTERED -> "Sinyal: filtrelendi"
         }
         return if (evidenceStatus == EvidenceStatus.SINGLE_SOURCE && uniqueSourceCount == 1) {
             "$base (aynı kaynaktan birden fazla haber olabilir)"

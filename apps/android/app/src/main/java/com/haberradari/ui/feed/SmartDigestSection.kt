@@ -123,7 +123,7 @@ fun SmartDigestSection(
 
         Spacer(modifier = Modifier.height(4.dp))
         Text(
-            text = "Güven: ${SmartDigestConfidence.displayLabel(contentDigest.confidence)}",
+            text = "Özet güveni: ${SmartDigestConfidence.displayLabel(contentDigest.confidence)}",
             style = MaterialTheme.typography.labelSmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )

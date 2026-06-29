@@ -41,8 +41,8 @@ class TrustTransparencyUiLogicTest {
     fun `source count display mapping`() {
         assertEquals("2 kaynak", CuratedSourceLabels.articleSourceSummary(2, 2))
         assertEquals("2 haber · 1 benzersiz kaynak", CuratedSourceLabels.articleSourceSummary(2, 1))
-        assertEquals("Kanıt: çoklu kaynak", CuratedSourceLabels.evidenceSummary(EvidenceStatus.CONFIRMED, 2))
-        assertTrue(CuratedSourceLabels.evidenceSummary(EvidenceStatus.SINGLE_SOURCE, 1).startsWith("Kanıt: tek kaynak"))
+        assertEquals("Sinyal: çoklu kaynak", CuratedSourceLabels.evidenceSummary(EvidenceStatus.CONFIRMED, 2))
+        assertTrue(CuratedSourceLabels.evidenceSummary(EvidenceStatus.SINGLE_SOURCE, 1).startsWith("Sinyal: tek kaynak"))
     }
 
     @Test
@@ -68,10 +68,11 @@ class TrustTransparencyUiLogicTest {
             isDemo = false,
             filteredSourceCount = 0,
             publishDecision = PublishDecision.PUBLISH_MAIN,
-            publishReason = "Çok kaynaklı doğrulama"
+            publishReason = "Çok kaynaklı kaynak sinyali"
         )
         val lines = TrustTransparencyUiLogic.whyShownLines(item)
-        assertTrue(lines.any { it.label == "Neden" && it.value.contains("doğrulama") })
+        assertTrue(lines.any { it.label == "Neden" && it.value.contains("kaynak sinyali") })
+        assertTrue(lines.any { it.label == "Kaynak sinyali" })
         assertTrue(lines.any { it.label == "Kaynak kapsamı" && it.value.contains("2 kaynak") })
         assertTrue(lines.any { it.label == "Küme notu" })
     }
