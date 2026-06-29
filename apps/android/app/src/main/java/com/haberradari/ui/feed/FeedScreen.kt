@@ -334,7 +334,7 @@ private fun StatsBanner(state: FeedUiState) {
                         msg
                     }
                     false -> "Backend RSS analizinde sayaç tutarsızlığı var: ${state.invariantError ?: "Bilinmeyen Hata"}"
-                    null -> "Backend RSS analiz: sayaç doğrulaması alınamadı."
+                    null -> "Backend RSS analiz: sayaç kontrolü alınamadı."
                 }
             }
             com.haberradari.domain.repository.FeedSource.FALLBACK_MOCK -> {
@@ -364,7 +364,7 @@ private fun LatestRssSectionHeader() {
         )
         Spacer(modifier = Modifier.height(4.dp))
         Text(
-            text = "Bu liste RSS kaynaklarından alınan ham haber özetleridir; AI doğrulaması değildir.",
+            text = "Bu liste RSS kaynaklarından alınan ham haber özetleridir; haber doğrulama hizmeti değildir.",
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
@@ -562,7 +562,7 @@ private fun EmptyMainStateContent(
         )
         Spacer(modifier = Modifier.height(8.dp))
         Text(
-            text = "RSS kaynakları tarandı. Doğrulama, önem ve güvenlik kuralları nedeniyle ana akışa alınacak yeterli olay bulunmadı.",
+            text = "RSS kaynakları tarandı. Kaynak sinyali, önem ve güvenlik kuralları nedeniyle ana akışa alınacak yeterli olay bulunmadı.",
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             textAlign = TextAlign.Center
@@ -661,12 +661,12 @@ private fun WatchlistModal(
                             }
                             Spacer(modifier = Modifier.height(4.dp))
                             Text(
-                                text = "Neden: ${item.reasonCode ?: item.publishReason ?: "Bilinmiyor"}",
+                                text = "Neden: ${TrustTransparencyUiLogic.sanitizeTrustDisplayText(item.reasonCode ?: item.publishReason ?: "Bilinmiyor")}",
                                 style = MaterialTheme.typography.bodySmall,
                                 color = MaterialTheme.colorScheme.error
                             )
                             Text(
-                                text = "Kanıt: ${item.evidenceStatus} (${item.sourceCount} kaynak)",
+                                text = "Sinyal: ${item.evidenceStatus} (${item.sourceCount} kaynak)",
                                 style = MaterialTheme.typography.labelSmall,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                             )

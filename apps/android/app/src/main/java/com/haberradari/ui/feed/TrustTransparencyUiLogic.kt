@@ -12,6 +12,9 @@ import com.haberradari.data.model.SourceSignalBand
 /** v0.6.6 — güven, kaynak şeffaflığı ve digest durum etiketleri. */
 object TrustTransparencyUiLogic {
 
+    const val SOURCE_SIGNAL_DISCLAIMER =
+        "Bu sinyal haberin doğruluğunu tek başına garanti etmez."
+
     fun shouldShowSmartDigestBlock(publishDecision: PublishDecision): Boolean =
         publishDecision == PublishDecision.PUBLISH_MAIN
 
@@ -37,7 +40,25 @@ object TrustTransparencyUiLogic {
         uniqueSourceCount <= 1 || evidenceStatus == EvidenceStatus.SINGLE_SOURCE
 
     fun singleSourceWarningText(): String =
-        "Tek kaynak — çoklu doğrulama yok; orijinal haberi kontrol edin."
+        "Tek kaynak — ek kaynak sinyali yok; orijinal haberi kontrol edin."
+
+    /** API/mock gibi kaynaklardan gelen metinleri güvenli ürün diline çevirir (davranış değişmez). */
+    fun sanitizeTrustDisplayText(text: String): String = text
+        .replace(
+            "Ana akışa alınma nedeni: Çok kaynaklı doğrulama",
+            "Ana akışa alınma nedeni: Çok kaynaklı kaynak sinyali",
+        )
+        .replace("Çok kaynaklı doğrulama", "Çok kaynaklı kaynak sinyali")
+        .replace(
+            "Doğrulama bekleniyor (Tek kaynaklı)",
+            "Ek kaynak sinyali bekleniyor (tek kaynaklı)",
+        )
+        .replace(
+            "Kritik olay (tek kaynaklı): Doğrulama bekleniyor.",
+            "Kritik olay (tek kaynaklı): Ek kaynak sinyali bekleniyor.",
+        )
+        .replace("Doğrulama bekleniyor", "Ek kaynak sinyali bekleniyor")
+        .replace(Regex("(?i)kanıt:"), "Sinyal:")
 
     data class WhyShownLine(val label: String, val value: String)
 
@@ -45,7 +66,7 @@ object TrustTransparencyUiLogic {
         val lines = mutableListOf<WhyShownLine>()
         lines += WhyShownLine("Yayın kararı", publishDecisionLabel(item.publishDecision))
         item.publishReason?.takeIf { it.isNotBlank() }?.let {
-            lines += WhyShownLine("Neden", it)
+            lines += WhyShownLine("Neden", sanitizeTrustDisplayText(it))
         }
         lines += WhyShownLine("Önem", importanceLabel(item.importance))
         lines += WhyShownLine(
@@ -53,14 +74,14 @@ object TrustTransparencyUiLogic {
             CuratedSourceLabels.articleSourceSummary(item.sourceCount, item.uniqueSourceCount)
         )
         lines += WhyShownLine(
-            "Kanıt durumu",
+            "Kaynak sinyali",
             CuratedSourceLabels.evidenceSummary(item.evidenceStatus, item.uniqueSourceCount)
         )
         if (item.clusterReason.isNotBlank()) {
             lines += WhyShownLine("Küme notu", item.clusterReason)
         }
         item.warningLabel?.takeIf { it.isNotBlank() }?.let {
-            lines += WhyShownLine("Uyarı", it)
+            lines += WhyShownLine("Uyarı", sanitizeTrustDisplayText(it))
         }
         return lines
     }
@@ -106,10 +127,13 @@ object TrustTransparencyUiLogic {
         val banned = listOf(
             "kesin doğru",
             "güvenilir haber",
+            "yalan haber",
             "yalan",
             "manipülasyon",
             "onaylandı",
-            "kanıtlandı"
+            "kanıtlandı",
+            "doğrulandı",
+            "teyit edildi",
         )
         return banned.any { lower.contains(it) }
     }

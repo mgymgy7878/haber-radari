@@ -132,6 +132,15 @@ fun TrustEvidenceRow(
                 overflow = TextOverflow.Ellipsis
             )
         }
+
+        Spacer(modifier = Modifier.height(6.dp))
+        Text(
+            text = TrustTransparencyUiLogic.SOURCE_SIGNAL_DISCLAIMER,
+            style = MaterialTheme.typography.labelSmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            maxLines = 3,
+            overflow = TextOverflow.Ellipsis
+        )
     }
 }
 
@@ -181,6 +190,14 @@ fun WhyShownSection(
                     overflow = TextOverflow.Ellipsis
                 )
             }
+            Spacer(modifier = Modifier.height(8.dp))
+            Text(
+                text = TrustTransparencyUiLogic.SOURCE_SIGNAL_DISCLAIMER,
+                style = MaterialTheme.typography.labelSmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                maxLines = 3,
+                overflow = TextOverflow.Ellipsis
+            )
         }
     }
 }
@@ -340,7 +357,7 @@ fun SourceListItemCard(
                     contentDescription = null
                 )
                 Spacer(modifier = Modifier.width(8.dp))
-                Text("Orijinal habere git")
+                Text("Orijinal kaynağa git")
             }
         }
     }
