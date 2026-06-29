@@ -21,6 +21,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.res.stringResource
+import com.haberradari.R
 import com.haberradari.data.model.Article
 
 /**
@@ -75,7 +77,8 @@ fun ArticleCard(
 
                 // 📅 Tarih — göreceli format
                 Text(
-                    text = formatRelativeTime(article.publishedAt),
+                    text = FeedUsabilityUiLogic.formatPublishedAtLabel(article.publishedAt.toString())
+                        ?: "—",
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -112,7 +115,7 @@ fun ArticleCard(
                 horizontalArrangement = Arrangement.End
             ) {
                 Text(
-                    text = "Haberi İncele ➔",
+                    text = stringResource(id = com.haberradari.R.string.original_link) + " →",
                     style = MaterialTheme.typography.labelMedium,
                     color = MaterialTheme.colorScheme.primary
                 )
@@ -121,18 +124,3 @@ fun ArticleCard(
     }
 }
 
-/**
- * Epoch millis → "2 saat önce" formatı.
- */
-private fun formatRelativeTime(epochMillis: Long): String {
-    val now = System.currentTimeMillis()
-    val diff = now - epochMillis
-
-    return when {
-        diff < 60_000 -> "Az önce"
-        diff < 3_600_000 -> "${diff / 60_000} dk önce"
-        diff < 86_400_000 -> "${diff / 3_600_000} saat önce"
-        diff < 604_800_000 -> "${diff / 86_400_000} gün önce"
-        else -> "${diff / 604_800_000} hafta önce"
-    }
-}

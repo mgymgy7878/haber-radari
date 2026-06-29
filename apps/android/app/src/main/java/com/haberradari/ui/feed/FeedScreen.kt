@@ -129,6 +129,7 @@ fun FeedScreen(
                 FeedDisplayPhase.OFFLINE_SETUP -> {
                     OfflineSetupState(
                         errorMessage = state.lastError ?: "Bilinmeyen Hata",
+                        emptyKind = FeedUsabilityUiLogic.resolveEmptyKind(state),
                         onRetry = { viewModel.refresh() },
                         modifier = Modifier.fillMaxSize()
                     )
@@ -175,10 +176,16 @@ private fun FeedContentBody(
     onOpenCuratedDetail: (AiCuratedNewsItem) -> Unit
 ) {
     Column(modifier = Modifier.fillMaxSize()) {
+        FeedStatusBar(
+            state = state,
+            isRefreshing = isRefreshing,
+        )
+
         if (state.lastError != null) {
             CachedErrorBanner(
                 cacheAgeText = state.cacheAgeText,
-                errorMessage = state.lastError
+                errorMessage = state.lastError,
+                onRetry = onRefresh,
             )
         } else if (state.isShowingCachedData) {
             CachedDataBanner(cacheAgeText = state.cacheAgeText)
@@ -247,15 +254,28 @@ private fun FeedContentBody(
                     }
                 }
 
-                // Son güvenlik: hiç item yoksa fallback göster
+                // Son güvenlik: hiç item yoksa empty/loading fallback
                 if (!state.hasVisibleBodyItems()) {
                     item(key = "body_fallback") {
-                        LoadingCard(
-                            message = "Haberler yükleniyor…",
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(16.dp)
-                        )
+                        when {
+                            state.isRemoteLoading || state.isInitialLoading -> {
+                                LoadingCard(
+                                    message = stringResource(id = com.haberradari.R.string.loading_message),
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(16.dp)
+                                )
+                            }
+                            else -> {
+                                PersonalFeedEmptyState(
+                                    kind = FeedUsabilityUiLogic.resolveEmptyKind(state),
+                                    onRefresh = onRefresh,
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(16.dp)
+                                )
+                            }
+                        }
                     }
                 }
             }
@@ -273,7 +293,95 @@ private fun FeedContentBody(
 }
 
 @Composable
-private fun CachedErrorBanner(cacheAgeText: String?, errorMessage: String?) {
+private fun FeedStatusBar(
+    state: FeedUiState,
+    isRefreshing: Boolean,
+    modifier: Modifier = Modifier,
+) {
+    val connectionStatus = FeedUsabilityUiLogic.resolveConnectionStatus(state, isRefreshing)
+    val lastUpdated = FeedUsabilityUiLogic.formatLastUpdatedText(state.lastUpdatedAt, state.cacheAgeText)
+    val sourcesLabel = FeedUsabilityUiLogic.formatActiveSourcesLabel(
+        state.enabledSourceCount,
+        state.totalSourceCount,
+    )
+
+    androidx.compose.material3.Surface(
+        modifier = modifier.fillMaxWidth(),
+        color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.55f),
+    ) {
+        Column(modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Text(
+                    text = "Son güncelleme: $lastUpdated",
+                    style = MaterialTheme.typography.labelMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.weight(1f),
+                )
+                Text(
+                    text = FeedUsabilityUiLogic.formatConnectionStatusLabel(connectionStatus),
+                    style = MaterialTheme.typography.labelSmall,
+                    color = MaterialTheme.colorScheme.primary,
+                )
+            }
+            Spacer(modifier = Modifier.height(2.dp))
+            Text(
+                text = sourcesLabel,
+                style = MaterialTheme.typography.labelSmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+            Text(
+                text = TrustTransparencyUiLogic.SOURCE_SIGNAL_DISCLAIMER,
+                style = MaterialTheme.typography.labelSmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.85f),
+                modifier = Modifier.padding(top = 4.dp),
+            )
+        }
+    }
+}
+
+@Composable
+private fun PersonalFeedEmptyState(
+    kind: FeedUsabilityUiLogic.FeedEmptyKind,
+    onRefresh: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    if (kind == FeedUsabilityUiLogic.FeedEmptyKind.NONE) return
+
+    androidx.compose.material3.OutlinedCard(modifier = modifier) {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier.padding(20.dp),
+        ) {
+            Text(
+                text = FeedUsabilityUiLogic.emptyStateTitle(kind),
+                style = MaterialTheme.typography.titleMedium,
+                textAlign = TextAlign.Center,
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+            Text(
+                text = FeedUsabilityUiLogic.emptyStateMessage(kind),
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                textAlign = TextAlign.Center,
+            )
+            Spacer(modifier = Modifier.height(16.dp))
+            Button(onClick = onRefresh) {
+                Text(stringResource(id = com.haberradari.R.string.refresh))
+            }
+        }
+    }
+}
+
+@Composable
+private fun CachedErrorBanner(
+    cacheAgeText: String?,
+    errorMessage: String?,
+    onRetry: () -> Unit,
+) {
     androidx.compose.material3.Surface(
         modifier = Modifier.fillMaxWidth(),
         color = MaterialTheme.colorScheme.errorContainer
@@ -292,6 +400,10 @@ private fun CachedErrorBanner(cacheAgeText: String?, errorMessage: String?) {
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onErrorContainer.copy(alpha = 0.8f)
                 )
+            }
+            Spacer(modifier = Modifier.height(8.dp))
+            Button(onClick = onRetry) {
+                Text(stringResource(id = com.haberradari.R.string.retry))
             }
         }
     }
@@ -477,6 +589,7 @@ private fun LoadingState(modifier: Modifier = Modifier) {
 @Composable
 private fun OfflineSetupState(
     errorMessage: String,
+    emptyKind: FeedUsabilityUiLogic.FeedEmptyKind = FeedUsabilityUiLogic.FeedEmptyKind.NONE,
     onRetry: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -494,14 +607,23 @@ private fun OfflineSetupState(
             )
             Spacer(modifier = Modifier.height(16.dp))
             Text(
-                text = "Backend bağlantısı kurulamadı",
+                text = when (emptyKind) {
+                    FeedUsabilityUiLogic.FeedEmptyKind.NO_ENABLED_SOURCES ->
+                        "Aktif kaynak yok"
+                    else -> "Backend bağlantısı kurulamadı"
+                },
                 style = MaterialTheme.typography.titleLarge,
                 color = MaterialTheme.colorScheme.onSurface,
                 textAlign = TextAlign.Center
             )
             Spacer(modifier = Modifier.height(8.dp))
             Text(
-                text = "API servisine ulaşılamadı ve cihazda kayıtlı haber önbelleği bulunamadı. Backend çalışıyorsa adb reverse yönlendirmesini kontrol edin.",
+                text = when (emptyKind) {
+                    FeedUsabilityUiLogic.FeedEmptyKind.NO_ENABLED_SOURCES ->
+                        FeedUsabilityUiLogic.emptyStateMessage(emptyKind)
+                    else ->
+                        "API servisine ulaşılamadı ve cihazda kayıtlı haber önbelleği bulunamadı. Backend çalışıyorsa adb reverse yönlendirmesini kontrol edin."
+                },
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 textAlign = TextAlign.Center
@@ -887,7 +1009,7 @@ fun AiCuratedNewsItemCard(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = "Kaynakları İncele →",
+                    text = "Kaynak profilini incele →",
                     style = MaterialTheme.typography.labelMedium,
                     color = MaterialTheme.colorScheme.tertiary
                 )
@@ -915,16 +1037,32 @@ fun LatestRssItemCard(
         Column(
             modifier = Modifier.padding(16.dp)
         ) {
+            Spacer(modifier = Modifier.height(12.dp))
+            
             androidx.compose.foundation.layout.Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
+                verticalAlignment = Alignment.CenterVertically,
             ) {
                 Text(
                     text = item.sourceNames?.joinToString(", ") ?: "Bilinmeyen Kaynak",
                     style = MaterialTheme.typography.labelSmall,
-                    color = MaterialTheme.colorScheme.primary
+                    color = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.weight(1f),
                 )
+                FeedUsabilityUiLogic.formatPublishedAtLabel(item.publishedAt)?.let { publishedLabel ->
+                    Text(
+                        text = publishedLabel,
+                        style = MaterialTheme.typography.labelSmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                }
+            }
+            Spacer(modifier = Modifier.height(4.dp))
+            androidx.compose.foundation.layout.Row(
+                horizontalArrangement = Arrangement.End,
+                modifier = Modifier.fillMaxWidth(),
+            ) {
                 androidx.compose.material3.Surface(
                     color = MaterialTheme.colorScheme.surfaceVariant,
                     shape = MaterialTheme.shapes.small
@@ -965,7 +1103,7 @@ fun LatestRssItemCard(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = "Haberi İncele →",
+                    text = "Orijinal kaynağa git →",
                     style = MaterialTheme.typography.labelMedium,
                     color = MaterialTheme.colorScheme.tertiary
                 )

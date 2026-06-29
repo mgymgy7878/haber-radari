@@ -39,7 +39,13 @@ data class FeedUiState(
     val watchlistPreview: List<com.haberradari.domain.repository.WatchlistPreviewItem>? = null,
     val rawPreview: List<com.haberradari.domain.repository.WatchlistPreviewItem>? = null,
     val noisePreview: List<com.haberradari.domain.repository.WatchlistPreviewItem>? = null,
-    val articles: List<Article> = emptyList()
+    val articles: List<Article> = emptyList(),
+    /** Room'daki toplam kaynak sayısı. */
+    val totalSourceCount: Int = 0,
+    /** RSS ingest için açık kaynak sayısı (DISABLED/NEEDS_REVIEW/kapalı hariç). */
+    val enabledSourceCount: Int = 0,
+    /** Son başarılı feed güncelleme zamanı (epoch ms). */
+    val lastUpdatedAt: Long? = null,
 )
 
 class FeedViewModel(
@@ -56,7 +62,22 @@ class FeedViewModel(
     init {
         loadCachedData()
         observeArticles()
+        observeSources()
         refresh()
+    }
+
+    private fun observeSources() {
+        viewModelScope.launch {
+            repository.getSourcesFlow().collect { sources ->
+                val enabledIngest = sources.count { source ->
+                    source.enabled && !source.legalMode.blocksProductionIngest()
+                }
+                _uiState.value = _uiState.value.copy(
+                    totalSourceCount = sources.size,
+                    enabledSourceCount = enabledIngest,
+                )
+            }
+        }
     }
 
     private fun loadCachedData() {
@@ -83,7 +104,8 @@ class FeedViewModel(
                         fallbackReason = cached.fallbackReason,
                         watchlistPreview = cached.watchlistPreview,
                         rawPreview = cached.rawPreview,
-                        noisePreview = cached.noisePreview
+                        noisePreview = cached.noisePreview,
+                        lastUpdatedAt = cached.generatedAt,
                     )
                 } else {
                     _uiState.value = _uiState.value.copy(isReadingCache = false)
@@ -139,7 +161,8 @@ class FeedViewModel(
                 fallbackReason = result.fallbackReason,
                 watchlistPreview = result.watchlistPreview,
                 rawPreview = result.rawPreview,
-                noisePreview = result.noisePreview
+                noisePreview = result.noisePreview,
+                lastUpdatedAt = result.generatedAt.takeIf { it > 0 } ?: System.currentTimeMillis(),
             )
         } catch (e: Exception) {
             val errorMsg = mapErrorMessage(e)
@@ -164,7 +187,8 @@ class FeedViewModel(
                     fallbackReason = cached.fallbackReason ?: e.message,
                     watchlistPreview = cached.watchlistPreview,
                     rawPreview = cached.rawPreview,
-                    noisePreview = cached.noisePreview
+                    noisePreview = cached.noisePreview,
+                    lastUpdatedAt = cached.generatedAt,
                 )
             } else {
                 _uiState.value = _uiState.value.copy(
@@ -205,7 +229,8 @@ class FeedViewModel(
                         publishedCount = cached.publishedCount,
                         hiddenCount = cached.hiddenCount,
                         watchlistPreview = cached.watchlistPreview,
-                        rawPreview = cached.rawPreview
+                        rawPreview = cached.rawPreview,
+                        lastUpdatedAt = cached.generatedAt,
                     )
                 } else {
                     _uiState.value = _uiState.value.copy(
