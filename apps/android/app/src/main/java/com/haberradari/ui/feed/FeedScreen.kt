@@ -86,7 +86,7 @@ fun FeedScreen(
                     IconButton(onClick = onOpenHealth) {
                         Icon(
                             imageVector = Icons.Default.Info,
-                            contentDescription = "Kaynak Sağlığı"
+                            contentDescription = "Kaynak Yönetimi"
                         )
                     }
                     IconButton(onClick = { viewModel.refresh() }) {

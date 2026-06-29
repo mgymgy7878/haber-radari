@@ -57,4 +57,8 @@ interface SourceDao {
         category: String,
         authorityLevel: SourceAuthority,
     )
+
+    /** Kullanıcı kaynak aç/kapat tercihi — yalnızca enabled alanı. */
+    @Query("UPDATE sources SET enabled = :enabled WHERE id = :id")
+    suspend fun updateSourceEnabled(id: String, enabled: Boolean)
 }
