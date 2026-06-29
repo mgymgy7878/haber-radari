@@ -78,7 +78,9 @@ içindir. `RSS_SOURCES`, `rss-ingest.ts`, `PublishGate.evaluate()`, Android seed
 | `country` | string | Hayır | `TR`, `INTL` |
 | `language` | string | Hayır | `tr` |
 | `category` | string | Hayır | Feed bölümü |
-| `sourceType` | enum | Hayır | `AGENCY`, `COMMERCIAL_MEDIA`, `PUBLIC_BROADCASTER`, `OFFICIAL`, `WIRE` |
+| `sourceType` | enum | Hayır | `AGENCY`, `COMMERCIAL_MEDIA`, `OFFICIAL`, … veya genişletilmiş: `news_media`, `regulator`, `market_data`, … (bkz. §7, types) |
+| `moduleType` | enum | Hayır | `news_feed`, `market_ticker`, `sports_widget`, `weather_widget`, `notification_rule` |
+| `sourceProfile` | string | Hayır | İç profil notu; ideolojik UI etiketi **değil** |
 | `legalMode` | enum | **Evet** | DISABLED / NEEDS_REVIEW / TITLE_LINK_ONLY / RSS_METADATA_ONLY / LICENSED |
 | `authorityTier` | string | **Evet** | OFFICIAL / PRIMARY_WIRE_OR_AGENCY / ESTABLISHED_MEDIA / … |
 | `reviewStatus` | enum | **Evet** | `pending` / `approved` / `rejected` |
@@ -126,7 +128,188 @@ içindir. `RSS_SOURCES`, `rss-ingest.ts`, `PublishGate.evaluate()`, Android seed
 
 ---
 
-## 7. Test / Fixture Plan
+## 7. Product & Source Expansion Addendum v0
+
+> **Kapsam:** Ürün gereksinimi + kaynak kapsamı + veri lisansı politikası. Bu bölüm **implementation değildir**; yeni kaynaklar otomatik production ingest’e eklenmez. Üst SSOT ile uyumlu: scraping kapalı, mobilde API key yok, haber doğrulama iddiası yok.
+
+### A. Siyasi yelpaze / alternatif medya kaynakları
+
+Muhalif/alternatif haber ajans ve siteleri kaynak havuzunda **değerlendirilebilir**; ancak her biri ayrı `legalMode` / `reviewStatus` / `publishEligible` kaydı gerektirir.
+
+| Kural | Değer |
+|-------|-------|
+| UI etiketleme | “Muhalif” gibi ideolojik etiketler **doğrudan gösterilmez**; kaynak türü / profil gösterilir |
+| İç sınıflandırma | `sourceProfile` veya `editorialProfileReview` düşünülebilir; kesin siyasi etiketleme **yapılmaz** |
+| Varsayılan legalMode | `TITLE_LINK_ONLY` veya `NEEDS_REVIEW` |
+| RSS_METADATA_ONLY | Yalnızca ToS / robots / lisans / hukuk kontrolü sonrası |
+| Ajans niteliği + lisans şartı | `LICENSED` (lisans var) / `DISABLED` (lisans yok) |
+
+**Aday kaynak havuzu (docs örneği — otomatik izin değil):**
+
+| Kaynak | Not |
+|--------|-----|
+| BirGün, Evrensel, SOL Haber, Gazete Duvar, Artı Gerçek | `NEEDS_REVIEW` → onay sonrası `TITLE_LINK_ONLY` |
+| Bianet, Medyascope | Bağımsız medya; ToS/RSS teyidi şart |
+| Halk TV, TELE1, KRT | Yayın/medya; video/transkript alınmaz |
+| Gerçek Gündem | `NEEDS_REVIEW` |
+| Cumhuriyet, Sözcü | Ticari medya; `TITLE_LINK_ONLY` hedef |
+| ANKA | Ajans; lisans yoksa `DISABLED` |
+
+**Sınırlar:**
+
+- Liste otomatik kullanım izni **değildir**.
+- Her kaynak için ToS / robots / RSS / lisans kontrolü gerekir.
+- Video, transkript, görsel, caption **alınmaz**.
+- Varsayılan kabul: `title`, `link`, `source`, `date`, `category` only.
+
+### B. Resmi kurum / duyuru / etkinlik kaynakları
+
+**Kapsanacak source categories:**
+
+| category | Açıklama |
+|----------|----------|
+| `official_announcement` | Kurum duyuruları |
+| `public_safety` | Kamu güvenliği |
+| `disaster` | Afet / deprem |
+| `economy_regulatory` | TCMB, SPK, KAP vb. |
+| `health_public` | Sağlık Bakanlığı vb. |
+| `municipality` | Belediye |
+| `event_public` | Kamusal etkinlik |
+| `protest_march_rally` | Yürüyüş / miting (tarafsız dil) |
+| `ceremony_celebration` | Kutlama / tören |
+| `transportation_public` | Ulaşım duyuruları |
+| `education_public` | MEB / YÖK vb. |
+
+**Öncelikli kaynak havuzu (omurga):**
+
+Cumhurbaşkanlığı duyuruları, bakanlıklar, valilikler, belediyeler, AFAD, deprem.afad, TCMB, SPK, KAP, TÜİK, Sağlık Bakanlığı, BTK, TÜBİTAK, YÖK/MEB, emniyet/trafik duyuruları (ToS teyidi ile), yerel yönetim etkinlik duyuruları.
+
+| Kural | Değer |
+|-------|-------|
+| Omurga rolü | Resmi kaynaklar öncelikli sinyal havuzu |
+| İçerik modeli | Metadata-only + link-out + attribution |
+| RSS/API yoksa | Scraping **açılmaz**; `NEEDS_REVIEW` kalır |
+| Etkinlik / miting / kutlama dili | Tarafsız; doğruluk garantisi iddiası **yok** |
+| Kaynak sinyali | Güvenilirlik **sinyali**; “kanıtlandı” dili yasak |
+
+### C. Feed retention / freshness policy
+
+| Policy | Varsayılan |
+|--------|------------|
+| Görünürlük penceresi | Son **24 saat** (`feedTtlHours=24`) |
+| Kritik override | Afet, kamu güvenliği, resmi piyasa duyurusu → `criticalTtlHours` |
+| Kategori kotası | `maxItemsPerCategory` (kategori başına) |
+| Global limit | `maxTotalItems` |
+| Taşma davranışı | Yeni haber gelince en eski / düşük öncelikli kart düşer |
+| Pin / critical exception | Yalnız resmi/kritik kaynaklarda |
+| Arşiv | Eski haberler arşivlenebilir; ana feed’i doldurmaz |
+| Cache vs UI | `cacheTtl` ve UI retention **ayrı** düşünülür |
+
+**Önerilen schema alanları:**
+
+```
+feedTtlHours
+maxItemsPerCategory
+maxTotalItems
+criticalTtlHours
+staleAfterMinutes
+dedupeWindowHours
+replacementPolicy = oldest_first | lowest_signal_first | category_quota_first
+```
+
+### D. UI category model (requirements only — APK sonraya)
+
+**Ana kategoriler (hedef):**
+
+Son Dakika, Türkiye, Dünya, Ekonomi, Piyasalar, Kripto, Spor, Teknoloji, Sağlık, Afet/Deprem, Resmi Duyurular, Yerel, Etkinlikler, Ulaşım, Eğitim.
+
+**Üst gösterge alanları (hedef):**
+
+| Gösterge | Açıklama |
+|----------|----------|
+| Kaynak sinyali durumu | Mevcut trust UX ile uyumlu |
+| Son güncelleme zamanı | Feed freshness |
+| Aktif haber sayısı | Retention policy ile uyumlu |
+| Afet/deprem kritik uyarı sayısı | Resmi kaynak önceliği |
+| Piyasa ticker kısa şeridi | Market modülü (haber değil) |
+| Hava durumu mini kartı | Weather modülü |
+| Maç/skor mini kartı | Sports modülü |
+
+> Bu PR UI implementation **yapmaz**; yalnızca Android UI gereksinimleri dokümante edilir.
+
+### E. Market ticker module
+
+**Kapsam:** döviz, altın, kripto.
+
+| Karar | Değer |
+|-------|-------|
+| Modül türü | Haber kaynağı **değil** — `moduleType=market_ticker` / `dataWidget` |
+| Lisans | Ayrı kontrol; ticari veri sağlayıcılarında risk yüksek |
+| TCMB vb. | Anlık değilse “anlık” sunulmaz; `displayDelayLabel` + `lastUpdatedAt` |
+| Kripto | Public exchange API mümkün; ToS + rate limit |
+| Mobil | API key **yok**; backend proxy + cache zorunlu |
+
+**Önerilen alanlar:** `tickerType` (fx \| gold \| crypto \| index), `symbol`, `provider`, `legalMode`, `updateIntervalSeconds`, `lastUpdatedAt`, `displayDelayLabel`, `cacheTtlSeconds`, `sourceAttribution`.
+
+### F. Sports fixture / live score module
+
+**Kapsam:** maç bilgisi, canlı skor, lig/turnuva.
+
+| Karar | Değer |
+|-------|-------|
+| Modül türü | `moduleType=sports_widget` — haber feed’inden ayrı |
+| Veri kaynağı | Scraping **yok**; resmi/izinli/lisanslı API |
+| UI | Skor + kaynak + son güncelleme görünür |
+| Bildirim | Kullanıcı **opt-in** |
+
+**Önerilen alanlar:** `sport`, `league`, `matchId`, `homeTeam`, `awayTeam`, `startTime`, `status`, `score`, `provider`, `legalMode`, `cacheTtlSeconds`, `lastUpdatedAt`.
+
+### G. Weather module
+
+**Kapsam:** hava durumu; mevcut konum veya manuel şehir.
+
+| Karar | Değer |
+|-------|-------|
+| Varsayılan | **Manuel şehir/il** seçimi |
+| Konum | Yalnız kullanıcı açık izin verirse; hassas konum yerine yaklaşık konum tercih |
+| Play/KVKK | Konum izni eklenirse Data Safety + KVKK aydınlatma güncellenmeden release **yapılamaz** |
+| API key | Backend proxy; mobilde key **yok** |
+
+**Önerilen alanlar:** `locationMode` (manual_city \| approximate_location), `city`, `latLonPrecision`, `provider`, `legalMode`, `cacheTtlMinutes`, `lastUpdatedAt`, `dataSafetyImpact`.
+
+### H. Notifications policy
+
+**Kapsam:** kategori bazlı bildirimler; afet/deprem önceliği; piyasa/kripto/spor/hava.
+
+| Karar | Değer |
+|-------|-------|
+| Opt-in | Tüm bildirimler kullanıcı onayı ile |
+| Granülarite | Kategori bazında aç/kapa |
+| İçerik | Kaynak adı + zaman görünür |
+| Rate limit | `rateLimitPerHour` zorunlu |
+| Quiet hours | Sessiz saat desteği |
+| Kritik afet | Ayrı öncelik sınıfı mümkün; kullanıcı kontrolü korunur |
+| Dil | “Doğrulandı / kesin doğru” bildirimde **yasak** |
+
+**Önerilen alanlar:** `notificationCategory`, `enabled`, `priority`, `rateLimitPerHour`, `quietHours`, `requiresLocation`, `sourceAttributionRequired`, `legalDisclaimerRequired`.
+
+### I. Updated non-goals (addendum kapsamı)
+
+Bu addendum ve PR #27 kapsamında **yapılmayacaklar:**
+
+- Android UI değişikliği yok  
+- APK / manifest / build config değişikliği yok  
+- Location permission ekleme yok  
+- Push notification implementation yok  
+- Market / sports / weather API entegrasyonu yok  
+- Production source registry değişikliği yok  
+- Scraping açma yok  
+- LLM entegrasyonu yok  
+- Alternatif medya aday listesinin otomatik ingest’e alınması yok  
+
+---
+
+## 8. Test / Fixture Plan
 
 | Artefakt | Yol | Amaç |
 |----------|-----|------|
@@ -154,27 +337,30 @@ içindir. `RSS_SOURCES`, `rss-ingest.ts`, `PublishGate.evaluate()`, Android seed
 
 ---
 
-## 8. Non-goals
+## 9. Non-goals
 
-- Android UI değişikliği yok  
-- APK / manifest / build config değişikliği yok  
+Bkz. §7.I (addendum non-goals). Özet:
+
+- Android UI / APK / manifest değişikliği yok  
 - Production `RSS_SOURCES` değişikliği yok  
-- `rss-ingest` runtime davranışı değişikliği yok  
-- `PublishGate.evaluate()` aktif bağlama yok  
+- `rss-ingest` / `PublishGate.evaluate()` runtime değişikliği yok  
 - LLM / smart digest entegrasyonu yok  
+- Market / sports / weather / push / location implementation yok  
 
 ---
 
-## 9. Next PR Plan
+## 10. Next PR Plan
 
 | Sıra | PR | APK gerekir? |
 |------|-----|--------------|
 | 1 | Source Registry SSOT v0 **implementation** (tek JSON/YAML SSOT + API adapter) | Hayır |
 | 2 | Legal Content Guardrail v0 (ingest field strip) | Hayır |
-| 3 | Play/KVKK Readiness v0 (privacy/KVKK/Data Safety docs) | Hayır |
-| 4 | Publish-Gate Policy fixtures (aktif gate öncesi) | Hayır |
-| 5 | Guarded Active Gate v0 (feature flag) | Hayır |
-| 6 | Android registry migration | **Evet** (APK) |
+| 3 | Feed retention policy implementation (TTL + max items) | Hayır |
+| 4 | Play/KVKK Readiness v0 (privacy/KVKK/Data Safety docs) | Hayır |
+| 5 | Market / Sports / Weather widget spec → backend proxy pilot | Hayır |
+| 6 | Publish-Gate Policy fixtures (aktif gate öncesi) | Hayır |
+| 7 | Guarded Active Gate v0 (feature flag) | Hayır |
+| 8 | Android registry + UI category migration | **Evet** (APK) |
 
 ---
 

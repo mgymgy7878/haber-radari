@@ -16,7 +16,85 @@ export type SourceType =
   | 'COMMERCIAL_MEDIA'
   | 'PUBLIC_BROADCASTER'
   | 'OFFICIAL'
-  | 'WIRE';
+  | 'WIRE'
+  | 'news_media'
+  | 'news_agency'
+  | 'official_institution'
+  | 'regulator'
+  | 'market_data'
+  | 'sports_data'
+  | 'weather_data'
+  | 'municipality'
+  | 'event_source';
+
+/** Haber feed dışı modül türleri (pre-implementation; runtime bağlı değil). */
+export type ModuleType =
+  | 'news_feed'
+  | 'market_ticker'
+  | 'sports_widget'
+  | 'weather_widget'
+  | 'notification_rule';
+
+export type FeedReplacementPolicy =
+  | 'oldest_first'
+  | 'lowest_signal_first'
+  | 'category_quota_first';
+
+/** Feed retention policy — docs/spec referansı (henüz runtime bağlı değil). */
+export interface FeedRetentionPolicy {
+  feedTtlHours: number;
+  maxItemsPerCategory: number;
+  maxTotalItems: number;
+  criticalTtlHours?: number;
+  staleAfterMinutes?: number;
+  dedupeWindowHours?: number;
+  replacementPolicy: FeedReplacementPolicy;
+}
+
+/** Market ticker widget spec (haber kaynağı değil). */
+export interface MarketTickerSourceSpec {
+  moduleType: 'market_ticker';
+  tickerType: 'fx' | 'gold' | 'crypto' | 'index';
+  symbol: string;
+  provider: string;
+  legalMode: LegalMode;
+  updateIntervalSeconds: number;
+  cacheTtlSeconds: number;
+  displayDelayLabel?: string;
+  sourceAttribution: string;
+}
+
+/** Sports widget spec (scraping yok). */
+export interface SportsWidgetSourceSpec {
+  moduleType: 'sports_widget';
+  sport: string;
+  league: string;
+  provider: string;
+  legalMode: LegalMode;
+  cacheTtlSeconds: number;
+}
+
+/** Weather widget spec. */
+export interface WeatherWidgetSourceSpec {
+  moduleType: 'weather_widget';
+  locationMode: 'manual_city' | 'approximate_location';
+  provider: string;
+  legalMode: LegalMode;
+  cacheTtlMinutes: number;
+  dataSafetyImpact?: string;
+}
+
+/** Bildirim kuralı spec. */
+export interface NotificationRuleSpec {
+  moduleType: 'notification_rule';
+  notificationCategory: string;
+  enabled: boolean;
+  priority: 'low' | 'normal' | 'high' | 'critical';
+  rateLimitPerHour: number;
+  quietHours?: { start: string; end: string };
+  sourceAttributionRequired: boolean;
+  legalDisclaimerRequired: boolean;
+}
 
 export interface SourceRegistryEntry {
   sourceId: string;
@@ -28,6 +106,10 @@ export interface SourceRegistryEntry {
   language?: string;
   category?: string;
   sourceType?: SourceType;
+  moduleType?: ModuleType;
+  /** İç profil notu; UI’da ideolojik etiket olarak kullanılmaz. */
+  sourceProfile?: string;
+  editorialProfileReview?: 'pending' | 'reviewed';
   legalMode: LegalMode;
   authorityTier: string;
   reviewStatus: ReviewStatus;
