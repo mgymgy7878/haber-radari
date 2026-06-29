@@ -73,11 +73,19 @@ fun AiCuratedDetailScreen(
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-                Text(
-                    text = item.aiSummary,
-                    style = MaterialTheme.typography.bodyLarge,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
+                AiSummaryUiLogic.safeSummaryOrNull(item.aiSummary)?.let { summary ->
+                    Text(
+                        text = summary,
+                        style = MaterialTheme.typography.bodyLarge,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                } ?: run {
+                    Text(
+                        text = AiSummaryUiLogic.missingSummaryHint(),
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
 
                 if (TrustTransparencyUiLogic.shouldShowSmartDigestBlock(item.publishDecision)) {
                     SmartDigestSection(

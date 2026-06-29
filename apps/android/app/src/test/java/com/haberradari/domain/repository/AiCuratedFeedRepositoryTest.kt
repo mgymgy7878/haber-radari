@@ -201,4 +201,28 @@ class AiCuratedFeedRepositoryTest {
         assertNotNull(result.latestRssPreview)
         assertEquals(1, result.latestRssPreview!!.size)
     }
+
+    @Test
+    fun `missing aiSummary field parses without crash and normalizes to empty`() = runTest {
+        val jsonWithoutSummary = sampleJson.replace("\"aiSummary\": \"Summary 1\",\n", "")
+        val cacheFile = File(cacheDir, "smart_feed_cache.json")
+        cacheFile.writeText(jsonWithoutSummary)
+
+        val result = repository.getCachedFeed()
+        assertNotNull(result)
+        assertEquals("", result!!.items[0].aiSummary)
+        assertEquals("Curated News Title 1", result.items[0].aiTitle)
+        assertFalse(result.items[0].sources.isEmpty())
+    }
+
+    @Test
+    fun `blank aiSummary normalizes to empty string`() = runTest {
+        val jsonBlankSummary = sampleJson.replace("\"aiSummary\": \"Summary 1\"", "\"aiSummary\": \"   \"")
+        val cacheFile = File(cacheDir, "smart_feed_cache.json")
+        cacheFile.writeText(jsonBlankSummary)
+
+        val result = repository.getCachedFeed()
+        assertNotNull(result)
+        assertEquals("", result!!.items[0].aiSummary)
+    }
 }
