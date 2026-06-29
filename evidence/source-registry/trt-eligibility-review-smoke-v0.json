@@ -1,0 +1,23 @@
+﻿{
+    "smokeAt":  "2026-06-29T12:53:05.5967241+03:00",
+    "publishBehaviorChanged":  false,
+    "publishedCount":  0,
+    "itemsLength":  0,
+    "totalScanned":  42,
+    "sourceCount":  3,
+    "trtItemsInFeed":  0,
+    "trtItemIds":  [
+
+                   ],
+    "trtSourceNames":  [
+
+                       ],
+    "trtWithAiSummary":  0,
+    "titleLinkOnlyAuditTrtDecisions":  [
+
+                                       ],
+    "runtimeTrtEnabled":  true,
+    "registryTrtLegalMode":  "NEEDS_REVIEW",
+    "registryTrtPublishEligible":  false,
+    "driftNote":  "runtime enabled=true vs registry publishEligible=false"
+}
