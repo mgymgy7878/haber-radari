@@ -1,0 +1,23 @@
+﻿{
+    "publishBehaviorChanged":  false,
+    "publishedCount":  0,
+    "itemsLength":  0,
+    "totalScanned":  42,
+    "titleLinkOnlySummaryPolicyAudit":  {
+                                            "readOnly":  true,
+                                            "version":  "v0",
+                                            "evaluatedItemCount":  0,
+                                            "titleLinkOnlyItemCount":  0,
+                                            "needsReviewItemCount":  0,
+                                            "userVisibleSummaryItemCount":  0,
+                                            "forbiddenSummaryFieldCount":  0,
+                                            "overallRecommendedFix":  "no_action",
+                                            "bySourceId":  {
+
+                                                           },
+                                            "decisions":  [
+
+                                                          ]
+                                        },
+    "smokeNote":  "publishedCount=0 snapshot; unit tests cover NTV/TRT/Haberturk when items publish"
+}
