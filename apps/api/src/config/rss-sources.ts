@@ -6,7 +6,7 @@ export interface RssSourceConfig {
   language: string;
   country: string;
   enabled: boolean;
-  /** Registry legalMode=DISABLED vb. nedenlerle runtime ingest kapalı. */
+  /** Registry legalMode=DISABLED / NEEDS_REVIEW vb. nedenlerle runtime ingest kapalı. */
   disabledReason?: string;
   trustTier: 'HIGH' | 'MEDIUM' | 'LOW';
 }
@@ -30,7 +30,8 @@ export const RSS_SOURCES: RssSourceConfig[] = [
     categoryHint: 'Manşet',
     language: 'tr',
     country: 'TR',
-    enabled: true,
+    enabled: false,
+    disabledReason: 'registry_needs_review_pending',
     trustTier: 'HIGH'
   },
   {

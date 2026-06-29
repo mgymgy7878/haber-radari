@@ -14,6 +14,7 @@ import {
   validateRegistry,
   LEGAL_MODE_CONTRACT,
 } from './source-registry-contract.js';
+import { getSourceById, loadSourceRegistryV0 } from './source-registry-loader.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const FIXTURE_PATH = join(__dirname, 'fixtures', 'source-registry-contract-cases.json');
@@ -157,6 +158,15 @@ describe('source-registry runtime drift snapshot (read-only)', () => {
     const target = loadFixtures().find(
       (f) => f.sourceId === 'aa_guncel' && f.legalMode === 'DISABLED',
     );
+    expect(target?.publishEligible).toBe(false);
+  });
+
+  it('trt_haber runtime enabled=false — registry NEEDS_REVIEW ile uyumlu', () => {
+    const trt = RSS_SOURCES.find((s) => s.id === 'trt_haber');
+    expect(trt?.enabled).toBe(false);
+    expect(trt?.disabledReason).toBe('registry_needs_review_pending');
+    const target = getSourceById(loadSourceRegistryV0(), 'trt_haber');
+    expect(target?.legalMode).toBe('NEEDS_REVIEW');
     expect(target?.publishEligible).toBe(false);
   });
 });

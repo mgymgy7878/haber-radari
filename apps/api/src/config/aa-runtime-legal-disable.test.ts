@@ -8,7 +8,7 @@ describe('aa runtime legal disable v0', () => {
   it('aa_guncel enabled ingest listesinde değil', () => {
     const enabledIds = RSS_SOURCES.filter((s) => s.enabled).map((s) => s.id);
     expect(enabledIds).not.toContain('aa_guncel');
-    expect(enabledIds).toHaveLength(3);
+    expect(enabledIds).toHaveLength(2);
   });
 
   it('aa_guncel disabledReason registry DISABLED ile uyumlu', () => {
@@ -20,9 +20,10 @@ describe('aa runtime legal disable v0', () => {
     expect(aaRegistry?.publishEligible).toBe(false);
   });
 
-  it('diğer runtime kaynakları enabled kalır', () => {
-    for (const id of ['trt_haber', 'ntv_son_dakika', 'haberturk_ekonomi']) {
+  it('diğer ticari runtime kaynakları enabled kalır', () => {
+    for (const id of ['ntv_son_dakika', 'haberturk_ekonomi']) {
       expect(RSS_SOURCES.find((s) => s.id === id)?.enabled).toBe(true);
     }
+    expect(RSS_SOURCES.find((s) => s.id === 'trt_haber')?.enabled).toBe(false);
   });
 });

@@ -1,0 +1,27 @@
+﻿{
+    "legalBlockApplied":  true,
+    "publishBehaviorIntentionallyChanged":  true,
+    "baselineBeforeTrtDisable":  {
+                                     "publishedCount":  0,
+                                     "itemsLength":  0,
+                                     "sourceCount":  3,
+                                     "trtItemsInFeed":  0
+                                 },
+    "afterTrtDisable":  {
+                            "publishedCount":  0,
+                            "itemsLength":  0,
+                            "sourceCount":  2,
+                            "successfulSourceCount":  2,
+                            "totalScanned":  25
+                        },
+    "trtItemsInFeed":  0,
+    "trtRuntimeConfig":  {
+                             "sourceId":  "trt_haber",
+                             "enabled":  false,
+                             "disabledReason":  "registry_needs_review_pending"
+                         },
+    "enabledRuntimeSourceIds":  [
+                                    "ntv_son_dakika",
+                                    "haberturk_ekonomi"
+                                ]
+}
