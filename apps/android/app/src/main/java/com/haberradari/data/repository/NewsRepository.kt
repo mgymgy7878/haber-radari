@@ -5,8 +5,8 @@ import com.haberradari.data.local.FeedHealthDao
 import com.haberradari.data.local.SourceDao
 import com.haberradari.data.model.Article
 import com.haberradari.data.model.FeedHealth
-import com.haberradari.data.model.LegalMode
 import com.haberradari.data.model.Source
+import com.haberradari.data.registry.SourceSeedRefreshPolicy
 import com.haberradari.data.remote.RssParser
 import io.ktor.client.HttpClient
 import io.ktor.client.request.get
@@ -123,12 +123,33 @@ class NewsRepository(
     fun getSourcesFlow(): Flow<List<Source>> = sourceDao.getAllSources()
 
     /**
-     * Varsayılan RSS kaynaklarını veritabanına yükler (ilk çalıştırma).
-     * Mevcut kaynakları ezmez (REPLACE strategy ile günceller).
+     * Varsayılan RSS kaynaklarını veritabanına yükler.
+     *
+     * 1. Eksik seed satırları INSERT IGNORE ile eklenir (fresh install).
+     * 2. Mevcut frozen seed satırlarında registry metadata refresh edilir;
+     *    kullanıcı [Source.enabled] tercihi korunur.
      */
     suspend fun seedDefaultSources() = withContext(Dispatchers.IO) {
-        val defaults = defaultSeedLoader()
-        sourceDao.insertSources(defaults)
+        val registrySeeds = defaultSeedLoader()
+        sourceDao.insertSources(registrySeeds)
+        refreshExistingSeedMetadata(registrySeeds)
+    }
+
+    private suspend fun refreshExistingSeedMetadata(registrySeeds: List<Source>) {
+        for (seed in registrySeeds) {
+            if (seed.id !in SourceSeedRefreshPolicy.REFRESHABLE_SEED_IDS) continue
+            val existing = sourceDao.getSourceById(seed.id) ?: continue
+            if (!SourceSeedRefreshPolicy.needsMetadataRefresh(existing, seed)) continue
+            val merged = SourceSeedRefreshPolicy.mergePreservingUserPreferences(existing, seed)
+            sourceDao.updateSeedMetadata(
+                id = merged.id,
+                name = merged.name,
+                feedUrl = merged.feedUrl,
+                legalMode = merged.legalMode,
+                category = merged.category,
+                authorityLevel = merged.authorityLevel,
+            )
+        }
     }
 
     /**

@@ -4,7 +4,9 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import com.haberradari.data.model.LegalMode
 import com.haberradari.data.model.Source
+import com.haberradari.data.model.SourceAuthority
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -31,4 +33,28 @@ interface SourceDao {
     /** Kaynak ID ile getir */
     @Query("SELECT * FROM sources WHERE id = :sourceId LIMIT 1")
     suspend fun getSourceById(sourceId: String): Source?
+
+    /**
+     * Registry SSOT seed metadata refresh — yalnızca güvenli alanlar.
+     * [Source.enabled] güncellenmez; kullanıcı tercihi korunur.
+     */
+    @Query(
+        """
+        UPDATE sources SET
+            name = :name,
+            feedUrl = :feedUrl,
+            legalMode = :legalMode,
+            category = :category,
+            authorityLevel = :authorityLevel
+        WHERE id = :id
+        """,
+    )
+    suspend fun updateSeedMetadata(
+        id: String,
+        name: String,
+        feedUrl: String,
+        legalMode: LegalMode,
+        category: String,
+        authorityLevel: SourceAuthority,
+    )
 }
