@@ -1,0 +1,31 @@
+﻿{
+    "legalBlockApplied":  true,
+    "publishBehaviorIntentionallyChanged":  true,
+    "baselineFromRcaSmoke":  {
+                                 "publishedCount":  2,
+                                 "itemsLength":  2,
+                                 "note":  "PR #30 RCA smoke before AA disable"
+                             },
+    "afterAaDisable":  {
+                           "publishedCount":  0,
+                           "itemsLength":  0,
+                           "successfulSourceCount":  3,
+                           "sourceCount":  3,
+                           "totalScanned":  41
+                       },
+    "aaItemsInFeed":  0,
+    "itemSourceNames":  [
+
+                        ],
+    "legalContentGuardrailDryRun":  {
+                                        "overallRecommendedFix":  "no_action_debug_only",
+                                        "wouldStripItemCount":  0,
+                                        "wouldStripFieldCount":  0,
+                                        "evaluatedItemCount":  0
+                                    },
+    "aaRuntimeConfig":  {
+                            "sourceId":  "aa_guncel",
+                            "enabled":  false,
+                            "disabledReason":  "registry_legal_mode_disabled_no_license"
+                        }
+}

@@ -212,11 +212,12 @@ describe('Source Authority / Health Scoring v0 (shadow)', () => {
     });
   }
 
-  it('resmi kaynak (AA) yüksek authority tier', () => {
+  it('aa_guncel disabled — shadow authority BLOCKED_OR_LOW_TRUST', () => {
     const aa = RSS_SOURCES.find((s) => s.id === 'aa_guncel')!;
+    expect(aa.enabled).toBe(false);
     const { tier, authorityScore } = resolveAuthorityTier(aa);
-    expect(tier).toBe(AuthorityTier.PRIMARY_WIRE_OR_AGENCY);
-    expect(authorityScore).toBeGreaterThanOrEqual(80);
+    expect(tier).toBe(AuthorityTier.BLOCKED_OR_LOW_TRUST);
+    expect(authorityScore).toBeLessThanOrEqual(20);
   });
 
   it('unknown profil düşük authority', () => {
