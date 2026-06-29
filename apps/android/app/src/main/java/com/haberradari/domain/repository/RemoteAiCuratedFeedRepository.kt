@@ -35,10 +35,6 @@ class RemoteAiCuratedFeedRepository(
         FeatureConfig.assertReleaseSmartFeedUrlPolicy()
 
         return withContext(Dispatchers.IO) {
-            if (forceRefresh) {
-                cacheFile?.delete()
-            }
-
             val urlBuilder = StringBuilder(
                 "${FeatureConfig.smartFeedBaseUrl}/api/v1/smart-feed?includeWatchlist=1&includeLatest=1"
             )

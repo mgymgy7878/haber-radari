@@ -57,6 +57,10 @@ class NewsRepository(
      */
     suspend fun refreshFeeds(): Int = withContext(Dispatchers.IO) {
         val enabledSources = sourceDao.getEnabledSources()
+        if (enabledSources.isEmpty()) {
+            android.util.Log.d("NewsFlow", "refreshFeeds skipped — no enabled ingest sources")
+            return@withContext 0
+        }
         android.util.Log.d("NewsFlow", "NewsRepository refreshFeeds started with ${enabledSources.size} sources")
         var newArticlesCount = 0
 
@@ -117,6 +121,11 @@ class NewsRepository(
 
 
         return@withContext newArticlesCount
+    }
+
+    /** RSS ingest için açık kaynak sayısı (Room sorgusu — UI state race'inden bağımsız). */
+    suspend fun countEnabledIngestSources(): Int = withContext(Dispatchers.IO) {
+        sourceDao.getEnabledSources().size
     }
 
     /** Kaynak akışı — UI routing için kullanılır */
