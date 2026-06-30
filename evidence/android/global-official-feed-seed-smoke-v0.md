@@ -2,7 +2,7 @@
 
 **Branch:** `feat/global-official-feed-seed-v0`  
 **Base commit (seed):** `5785a23` — feat: add global official feed seed v0  
-**Hardening commit:** *(bu commit sonrası güncellenecek)*  
+**Hardening commit:** `8f797a9` — fix: harden global official feed metadata-only enforcement v0  
 **Tarih:** 2026-06-30  
 **Play/KVKK/B5:** Dokunulmadı
 
