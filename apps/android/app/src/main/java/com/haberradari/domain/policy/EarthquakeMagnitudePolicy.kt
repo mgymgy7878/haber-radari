@@ -14,6 +14,15 @@ object EarthquakeMagnitudePolicy {
     const val REASON_MAGNITUDE_UNKNOWN = "EARTHQUAKE_MAGNITUDE_UNKNOWN"
     const val REASON_PUBLIC_SAFETY_EXCEPTION = "PUBLIC_SAFETY_EXCEPTION"
 
+    /**
+     * Local Android ingest kaynakları arasında yüksek frekanslı mikroseismik veri yayınlayan kaynaklar.
+     * Bu kaynaklarda preview-cap uygulanmadan önce magnitude gate uygulanır;
+     * böylece M<5 kayıtların cap'i doldurarak M≥5 büyük depremleri dışarı atması engellenir.
+     */
+    val EARTHQUAKE_INGEST_SOURCE_IDS: Set<String> = setOf(
+        "usgs-earthquakes",
+    )
+
     private val earthquakeSignals = listOf(
         "deprem",
         "earthquake",
