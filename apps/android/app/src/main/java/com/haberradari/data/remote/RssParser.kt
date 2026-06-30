@@ -5,6 +5,8 @@ import com.haberradari.data.model.LegalMode
 import com.haberradari.data.model.Source
 import java.net.URI
 import java.security.MessageDigest
+import java.time.ZoneId
+import java.util.Locale
 import java.util.UUID
 
 /**
@@ -228,22 +230,84 @@ object RssParser {
 
     private fun parseDate(dateStr: String): Long? {
         if (dateStr.isBlank()) return null
+        parseRfc2822Date(dateStr)?.let { return it }
+        parseIso8601Date(dateStr)?.let { return it }
+        return parseTurkishDateTime(dateStr)
+    }
+
+    private fun parseRfc2822Date(dateStr: String): Long? = try {
+        java.text.SimpleDateFormat(
+            "EEE, dd MMM yyyy HH:mm:ss Z",
+            Locale.ENGLISH,
+        ).parse(dateStr)?.time
+    } catch (_: Exception) {
+        null
+    }
+
+    private fun parseIso8601Date(dateStr: String): Long? = try {
+        java.text.SimpleDateFormat(
+            "yyyy-MM-dd'T'HH:mm:ssZ",
+            Locale.ENGLISH,
+        ).parse(dateStr)?.time
+    } catch (_: Exception) {
+        null
+    }
+
+    /**
+     * Resmi kurum Atom feed'leri (ör. TCMB): `18 Haz 2026 14:00:00`
+     * Timezone belirtilmezse Europe/Istanbul varsayılır (deterministic).
+     */
+    private fun parseTurkishDateTime(dateStr: String): Long? {
+        val match = TURKISH_DATE_TIME_PATTERN.matchEntire(dateStr.trim()) ?: return null
+        val day = match.groupValues[1].toIntOrNull() ?: return null
+        val month = resolveTurkishMonth(match.groupValues[2]) ?: return null
+        val year = match.groupValues[3].toIntOrNull() ?: return null
+        val hour = match.groupValues[4].toIntOrNull() ?: return null
+        val minute = match.groupValues[5].toIntOrNull() ?: return null
+        val second = match.groupValues[6].toIntOrNull() ?: return null
+
         return try {
-            // RFC 2822 format (RSS standard)
-            java.text.SimpleDateFormat(
-                "EEE, dd MMM yyyy HH:mm:ss Z",
-                java.util.Locale.ENGLISH
-            ).parse(dateStr)?.time
+            java.time.LocalDateTime.of(year, month, day, hour, minute, second)
+                .atZone(TURKISH_FEED_ZONE)
+                .toInstant()
+                .toEpochMilli()
         } catch (_: Exception) {
-            try {
-                // ISO 8601 fallback
-                java.text.SimpleDateFormat(
-                    "yyyy-MM-dd'T'HH:mm:ssZ",
-                    java.util.Locale.ENGLISH
-                ).parse(dateStr)?.time
-            } catch (_: Exception) {
-                null
-            }
+            null
         }
     }
+
+    private fun resolveTurkishMonth(token: String): Int? {
+        val key = normalizeTurkishMonthToken(token)
+        return TURKISH_MONTH_TO_NUMBER[key]
+    }
+
+    private fun normalizeTurkishMonthToken(token: String): String {
+        return token.trim().trimEnd('.').lowercase(Locale.ROOT)
+            .replace('ı', 'i')
+            .replace('ğ', 'g')
+            .replace('ü', 'u')
+            .replace('ö', 'o')
+            .replace('ç', 'c')
+            .replace('ş', 's')
+    }
+
+    private val TURKISH_FEED_ZONE: ZoneId = ZoneId.of("Europe/Istanbul")
+
+    private val TURKISH_DATE_TIME_PATTERN =
+        Regex("""^(\d{1,2})\s+(\S+)\s+(\d{4})\s+(\d{2}):(\d{2}):(\d{2})$""")
+
+    private val TURKISH_MONTH_TO_NUMBER: Map<String, Int> = mapOf(
+        "oca" to 1, "ocak" to 1,
+        "sub" to 2, "subat" to 2,
+        "mar" to 3, "mart" to 3,
+        "nis" to 4, "nisan" to 4,
+        "may" to 5, "mayis" to 5,
+        "haz" to 6, "haziran" to 6,
+        "tem" to 7, "temmuz" to 7,
+        "agu" to 8, "agustos" to 8,
+        "eyl" to 9, "eylul" to 9,
+        "eki" to 10, "ekim" to 10,
+        "kas" to 11, "kasim" to 11,
+        "ara" to 12, "aralik" to 12,
+    )
 }
