@@ -21,12 +21,19 @@ object AndroidSeedRegistryDeriver {
         val registrySourceId: String,
     )
 
-    /** Frozen Android seed parity listesi — binding listesindeki kaynaklar seed edilir (v0: 4). */
+    /** Frozen Android seed parity listesi — binding listesindeki kaynaklar seed edilir (v0: 3). */
     val ANDROID_SEED_RUNTIME_BINDINGS: List<AndroidSeedBinding> = listOf(
         AndroidSeedBinding(androidSourceId = "ntv-turkiye", registrySourceId = "ntv_turkiye"),
         AndroidSeedBinding(androidSourceId = "bbc-turkce", registrySourceId = "bbc_turkce"),
         AndroidSeedBinding(androidSourceId = "haberturk", registrySourceId = "haberturk"),
-        AndroidSeedBinding(androidSourceId = "afad-official", registrySourceId = "afad_official"),
+    )
+
+    /**
+     * PR #59 audit: feedUrl 404 — binding geçici kaldırıldı.
+     * Mevcut kurulumlarda kalan satırlar seed refresh'te kapatılır (registry kaydı kalır).
+     */
+    val ANDROID_SEED_RETIRED_RUNTIME_IDS_V0: Set<String> = setOf(
+        "afad-official",
     )
 
     /**
@@ -37,7 +44,6 @@ object AndroidSeedRegistryDeriver {
         "ntv-turkiye" to true,
         "bbc-turkce" to true,
         "haberturk" to true,
-        "afad-official" to true,
     )
 
     /** Kategori parity — registry Title case, Android seed lowercase Türkçe. */
@@ -45,7 +51,6 @@ object AndroidSeedRegistryDeriver {
         "ntv-turkiye" to "türkiye",
         "bbc-turkce" to "dünya",
         "haberturk" to "genel",
-        "afad-official" to "afet",
     )
 
     /** Pre-migration parity referansı (id/name/url/category/enabled); legalMode registry’den gelir. */
@@ -76,16 +81,6 @@ object AndroidSeedRegistryDeriver {
             category = "genel",
             enabled = true,
             expectedLegalMode = LegalMode.TITLE_LINK_ONLY,
-        ),
-        SeedParityExpectation(
-            androidSourceId = "afad-official",
-            registrySourceId = "afad_official",
-            name = "AFAD",
-            feedUrl = "https://www.afad.gov.tr/rss",
-            category = "afet",
-            enabled = true,
-            expectedLegalMode = LegalMode.RSS_METADATA_ONLY,
-            expectedAuthorityLevel = SourceAuthority.OFFICIAL_PRIMARY,
         ),
     )
 
