@@ -21,11 +21,14 @@ object AndroidSeedRegistryDeriver {
         val registrySourceId: String,
     )
 
-    /** Frozen Android seed parity listesi — binding listesindeki kaynaklar seed edilir (v0: 3). */
+    /** Frozen Android seed parity listesi — binding listesindeki kaynaklar seed edilir (v0: 6). */
     val ANDROID_SEED_RUNTIME_BINDINGS: List<AndroidSeedBinding> = listOf(
         AndroidSeedBinding(androidSourceId = "ntv-turkiye", registrySourceId = "ntv_turkiye"),
         AndroidSeedBinding(androidSourceId = "bbc-turkce", registrySourceId = "bbc_turkce"),
         AndroidSeedBinding(androidSourceId = "haberturk", registrySourceId = "haberturk"),
+        AndroidSeedBinding(androidSourceId = "fed-press", registrySourceId = "fed_press"),
+        AndroidSeedBinding(androidSourceId = "eu-commission-press", registrySourceId = "eu_commission_press"),
+        AndroidSeedBinding(androidSourceId = "usgs-earthquakes", registrySourceId = "usgs_earthquakes"),
     )
 
     /**
@@ -44,6 +47,10 @@ object AndroidSeedRegistryDeriver {
         "ntv-turkiye" to true,
         "bbc-turkce" to true,
         "haberturk" to true,
+        // Global resmi kaynaklar — PR #68 ToS PASS; Fed/EU muhafazakâr default kapalı
+        "fed-press" to false,
+        "eu-commission-press" to false,
+        "usgs-earthquakes" to true,
     )
 
     /** Kategori parity — registry Title case, Android seed lowercase Türkçe. */
@@ -51,6 +58,9 @@ object AndroidSeedRegistryDeriver {
         "ntv-turkiye" to "türkiye",
         "bbc-turkce" to "dünya",
         "haberturk" to "genel",
+        "fed-press" to "ekonomi",
+        "eu-commission-press" to "dünya",
+        "usgs-earthquakes" to "afet",
     )
 
     /** Pre-migration parity referansı (id/name/url/category/enabled); legalMode registry’den gelir. */
@@ -81,6 +91,36 @@ object AndroidSeedRegistryDeriver {
             category = "genel",
             enabled = true,
             expectedLegalMode = LegalMode.TITLE_LINK_ONLY,
+        ),
+        SeedParityExpectation(
+            androidSourceId = "fed-press",
+            registrySourceId = "fed_press",
+            name = "Federal Reserve",
+            feedUrl = "https://www.federalreserve.gov/feeds/press_all.xml",
+            category = "ekonomi",
+            enabled = false,
+            expectedLegalMode = LegalMode.TITLE_LINK_ONLY,
+            expectedAuthorityLevel = SourceAuthority.OFFICIAL_PRIMARY,
+        ),
+        SeedParityExpectation(
+            androidSourceId = "eu-commission-press",
+            registrySourceId = "eu_commission_press",
+            name = "EU Commission Press",
+            feedUrl = "https://ec.europa.eu/commission/presscorner/api/rss",
+            category = "dünya",
+            enabled = false,
+            expectedLegalMode = LegalMode.TITLE_LINK_ONLY,
+            expectedAuthorityLevel = SourceAuthority.OFFICIAL_PRIMARY,
+        ),
+        SeedParityExpectation(
+            androidSourceId = "usgs-earthquakes",
+            registrySourceId = "usgs_earthquakes",
+            name = "USGS Earthquakes",
+            feedUrl = "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_day.atom",
+            category = "afet",
+            enabled = true,
+            expectedLegalMode = LegalMode.RSS_METADATA_ONLY,
+            expectedAuthorityLevel = SourceAuthority.OFFICIAL_PRIMARY,
         ),
     )
 

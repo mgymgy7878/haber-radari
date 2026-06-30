@@ -29,11 +29,11 @@ class AndroidSeedRegistryDeriverTest {
     }
 
     @Test
-    fun `parity seed kaynak sayısı 3`() {
+    fun `parity seed kaynak sayısı 6`() {
         val seeds = AndroidSeedRegistryDeriver.deriveDefaultSeedsFromRegistryJson(registryJson)
         val registryCount = Gson().fromJson(registryJson, SourceRegistryDocument::class.java).sources.size
-        assertEquals(3, seeds.size)
-        assertEquals(21, registryCount)
+        assertEquals(6, seeds.size)
+        assertEquals(24, registryCount)
     }
 
     @Test
@@ -81,7 +81,7 @@ class AndroidSeedRegistryDeriverTest {
     }
 
     @Test
-    fun `registry 21 kaynak otomatik seed edilmez`() {
+    fun `registry 24 kaynak otomatik seed edilmez`() {
         val seeds = AndroidSeedRegistryDeriver.deriveDefaultSeedsFromRegistryJson(registryJson)
         val runtimeIds = seeds.map { it.id }.toSet()
         assertFalse(runtimeIds.contains("afad-official"))
@@ -91,6 +91,8 @@ class AndroidSeedRegistryDeriverTest {
         assertFalse(runtimeIds.contains("deprem_afad"))
         assertFalse(runtimeIds.contains("tuik"))
         assertFalse(runtimeIds.contains("ntv_son_dakika"))
+        assertFalse(runtimeIds.contains("ecb_press"))
+        assertFalse(runtimeIds.contains("who_news"))
     }
 
     @Test

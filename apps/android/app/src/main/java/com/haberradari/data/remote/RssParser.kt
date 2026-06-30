@@ -99,9 +99,10 @@ object RssParser {
             val hash = computeContentHash(item.title, canonicalUrl)
             val publishedAt = parseDate(item.pubDate) ?: now
 
-            // TITLE_LINK_ONLY modunda description saklanmaz
+            // TITLE_LINK_ONLY modunda description saklanmaz; RSS_METADATA_ONLY HTML özet taşımaz
             val description = when (source.legalMode) {
                 LegalMode.TITLE_LINK_ONLY -> null
+                LegalMode.RSS_METADATA_ONLY -> item.description?.takeUnless { it.contains('<') }
                 else -> item.description
             }
 
@@ -244,13 +245,21 @@ object RssParser {
         null
     }
 
-    private fun parseIso8601Date(dateStr: String): Long? = try {
-        java.text.SimpleDateFormat(
-            "yyyy-MM-dd'T'HH:mm:ssZ",
-            Locale.ENGLISH,
-        ).parse(dateStr)?.time
-    } catch (_: Exception) {
-        null
+    private fun parseIso8601Date(dateStr: String): Long? {
+        val trimmed = dateStr.trim()
+        try {
+            return java.time.Instant.parse(trimmed).toEpochMilli()
+        } catch (_: Exception) {
+            // fallback: offset without fractional seconds
+        }
+        return try {
+            java.text.SimpleDateFormat(
+                "yyyy-MM-dd'T'HH:mm:ssZ",
+                Locale.ENGLISH,
+            ).parse(trimmed)?.time
+        } catch (_: Exception) {
+            null
+        }
     }
 
     /**
