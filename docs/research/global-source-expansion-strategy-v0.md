@@ -43,9 +43,85 @@ Uygulama **haber doğrulama** veya **kesin doğru** iddiası taşımaz. İzin ve
 
 ---
 
-## 3. Kaynak grupları ve ilk karar
+## 3. Güvenli içerik sunum modeli (metadata-only olay sinyali)
 
-### 3.1 Global ajanslar
+**Net karar:** Haber Radarı lisanssız ticari ve ajans kaynaklarda **haber özeti üretmez**. Bunun yerine **metadata-only olay sinyali** üretir.
+
+> “Haberin özü” = kaynağın makale metninden türetilmiş özet/parafraz → **telif ve ToS riski** taşır. Sadece link koymak riski tamamen kaldırmaz; fikir/olay değil **ifade biçimi** korunur. FSEK haber/iktibas istisnaları olsa da kaynak belirtme ve kapsam sınırı vardır; her yayıncının ToS/lisans şartı ayrı risk yaratır. **Hukuki kesin hüküm verilmez** — risk sınıflandırması yapılır.
+
+### 3.1 Lisans maliyetsiz en güvenli model (`TITLE_LINK_ONLY`)
+
+```text
+Kaynak: BBC / DW / NYT / Guardian / Reuters vb. (audit PASS sonrası)
+Başlık: Kaynağın RSS/meta başlığı (orijinal dil)
+Tarih: publishedAt
+Kısa sinyal: kategori / ülke etiketi (ör. “Dünya gündemi / ekonomi”)
+Buton: Orijinal kaynağa git
+```
+
+Bu modelde **haber metni alınmaz**, **özet üretilmez**, **görsel alınmaz**, **caption alınmaz**. SSOT v1 tam metin/görsel/caption/`rawHtml` yasağını ve ticari medya için `TITLE_LINK_ONLY / NEEDS_REVIEW` yaklaşımını şart koşar.
+
+### 3.2 Olay sinyali — güvenli “öz” tanımı
+
+En güvenli yol, kaynağın makalesini özetlemek değil; **birden fazla metadata sinyalinden olay etiketi üretmektir**:
+
+```text
+Olay sinyali:
+“ABD’de Fed faiz kararı gündemde”
+
+Kaynaklar:
+- Reuters — orijinal link
+- NYT — orijinal link
+- Fed — resmi açıklama linki
+```
+
+Buradaki “öz”, haber metninden kopyalanmış/parafraz edilmiş özet **değildir**; **başlıklar + kaynak adı + kategori + ülke + resmi açıklama varlığı** gibi metadata’dan üretilmiş kısa olay etiketidir.
+
+**İzin verilen olay sinyali alanları:**
+
+| Alan | Durum |
+|------|-------|
+| Başlık (RSS/meta) | Evet — orijinal dil |
+| Kaynak adı | Evet |
+| Tarih (`publishedAt`) | Evet |
+| Kategori / ülke etiketi | Evet |
+| Orijinal link | Evet — zorunlu |
+| Kaynak sayısı (cluster) | Evet |
+| Olay etiketi (metadata türetimi) | Evet — parafraz/LLM makale özeti **değil** |
+
+**Yasak alanlar (lisanssız ticari/ajans):**
+
+| Alan | Durum |
+|------|-------|
+| `fullText`, `articleText`, `body`, `scrapedText` | **Yasak** |
+| `articleSummary`, makale özeti, AI parafraz | **Yasak** |
+| Görsel, video, audio, `caption` | **Yasak** |
+| Makale scrape + Türkçe AI özet + link | **Yasak** |
+
+### 3.3 Riskli model (yapılmaz)
+
+```text
+NYT makalesini aç → metnini çek → AI ile Türkçe özetle → link koy
+```
+
+Teknik olarak “özet” görünse bile kaynağın ifade ettiği haber içeriğinden türetilmiş yeni metin olabilir. Büyük yayıncılar ve ajanslarda risk daha yüksektir.
+
+### 3.4 Kullanıcıya gösterilecek ürün dili
+
+```text
+Kaynak sinyali
+Bu konuda birden fazla kaynak haber geçti.
+Bu sinyal haberin doğruluğunu tek başına garanti etmez.
+Detay için orijinal kaynakları aç.
+```
+
+İzin verilen dil: **kaynak sinyali**, **kaynak profili**, **metadata tabanlı olay etiketi**, **orijinal kaynağa yönlendirme**. “Doğrulandı”, “kesin doğru”, “kanıtlandı” dili **yasak**.
+
+---
+
+## 4. Kaynak grupları ve ilk karar
+
+### 4.1 Global ajanslar
 
 **Örnekler:** Reuters, AP, AFP, AA, DHA, İHA, ANKA (TR ajansları aynı gate’e tabi).
 
@@ -56,7 +132,7 @@ Uygulama **haber doğrulama** veya **kesin doğru** iddiası taşımaz. İzin ve
 
 **Net hüküm:** Reuters / AP / AFP **doğrudan seed’e eklenmez**. RSS veya public API görünse bile lisans audit PASS olmadan registry ingest açılmaz.
 
-### 3.2 Büyük ticari medya
+### 4.2 Büyük ticari medya
 
 **Örnekler:** New York Times, Guardian, BBC (global), DW, NHK, CNN, Financial Times, Habertürk, NTV vb.
 
@@ -70,7 +146,7 @@ Uygulama **haber doğrulama** veya **kesin doğru** iddiası taşımaz. İzin ve
 
 **Özel not — BBC / DW / NHK / Guardian:** Global yayıncı feed’i bulunsa bile kullanım koşulu audit **PASS olmadan** seed açılmaz. Mevcut `bbc-turkce` Android seed’i **NEEDS_REVIEW** örneğidir.
 
-### 3.3 Resmi / kurumsal kaynaklar (birinci global omurga)
+### 4.3 Resmi / kurumsal kaynaklar (birinci global omurga)
 
 **Örnekler:** WHO, CDC, ECB, IMF, World Bank, OECD, USGS, NASA, EU kurumları, Fed, EMA, FDA, NHS.
 
@@ -82,20 +158,20 @@ Uygulama **haber doğrulama** veya **kesin doğru** iddiası taşımaz. İzin ve
 
 Resmi kurum olmak otomatik lisans sayılmaz; yine de ToS, robots ve alan uygunluğu denetlenir.
 
-### 3.4 Teknoloji
+### 4.4 Teknoloji
 
 **Örnekler:** Resmi şirket blogları (Google, Microsoft, OpenAI, GitHub), güvenlik advisories (CISA, vendor bulletins).
 
 | Varsayılan | Audit sonrası metadata-only; tam metin yok |
 |------------|-----------------------------------------------|
 
-### 3.5 Sağlık
+### 4.5 Sağlık
 
 **Örnekler:** WHO, CDC, EMA, FDA, NHS.
 
 Resmi sağlık kurumları **öncelikli**; ticari sağlık medyası ticari medya gate’ine tabidir.
 
-### 3.6 Ülke gündemi (resmi/public)
+### 4.6 Ülke gündemi (resmi/public)
 
 **Örnekler:** ABD (whitehouse.gov, state.gov), Almanya (bundesregierung.de), İngiltere (gov.uk), AB (ec.europa.eu), Japonya resmi portal, Çin resmi/public duyuru kanalları.
 
@@ -103,7 +179,7 @@ Resmi sağlık kurumları **öncelikli**; ticari sağlık medyası ticari medya 
 
 ---
 
-## 4. Kaynak ekleme gate’i
+## 5. Kaynak ekleme gate’i
 
 Her aday kaynak için audit sonunda **tek** birincil gate sonucu atanır:
 
@@ -120,11 +196,11 @@ Her aday kaynak için audit sonunda **tek** birincil gate sonucu atanır:
 
 ---
 
-## 5. v0 hedef paket (ilk global genişleme)
+## 6. v0 hedef paket (ilk global genişleme)
 
 Aşağıdaki paket **audit sırası**dır; otomatik seed listesi değildir.
 
-### 5.1 Dünya gündemi — ülke önceliği
+### 6.1 Dünya gündemi — ülke önceliği
 
 | Öncelik | Bölge / ülke | Kaynak tipi |
 |--------:|--------------|-------------|
@@ -135,7 +211,7 @@ Aşağıdaki paket **audit sırası**dır; otomatik seed listesi değildir.
 | 5 | Çin | Resmi/public duyuru (dil + erişim riski ayrı değerlendirme) |
 | 6 | Japonya | Resmi portal / kabine public |
 
-### 5.2 Kategori önceliği
+### 6.2 Kategori önceliği
 
 | Kategori | Öncelikli kurumlar (audit adayı) |
 |----------|----------------------------------|
@@ -144,7 +220,7 @@ Aşağıdaki paket **audit sırası**dır; otomatik seed listesi değildir.
 | **Teknoloji** | Resmi vendor blogları, CISA advisories |
 | **Afet / doğa** | USGS, EMSC, resmi afet API/RSS (JSON adapter ayrı gate) |
 
-### 5.3 Bilinçli v0 dışı (ikinci dalga)
+### 6.3 Bilinçli v0 dışı (ikinci dalga)
 
 | Grup | Neden ertelendi |
 |------|-----------------|
@@ -155,7 +231,7 @@ Aşağıdaki paket **audit sırası**dır; otomatik seed listesi değildir.
 
 ---
 
-## 6. Dil ve sunum politikası (v0)
+## 7. Dil ve sunum politikası (v0)
 
 | Alan | Politika |
 |------|----------|
@@ -163,14 +239,14 @@ Aşağıdaki paket **audit sırası**dır; otomatik seed listesi değildir.
 | Kaynak başlığı | Orijinal dilde gösterilir |
 | Kaynak adı / profili | Türkçe etiket + orijinal kurum adı |
 | Tarih | Yerel format (tr-TR) |
-| Özet / aiSummary | Kaynak `legalMode`’a göre; LLM digest **kapalı** |
+| Özet / aiSummary / olay etiketi | Kaynak `legalMode`’a göre; **makale özeti/parafraz yasak**; LLM digest **kapalı** |
 | Link-out | Zorunlu — orijinal kaynağa yönlendirme |
 
 **Çeviri:** Kullanıcıya otomatik çeviri **v0 kapsamı dışı**. İleride ayrı legal + maliyet + Play incelemesi gerekir.
 
 ---
 
-## 7. Mevcut durum (baseline)
+## 8. Mevcut durum (baseline)
 
 | Alan | Durum (main @ PR #65 sonrası) |
 |------|-------------------------------|
@@ -184,7 +260,7 @@ Global genişleme **mevcut 3 seed’i değiştirmez**; yeni kaynaklar yalnızca 
 
 ---
 
-## 8. Önerilen PR / audit sırası
+## 9. Önerilen PR / audit sırası
 
 | Sıra | Branch / iş | Tür | Çıktı |
 |-----:|-------------|-----|-------|
@@ -198,7 +274,7 @@ Global genişleme **mevcut 3 seed’i değiştirmez**; yeni kaynaklar yalnızca 
 
 ---
 
-## 9. Audit şablonu (sonraki PR’lar için)
+## 10. Audit şablonu (sonraki PR’lar için)
 
 Her kaynak satırında minimum alanlar:
 
@@ -212,17 +288,18 @@ Her kaynak satırında minimum alanlar:
 | `sampleFields` | title, link, published — **tam metin yok** |
 | `tosNote` | Kullanım koşulu özeti / incelenmedi |
 | `robotsNote` | robots.txt özeti |
-| `gateResult` | Bölüm 4 enum |
+| `gateResult` | Bölüm 5 enum |
 | `recommendedLegalMode` | SSOT v1 legalMode |
 | `seedRecommendation` | Alınır / alınmaz / ertelenir |
 
 ---
 
-## 10. Riskler ve kontroller
+## 11. Riskler ve kontroller
 
 | Risk | Seviye | Kontrol |
 |------|--------|---------|
 | Ajans/ticari medyanın lisanssız eklenmesi | Yüksek | Ajans → DISABLED; ticari → audit gate |
+| Makale scrape + AI özet (lisanssız) | Yüksek | Bölüm 3.3 — metadata-only olay sinyali |
 | NYT/Reuters içerik çekme | Yüksek | TITLE_LINK_ONLY / DISABLED varsayılan |
 | RSS varlığı = izin sanılması | Orta | Evidence-first; teknik PASS ≠ legal PASS |
 | Çeviri/LLM maliyet patlaması | Orta | v0 dışı; backend proxy + kill switch |
@@ -231,7 +308,7 @@ Her kaynak satırında minimum alanlar:
 
 ---
 
-## 11. Kabul kriterleri (bu belge için)
+## 12. Kabul kriterleri (bu belge için)
 
 - [x] Global ürün yönü tanımlandı
 - [x] Ajans / ticari / resmi kaynak grupları ayrıldı
@@ -239,11 +316,12 @@ Her kaynak satırında minimum alanlar:
 - [x] v0 hedef paket (ülke + kategori) listelendi
 - [x] Kod / seed / registry değişikliği **yok**
 - [x] SSOT v1 ile uyum teyit edildi
+- [x] Metadata-only olay sinyali modeli tanımlandı (makale özeti/parafraz yasak)
 - [x] Sonraki audit PR sırası yazıldı
 
 ---
 
-## 12. İlişkili belgeler
+## 13. İlişkili belgeler
 
 | Belge | Rol |
 |-------|-----|
@@ -254,8 +332,9 @@ Her kaynak satırında minimum alanlar:
 
 ---
 
-## 13. Revizyon geçmişi
+## 14. Revizyon geçmişi
 
 | Sürüm | Tarih | Not |
 |-------|-------|-----|
 | v0 | 2026-06-30 | İlk global genişleme stratejisi; evidence-first; kod yok |
+| v0.1 | 2026-06-30 | Bölüm 3: metadata-only olay sinyali; lisanssız makale özeti yasağı |

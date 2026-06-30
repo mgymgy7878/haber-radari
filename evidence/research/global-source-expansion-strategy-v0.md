@@ -11,6 +11,8 @@
 
 Haber Radarı ürün yönü güncellendi: **küresel önemli gelişmeleri seçen, ülkeler/kategoriler bazlı kişisel haber radarı** (şimdilik Türkçe UI). Global ajanslar (Reuters/AP/AFP) ve büyük ticari medya (NYT vb.) **doğrudan seed’e eklenmez**; resmi/kurumsal kaynaklar ilk global omurga adayıdır.
 
+**v0.1 ekleme:** Lisanssız ticari/ajans kaynaklarda **makale özeti/parafraz üretilmez**; yalnızca **metadata-only olay sinyali** (başlık, kaynak adı, tarih, kategori, ülke, link, kaynak sayısı).
+
 ---
 
 ## Değişen dosyalar
@@ -74,7 +76,9 @@ NO_FEED_FOUND
 
 ## Legal-safe çizgi
 
-- Metadata-only; tam metin/scrape/görsel yok
+- Metadata-only; tam metin/scrape/görsel/caption yok
+- Lisanssız ticari/ajans: makale özeti, AI parafraz, scrape+özet **yasak**
+- Güvenli model: başlık + kaynak adı + tarih + kategori + orijinal link + olay etiketi (metadata türetimi)
 - “Doğrulama / kesin doğru” dili yok
 - Ajans lisanssız → DISABLED
 - RSS varlığı ≠ izin
