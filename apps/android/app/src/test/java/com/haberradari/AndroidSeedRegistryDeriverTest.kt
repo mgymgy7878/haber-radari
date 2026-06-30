@@ -29,10 +29,10 @@ class AndroidSeedRegistryDeriverTest {
     }
 
     @Test
-    fun `parity seed kaynak sayısı 4`() {
+    fun `parity seed kaynak sayısı 3`() {
         val seeds = AndroidSeedRegistryDeriver.deriveDefaultSeedsFromRegistryJson(registryJson)
         val registryCount = Gson().fromJson(registryJson, SourceRegistryDocument::class.java).sources.size
-        assertEquals(4, seeds.size)
+        assertEquals(3, seeds.size)
         assertEquals(21, registryCount)
     }
 
@@ -52,17 +52,16 @@ class AndroidSeedRegistryDeriverTest {
     }
 
     @Test
-    fun `AFAD registry approved RSS_METADATA_ONLY ve feedUrl doğrulanır`() {
+    fun `AFAD registry kaydı var ama runtime seed binding yok`() {
         val document = Gson().fromJson(registryJson, SourceRegistryDocument::class.java)
         val afad = document.sources.first { it.sourceId == "afad_official" }
         assertEquals("approved", afad.reviewStatus)
         assertEquals("RSS_METADATA_ONLY", afad.legalMode)
         assertEquals("https://www.afad.gov.tr/rss", afad.feedUrl)
 
-        val seed = AndroidSeedRegistryDeriver.deriveDefaultSeedsFromRegistryJson(registryJson)
-            .first { it.id == "afad-official" }
-        assertEquals(LegalMode.RSS_METADATA_ONLY, seed.legalMode)
-        assertTrue(seed.enabled)
+        val seeds = AndroidSeedRegistryDeriver.deriveDefaultSeedsFromRegistryJson(registryJson)
+        assertFalse(seeds.any { it.id == "afad-official" })
+        assertTrue(AndroidSeedRegistryDeriver.ANDROID_SEED_RETIRED_RUNTIME_IDS_V0.contains("afad-official"))
     }
 
     @Test
@@ -85,7 +84,7 @@ class AndroidSeedRegistryDeriverTest {
     fun `registry 21 kaynak otomatik seed edilmez`() {
         val seeds = AndroidSeedRegistryDeriver.deriveDefaultSeedsFromRegistryJson(registryJson)
         val runtimeIds = seeds.map { it.id }.toSet()
-        assertTrue(runtimeIds.contains("afad-official"))
+        assertFalse(runtimeIds.contains("afad-official"))
         assertFalse(runtimeIds.contains("afad_official"))
         assertFalse(runtimeIds.contains("tcmb"))
         assertFalse(runtimeIds.contains("kap"))

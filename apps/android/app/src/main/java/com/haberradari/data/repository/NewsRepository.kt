@@ -6,6 +6,7 @@ import com.haberradari.data.local.SourceDao
 import com.haberradari.data.model.Article
 import com.haberradari.data.model.FeedHealth
 import com.haberradari.data.model.Source
+import com.haberradari.data.registry.AndroidSeedRegistryDeriver
 import com.haberradari.data.registry.SourceSeedRefreshPolicy
 import com.haberradari.data.remote.RssParser
 import io.ktor.client.HttpClient
@@ -152,6 +153,17 @@ class NewsRepository(
         val registrySeeds = defaultSeedLoader()
         sourceDao.insertSources(registrySeeds)
         refreshExistingSeedMetadata(registrySeeds)
+        retireRemovedSeedSources()
+    }
+
+    /** Binding'den çıkarılan kaynaklar — mevcut kurulumlarda RSS ingest kapatılır. */
+    private suspend fun retireRemovedSeedSources() {
+        for (id in AndroidSeedRegistryDeriver.ANDROID_SEED_RETIRED_RUNTIME_IDS_V0) {
+            val existing = sourceDao.getSourceById(id) ?: continue
+            if (existing.enabled) {
+                sourceDao.updateSourceEnabled(id, false)
+            }
+        }
     }
 
     private suspend fun refreshExistingSeedMetadata(registrySeeds: List<Source>) {
