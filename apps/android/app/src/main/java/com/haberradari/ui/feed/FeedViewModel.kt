@@ -10,7 +10,9 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.launch
 import com.haberradari.data.model.AiCuratedNewsItem
+import com.haberradari.domain.policy.EarthquakeMainFeedGate
 import com.haberradari.domain.repository.AiCuratedFeedRepository
+import com.haberradari.domain.repository.AiCuratedFeedResult
 import com.haberradari.domain.repository.FeedSource
 
 /**
@@ -86,7 +88,7 @@ class FeedViewModel(
         viewModelScope.launch {
             _uiState.value = _uiState.value.copy(isReadingCache = true)
             try {
-                val cached = aiFeedRepository.getCachedFeed()
+                val cached = aiFeedRepository.getCachedFeed()?.let(::applyEarthquakeGate)
                 if (cached != null) {
                     _uiState.value = _uiState.value.copy(
                         curatedItems = cached.items,
@@ -152,7 +154,7 @@ class FeedViewModel(
 
         _uiState.value = _uiState.value.copy(isRemoteLoading = true)
         try {
-            val result = aiFeedRepository.getCuratedFeed(articles, forceRefresh)
+            val result = applyEarthquakeGate(aiFeedRepository.getCuratedFeed(articles, forceRefresh))
 
             _uiState.value = _uiState.value.copy(
                 curatedItems = result.items,
@@ -178,7 +180,7 @@ class FeedViewModel(
             )
         } catch (e: Exception) {
             val errorMsg = mapErrorMessage(e)
-            val cached = aiFeedRepository.getCachedFeed()
+            val cached = aiFeedRepository.getCachedFeed()?.let(::applyEarthquakeGate)
             _uiState.value = if (cached != null) {
                 FeedRefreshUiLogic.applyCachedSnapshot(
                     _uiState.value,
@@ -217,7 +219,7 @@ class FeedViewModel(
                 fetchCuratedFeed(_uiState.value.articles, forceRefresh = true)
             } catch (e: Exception) {
                 val errorMsg = mapErrorMessage(e)
-                val cached = aiFeedRepository.getCachedFeed()
+                val cached = aiFeedRepository.getCachedFeed()?.let(::applyEarthquakeGate)
                 _uiState.value = if (cached != null) {
                     FeedRefreshUiLogic.applyCachedSnapshot(
                         _uiState.value,
@@ -234,6 +236,9 @@ class FeedViewModel(
             }
         }
     }
+
+    private fun applyEarthquakeGate(result: AiCuratedFeedResult): AiCuratedFeedResult =
+        EarthquakeMainFeedGate.apply(result)
 
     private fun formatCacheAge(timestamp: Long): String {
         val diffMs = System.currentTimeMillis() - timestamp
