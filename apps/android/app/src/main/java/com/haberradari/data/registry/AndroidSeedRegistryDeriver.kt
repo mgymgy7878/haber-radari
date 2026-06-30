@@ -21,11 +21,12 @@ object AndroidSeedRegistryDeriver {
         val registrySourceId: String,
     )
 
-    /** Frozen Android seed parity listesi — yalnızca bu 3 kaynak seed edilir. */
+    /** Frozen Android seed parity listesi — binding listesindeki kaynaklar seed edilir (v0: 4). */
     val ANDROID_SEED_RUNTIME_BINDINGS: List<AndroidSeedBinding> = listOf(
         AndroidSeedBinding(androidSourceId = "ntv-turkiye", registrySourceId = "ntv_turkiye"),
         AndroidSeedBinding(androidSourceId = "bbc-turkce", registrySourceId = "bbc_turkce"),
         AndroidSeedBinding(androidSourceId = "haberturk", registrySourceId = "haberturk"),
+        AndroidSeedBinding(androidSourceId = "afad-official", registrySourceId = "afad_official"),
     )
 
     /**
@@ -36,6 +37,7 @@ object AndroidSeedRegistryDeriver {
         "ntv-turkiye" to true,
         "bbc-turkce" to true,
         "haberturk" to true,
+        "afad-official" to true,
     )
 
     /** Kategori parity — registry Title case, Android seed lowercase Türkçe. */
@@ -43,6 +45,7 @@ object AndroidSeedRegistryDeriver {
         "ntv-turkiye" to "türkiye",
         "bbc-turkce" to "dünya",
         "haberturk" to "genel",
+        "afad-official" to "afet",
     )
 
     /** Pre-migration parity referansı (id/name/url/category/enabled); legalMode registry’den gelir. */
@@ -74,6 +77,16 @@ object AndroidSeedRegistryDeriver {
             enabled = true,
             expectedLegalMode = LegalMode.TITLE_LINK_ONLY,
         ),
+        SeedParityExpectation(
+            androidSourceId = "afad-official",
+            registrySourceId = "afad_official",
+            name = "AFAD",
+            feedUrl = "https://www.afad.gov.tr/rss",
+            category = "afet",
+            enabled = true,
+            expectedLegalMode = LegalMode.RSS_METADATA_ONLY,
+            expectedAuthorityLevel = SourceAuthority.OFFICIAL_PRIMARY,
+        ),
     )
 
     data class SeedParityExpectation(
@@ -84,6 +97,7 @@ object AndroidSeedRegistryDeriver {
         val category: String,
         val enabled: Boolean,
         val expectedLegalMode: LegalMode,
+        val expectedAuthorityLevel: SourceAuthority = SourceAuthority.GENERAL_MEDIA,
     )
 
     private val gson = Gson()
@@ -132,8 +146,10 @@ object AndroidSeedRegistryDeriver {
         else -> error("Geçersiz registry legalMode: $mode")
     }
 
-    private fun mapAuthorityTier(@Suppress("UNUSED_PARAMETER") tier: String?): SourceAuthority =
-        SourceAuthority.GENERAL_MEDIA
+    private fun mapAuthorityTier(tier: String?): SourceAuthority = when (tier) {
+        "OFFICIAL" -> SourceAuthority.OFFICIAL_PRIMARY
+        else -> SourceAuthority.GENERAL_MEDIA
+    }
 
     private fun assertSeedLegalSafety(androidSourceId: String, legalMode: LegalMode) {
         if (legalMode == LegalMode.DISABLED) {

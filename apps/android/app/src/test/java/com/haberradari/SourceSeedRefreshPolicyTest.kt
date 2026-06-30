@@ -133,14 +133,15 @@ class SourceSeedRefreshPolicyTest {
     }
 
     @Test
-    fun `fresh install parity seed kaynak sayısı 3 ve legalMode doğru`() = runBlocking {
+    fun `fresh install parity seed kaynak sayısı 4 ve legalMode doğru`() = runBlocking {
         val dao = FakeSourceDao()
         repository(dao).seedDefaultSources()
 
-        assertEquals(3, dao.sources.size)
+        assertEquals(4, dao.sources.size)
         assertEquals(LegalMode.TITLE_LINK_ONLY, dao.sources["ntv-turkiye"]?.legalMode)
         assertEquals(LegalMode.TITLE_LINK_ONLY, dao.sources["haberturk"]?.legalMode)
         assertEquals(LegalMode.NEEDS_REVIEW, dao.sources["bbc-turkce"]?.legalMode)
+        assertEquals(LegalMode.RSS_METADATA_ONLY, dao.sources["afad-official"]?.legalMode)
     }
 
     @Test
@@ -176,9 +177,23 @@ class SourceSeedRefreshPolicyTest {
         dao.seedExisting(legacySource("ntv-turkiye"))
         repository(dao).seedDefaultSources()
 
-        assertEquals(3, dao.sources.size)
-        assertFalse(dao.sources.containsKey("afad_official"))
+        assertEquals(4, dao.sources.size)
+        assertTrue(dao.sources.containsKey("afad-official"))
         assertFalse(dao.sources.containsKey("tcmb"))
+        assertFalse(dao.sources.containsKey("deprem_afad"))
+    }
+
+    @Test
+    fun `AFAD user enabled false tercihi refresh sonrası korunur`() = runBlocking {
+        val dao = FakeSourceDao()
+        dao.seedExisting(legacySource("afad-official", enabled = false))
+        dao.seedExisting(legacySource("ntv-turkiye"))
+        dao.seedExisting(legacySource("haberturk"))
+        dao.seedExisting(legacySource("bbc-turkce"))
+
+        repository(dao).seedDefaultSources()
+
+        assertFalse(dao.sources["afad-official"]!!.enabled)
     }
 
     @Test
@@ -223,8 +238,9 @@ class SourceSeedRefreshPolicyTest {
 
     @Test
     fun `refreshable seed ids frozen binding ile sınırlı`() {
-        assertEquals(3, SourceSeedRefreshPolicy.REFRESHABLE_SEED_IDS.size)
+        assertEquals(4, SourceSeedRefreshPolicy.REFRESHABLE_SEED_IDS.size)
         assertTrue(SourceSeedRefreshPolicy.REFRESHABLE_SEED_IDS.contains("ntv-turkiye"))
-        assertFalse(SourceSeedRefreshPolicy.REFRESHABLE_SEED_IDS.contains("afad_official"))
+        assertTrue(SourceSeedRefreshPolicy.REFRESHABLE_SEED_IDS.contains("afad-official"))
+        assertFalse(SourceSeedRefreshPolicy.REFRESHABLE_SEED_IDS.contains("tcmb"))
     }
 }
