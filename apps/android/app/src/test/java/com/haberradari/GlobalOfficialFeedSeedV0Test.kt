@@ -120,6 +120,32 @@ class GlobalOfficialFeedSeedV0Test {
     }
 
     @Test
+    fun `USGS Atom plain text summary also null`() {
+        val usgs = seeds.first { it.id == "usgs-earthquakes" }
+        val item = RssParser.RssItem(
+            title = "M 3.0 - California",
+            link = "https://earthquake.usgs.gov/earthquakes/eventpage/test2",
+            pubDate = "2026-06-30T10:00:00Z",
+            description = "10 km NE of Sample City",
+        )
+        val article = RssParser.toArticles(listOf(item), usgs).single()
+        assertNull(article.description)
+    }
+
+    @Test
+    fun `EU Commission TITLE_LINK_ONLY does not persist description`() {
+        val eu = seeds.first { it.id == "eu-commission-press" }
+        val item = RssParser.RssItem(
+            title = "Commission press release",
+            link = "https://ec.europa.eu/commission/presscorner/detail/en/test",
+            pubDate = "Mon, 30 Jun 2026 12:00:00 GMT",
+            description = "Paragraph summary that must not appear in UI.",
+        )
+        val article = RssParser.toArticles(listOf(item), eu).single()
+        assertNull(article.description)
+    }
+
+    @Test
     fun `USGS Atom ISO instant date parses`() {
         val usgs = seeds.first { it.id == "usgs-earthquakes" }
         val item = RssParser.RssItem(

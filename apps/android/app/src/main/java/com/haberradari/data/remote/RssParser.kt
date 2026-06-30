@@ -23,6 +23,9 @@ import java.util.UUID
  */
 object RssParser {
 
+    /** Global official afet seed — Atom summary/description UI/cache'e taşınmaz. */
+    const val USGS_EARTHQUAKES_SOURCE_ID = "usgs-earthquakes"
+
     /**
      * Ham RSS item — parse sonucu.
      * Henüz legalMode filtresi uygulanmamış durum.
@@ -99,10 +102,12 @@ object RssParser {
             val hash = computeContentHash(item.title, canonicalUrl)
             val publishedAt = parseDate(item.pubDate) ?: now
 
-            // TITLE_LINK_ONLY modunda description saklanmaz; RSS_METADATA_ONLY HTML özet taşımaz
-            val description = when (source.legalMode) {
-                LegalMode.TITLE_LINK_ONLY -> null
-                LegalMode.RSS_METADATA_ONLY -> item.description?.takeUnless { it.contains('<') }
+            // TITLE_LINK_ONLY → description yok; USGS (resmi afet) → description her zaman yok
+            val description = when {
+                source.legalMode == LegalMode.TITLE_LINK_ONLY -> null
+                source.id == USGS_EARTHQUAKES_SOURCE_ID -> null
+                source.legalMode == LegalMode.RSS_METADATA_ONLY ->
+                    item.description?.takeUnless { it.contains('<') }
                 else -> item.description
             }
 
