@@ -148,92 +148,78 @@ class EarthquakeMainFeedGateTest {
         assertEquals(2, result.watchlistPreview?.size)
     }
 
+    // ── filterLatestPreview — Son Haberler filtreleme ──────────────────────────
+
     private fun latestItem(
         id: String,
         title: String,
-        sourceName: String = "NTV",
-        category: String = "genel",
+        sourceName: String = "USGS Earthquakes",
+        category: String = "afet",
     ): WatchlistPreviewItem = WatchlistPreviewItem(
         id = id,
         title = title,
         category = category,
         publishDecision = "LATEST_RSS",
         publishReason = null,
-        evidenceStatus = "LOW_CONFIDENCE",
-        contentType = "GENERAL",
-        topicQuality = "NORMAL",
+        evidenceStatus = EvidenceStatus.LOW_CONFIDENCE.name,
+        contentType = ContentType.GENERAL.name,
+        topicQuality = TopicQuality.NORMAL.name,
         sourceCount = 1,
-        reasonCode = null,
+        reasonCode = "LOCAL_ANDROID_INGEST",
         shortDescription = null,
         originalUrl = "https://example.com/$id",
-        publishedAt = "1000",
+        publishedAt = "1700000000000",
         sourceNames = listOf(sourceName),
     )
 
     @Test
-    fun `NTV unknown magnitude deprem removed from Son Haberler`() {
-        val result = EarthquakeMainFeedGate.apply(
-            baseResult(emptyList()).copy(
-                latestRssPreview = listOf(
-                    latestItem("ntv-1", "Son dakika deprem mi oldu?"),
-                ),
-            ),
-        )
-        assertTrue(result.latestRssPreview.isNullOrEmpty())
-        assertEquals(
-            EarthquakeMagnitudePolicy.REASON_MAGNITUDE_UNKNOWN,
-            result.watchlistPreview?.first()?.reasonCode,
-        )
+    fun `Son Haberler - M5 and above passes filter`() {
+        val items = listOf(latestItem("usgs-5", "M 5.1 - Alaska"))
+        val result = EarthquakeMainFeedGate.filterLatestPreview(items)
+        assertEquals(1, result?.size)
     }
 
     @Test
-    fun `USGS M 0_6 removed from Son Haberler`() {
-        val result = EarthquakeMainFeedGate.apply(
-            baseResult(emptyList()).copy(
-                latestRssPreview = listOf(
-                    latestItem(
-                        id = "usgs-low",
-                        title = "M 0.6 - 22 km N of Borrego Springs, CA",
-                        sourceName = "USGS Earthquakes",
-                        category = "afet",
-                    ),
-                ),
-            ),
-        )
-        assertTrue(result.latestRssPreview.isNullOrEmpty())
-        assertEquals(
-            EarthquakeMagnitudePolicy.REASON_MAGNITUDE_BELOW_THRESHOLD,
-            result.watchlistPreview?.first()?.reasonCode,
-        )
+    fun `Son Haberler - M below 5 removed`() {
+        val items = listOf(latestItem("usgs-low", "M 0.6 - 22 km N of Borrego Springs, CA"))
+        val result = EarthquakeMainFeedGate.filterLatestPreview(items)
+        assertTrue(result.isNullOrEmpty())
     }
 
     @Test
-    fun `USGS M 5_0 stays in Son Haberler`() {
-        val result = EarthquakeMainFeedGate.apply(
-            baseResult(emptyList()).copy(
-                latestRssPreview = listOf(
-                    latestItem(
-                        id = "usgs-5",
-                        title = "M 5.0 - Alaska Peninsula",
-                        sourceName = "USGS Earthquakes",
-                        category = "afet",
-                    ),
-                ),
-            ),
+    fun `Son Haberler - magnitude unknown deprem removed`() {
+        val items = listOf(
+            latestItem("ntv-dep", "Son dakika deprem mi oldu?", sourceName = "NTV", category = "genel"),
         )
-        assertEquals(1, result.latestRssPreview?.size)
-        assertTrue(result.watchlistPreview.isNullOrEmpty())
+        val result = EarthquakeMainFeedGate.filterLatestPreview(items)
+        assertTrue(result.isNullOrEmpty())
     }
 
     @Test
-    fun `non earthquake latest item stays in Son Haberler`() {
-        val result = EarthquakeMainFeedGate.apply(
-            baseResult(emptyList()).copy(
-                latestRssPreview = listOf(
-                    latestItem("eco", "Merkez Bankası faiz kararını açıkladı", "Reuters", "ekonomi"),
-                ),
-            ),
+    fun `Son Haberler - non earthquake item kept`() {
+        val items = listOf(
+            latestItem("eco-1", "Enflasyon verisi açıklandı", sourceName = "Reuters", category = "ekonomi"),
         )
-        assertEquals(1, result.latestRssPreview?.size)
+        val result = EarthquakeMainFeedGate.filterLatestPreview(items)
+        assertEquals(1, result?.size)
+    }
+
+    @Test
+    fun `Son Haberler - null input returns null`() {
+        assertNull(EarthquakeMainFeedGate.filterLatestPreview(null))
+    }
+
+    @Test
+    fun `Son Haberler - mixed items only eligible pass`() {
+        val items = listOf(
+            latestItem("eq-pass", "M 6.2 - Turkey"),
+            latestItem("eq-fail", "M 2.1 - California"),
+            latestItem("ntv", "Deprem mi oldu?", sourceName = "NTV", category = "genel"),
+            latestItem("non-eq", "Yeni ekonomik paket açıklandı", sourceName = "Reuters", category = "ekonomi"),
+        )
+        val result = EarthquakeMainFeedGate.filterLatestPreview(items)
+        assertEquals(2, result?.size)
+        assertTrue(result!!.any { it.id == "eq-pass" })
+        assertTrue(result.any { it.id == "non-eq" })
     }
 }

@@ -237,9 +237,11 @@ class FeedViewModel(
         }
     }
 
-    private fun applyEarthquakeGate(result: AiCuratedFeedResult): AiCuratedFeedResult =
-        // Local Android ingest → latestRssPreview merge eklendiğinde gate merge SONRASI uygulanmalı.
-        EarthquakeMainFeedGate.apply(result)
+    private fun applyEarthquakeGate(result: AiCuratedFeedResult): AiCuratedFeedResult {
+        val gated = EarthquakeMainFeedGate.apply(result)
+        val filteredLatest = EarthquakeMainFeedGate.filterLatestPreview(gated.latestRssPreview)
+        return gated.copy(latestRssPreview = filteredLatest)
+    }
 
     private fun formatCacheAge(timestamp: Long): String {
         val diffMs = System.currentTimeMillis() - timestamp

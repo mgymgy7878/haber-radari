@@ -6,11 +6,9 @@ import com.haberradari.domain.repository.AiCuratedFeedResult
 import com.haberradari.domain.repository.WatchlistPreviewItem
 
 /**
- * Deprem magnitude eşiği kapısı — ana akış (PUBLISH_MAIN) ve kullanıcıya dönük
- * Son Haberler (`latestRssPreview`) için uygulanır.
- *
- * Eşik altı / bilinmeyen deprem kayıtları izleme listesine taşınır.
- * Ham/debug önizleme (`rawPreview`, `noisePreview`) dokunulmaz.
+ * Deprem magnitude eşiği kapısı — PUBLISH_MAIN ve kullanıcıya dönük Son Haberler (latestRssPreview) için.
+ * Eşik altı / bilinmeyen deprem kayıtları ana akıştan ve Son Haberler'den kaldırılır.
+ * Ham önizleme metadata-only sınırını korumuş olur; description/body kullanılmaz.
  */
 object EarthquakeMainFeedGate {
 
@@ -37,61 +35,42 @@ object EarthquakeMainFeedGate {
             }
         }
 
-        val (keptLatest, demotedFromLatest) = filterLatestRssPreview(result.latestRssPreview)
-        val allDemoted = demoted + demotedFromLatest
+        if (demoted.isEmpty()) return result
 
-        if (allDemoted.isEmpty() && keptLatest == result.latestRssPreview) {
-            return result
-        }
-
-        val mergedWatchlist = (result.watchlistPreview.orEmpty() + allDemoted)
+        val mergedWatchlist = (result.watchlistPreview.orEmpty() + demoted)
             .distinctBy { it.id }
 
-        val mainDemotedCount = demoted.size
-        val latestDemotedCount = demotedFromLatest.size
+        val demotedCount = demoted.size
         return result.copy(
             items = keptMain,
-            latestRssPreview = keptLatest,
             watchlistPreview = mergedWatchlist.takeIf { it.isNotEmpty() },
-            publishedCount = (result.publishedCount - mainDemotedCount).coerceAtLeast(0),
-            hiddenCount = result.hiddenCount + mainDemotedCount + latestDemotedCount,
+            publishedCount = (result.publishedCount - demotedCount).coerceAtLeast(0),
+            hiddenCount = result.hiddenCount + demotedCount,
             watchlistCount = mergedWatchlist.size,
         )
     }
 
-    /**
-     * Son Haberler önizlemesi — production kullanıcı alanı; deprem eşiği burada da geçerli.
-     * Local Android ingest merge sonrası gate bu listede de uygulanmalı (FeedViewModel sırası).
-     */
-    fun filterLatestRssPreview(
-        preview: List<WatchlistPreviewItem>?,
-    ): Pair<List<WatchlistPreviewItem>?, List<WatchlistPreviewItem>> {
-        if (preview.isNullOrEmpty()) return preview to emptyList()
-
-        val kept = mutableListOf<WatchlistPreviewItem>()
-        val demoted = mutableListOf<WatchlistPreviewItem>()
-
-        for (item in preview) {
-            when (
-                val eligibility = EarthquakeMagnitudePolicy.evaluateMainFeedEligibility(
-                    title = item.title,
-                    category = item.category,
-                    sourceNames = item.sourceNames.orEmpty(),
-                    existingReasonCode = item.reasonCode,
-                )
-            ) {
-                is EarthquakeMagnitudePolicy.MainFeedEligibility.Eligible -> kept.add(item)
-                is EarthquakeMagnitudePolicy.MainFeedEligibility.WatchlistOnly -> {
-                    demoted.add(item.toDemotedWatchlist(eligibility.reasonCode))
-                }
-            }
-        }
-
-        return kept.takeIf { it.isNotEmpty() } to demoted
-    }
-
     private fun primaryTitle(item: AiCuratedNewsItem): String =
         item.sources.firstOrNull()?.originalTitle?.takeIf { it.isNotBlank() } ?: item.aiTitle
+
+    /**
+     * Son Haberler (latestRssPreview) kullanıcıya dönük production alanıdır.
+     * Deprem sinyali taşıyan ve eşiği karşılamayan kayıtlar listeden çıkarılır.
+     * Yalnızca title/category/sourceNames kullanılır — description/body/html yasak.
+     */
+    fun filterLatestPreview(
+        items: List<WatchlistPreviewItem>?,
+    ): List<WatchlistPreviewItem>? {
+        if (items.isNullOrEmpty()) return items
+        val filtered = items.filter { item ->
+            EarthquakeMagnitudePolicy.evaluateMainFeedEligibility(
+                title = item.title,
+                category = item.category,
+                sourceNames = item.sourceNames.orEmpty(),
+            ) is EarthquakeMagnitudePolicy.MainFeedEligibility.Eligible
+        }
+        return filtered.takeIf { it.isNotEmpty() }
+    }
 
     private fun AiCuratedNewsItem.toWatchlistPreview(reasonCode: String): WatchlistPreviewItem =
         WatchlistPreviewItem(
@@ -109,13 +88,5 @@ object EarthquakeMainFeedGate {
             originalUrl = sources.firstOrNull()?.url,
             publishedAt = sources.firstOrNull()?.publishedAt?.toString(),
             sourceNames = sources.map { it.sourceName }.distinct(),
-        )
-
-    private fun WatchlistPreviewItem.toDemotedWatchlist(reasonCode: String): WatchlistPreviewItem =
-        copy(
-            publishDecision = PublishDecision.WATCHLIST_ONLY.name,
-            publishReason = reasonCode,
-            reasonCode = reasonCode,
-            shortDescription = null,
         )
 }
