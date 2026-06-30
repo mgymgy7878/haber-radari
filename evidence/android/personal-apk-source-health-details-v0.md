@@ -4,7 +4,7 @@
 
 - **Branch:** `feat/personal-apk-source-health-details-v0`
 - **Base:** `main` @ `5b3c0cd` (docs: re-audit tcmb feed after turkish date parser v0.3 #64)
-- **Commit:** `e63a84d` — feat: add source health details v0
+- **Commit:** `8f67d52` — feat: add source health details v0
 
 ## Değişen dosyalar
 
