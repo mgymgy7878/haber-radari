@@ -2,6 +2,7 @@ package com.haberradari.ui.feed
 
 import com.haberradari.data.model.Article
 import com.haberradari.data.registry.AndroidSeedRegistryDeriver
+import com.haberradari.domain.policy.EarthquakeMagnitudePolicy
 import com.haberradari.domain.repository.WatchlistPreviewItem
 
 /**
@@ -25,6 +26,10 @@ object LatestRssPreviewUiLogic {
     /**
      * Backend önizlemesine, henüz listede olmayan local Android ingest kayıtlarını ekler.
      * [shortDescription] her zaman null — title/date/source/link dışı özet gösterilmez.
+     *
+     * Deprem kaynakları (EARTHQUAKE_INGEST_SOURCE_IDS) için magnitude gate cap'ten önce uygulanır:
+     * sürekli gelen M<5 mikroseismik kayıtların source-cap'i doldurarak M≥5 büyük depremleri
+     * preview penceresinden dışarı atması engellenir.
      */
     fun mergeWithLocalAndroidIngest(
         backendPreview: List<WatchlistPreviewItem>?,
@@ -45,7 +50,20 @@ object LatestRssPreviewUiLogic {
             }
             .sortedByDescending { it.publishedAt }
             .groupBy { it.sourceId }
-            .flatMap { (_, bySource) -> bySource.take(MAX_ITEMS_PER_LOCAL_SOURCE) }
+            .flatMap { (sourceId, bySource) ->
+                val candidates = if (sourceId in EarthquakeMagnitudePolicy.EARTHQUAKE_INGEST_SOURCE_IDS) {
+                    bySource.filter { article ->
+                        EarthquakeMagnitudePolicy.evaluateMainFeedEligibility(
+                            title = article.title,
+                            category = categoryForSource(sourceId),
+                            sourceNames = listOf(article.sourceName),
+                        ) is EarthquakeMagnitudePolicy.MainFeedEligibility.Eligible
+                    }
+                } else {
+                    bySource
+                }
+                candidates.take(MAX_ITEMS_PER_LOCAL_SOURCE)
+            }
             .map { articleToPreviewItem(it) }
             .toList()
 
