@@ -133,14 +133,17 @@ class SourceSeedRefreshPolicyTest {
     }
 
     @Test
-    fun `fresh install parity seed kaynak sayısı 3 ve legalMode doğru`() = runBlocking {
+    fun `fresh install parity seed kaynak sayısı 6 ve legalMode doğru`() = runBlocking {
         val dao = FakeSourceDao()
         repository(dao).seedDefaultSources()
 
-        assertEquals(3, dao.sources.size)
+        assertEquals(6, dao.sources.size)
         assertEquals(LegalMode.TITLE_LINK_ONLY, dao.sources["ntv-turkiye"]?.legalMode)
         assertEquals(LegalMode.TITLE_LINK_ONLY, dao.sources["haberturk"]?.legalMode)
         assertEquals(LegalMode.NEEDS_REVIEW, dao.sources["bbc-turkce"]?.legalMode)
+        assertEquals(LegalMode.TITLE_LINK_ONLY, dao.sources["fed-press"]?.legalMode)
+        assertEquals(LegalMode.TITLE_LINK_ONLY, dao.sources["eu-commission-press"]?.legalMode)
+        assertEquals(LegalMode.RSS_METADATA_ONLY, dao.sources["usgs-earthquakes"]?.legalMode)
         assertFalse(dao.sources.containsKey("afad-official"))
     }
 
@@ -172,15 +175,17 @@ class SourceSeedRefreshPolicyTest {
     }
 
     @Test
-    fun `registry 21 kaynak otomatik DB ye eklenmez`() = runBlocking {
+    fun `registry 24 kaynak otomatik DB ye eklenmez`() = runBlocking {
         val dao = FakeSourceDao()
         dao.seedExisting(legacySource("ntv-turkiye"))
         repository(dao).seedDefaultSources()
 
-        assertEquals(3, dao.sources.size)
+        assertEquals(6, dao.sources.size)
         assertFalse(dao.sources.containsKey("afad-official"))
         assertFalse(dao.sources.containsKey("tcmb"))
         assertFalse(dao.sources.containsKey("deprem_afad"))
+        assertFalse(dao.sources.containsKey("ecb_press"))
+        assertFalse(dao.sources.containsKey("who_news"))
     }
 
     @Test
@@ -248,8 +253,11 @@ class SourceSeedRefreshPolicyTest {
 
     @Test
     fun `refreshable seed ids frozen binding ile sınırlı`() {
-        assertEquals(3, SourceSeedRefreshPolicy.REFRESHABLE_SEED_IDS.size)
+        assertEquals(6, SourceSeedRefreshPolicy.REFRESHABLE_SEED_IDS.size)
         assertTrue(SourceSeedRefreshPolicy.REFRESHABLE_SEED_IDS.contains("ntv-turkiye"))
+        assertTrue(SourceSeedRefreshPolicy.REFRESHABLE_SEED_IDS.contains("fed-press"))
+        assertTrue(SourceSeedRefreshPolicy.REFRESHABLE_SEED_IDS.contains("eu-commission-press"))
+        assertTrue(SourceSeedRefreshPolicy.REFRESHABLE_SEED_IDS.contains("usgs-earthquakes"))
         assertFalse(SourceSeedRefreshPolicy.REFRESHABLE_SEED_IDS.contains("afad-official"))
         assertFalse(SourceSeedRefreshPolicy.REFRESHABLE_SEED_IDS.contains("tcmb"))
     }

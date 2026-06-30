@@ -90,7 +90,7 @@ class FeedViewModel(
                 if (cached != null) {
                     _uiState.value = _uiState.value.copy(
                         curatedItems = cached.items,
-                        latestRssPreview = cached.latestRssPreview,
+                        latestRssPreview = mergeLatestRssPreview(cached.latestRssPreview, _uiState.value.articles),
                         isInitialLoading = false,
                         isReadingCache = false,
                         isShowingCachedData = true,
@@ -156,7 +156,7 @@ class FeedViewModel(
 
             _uiState.value = _uiState.value.copy(
                 curatedItems = result.items,
-                latestRssPreview = result.latestRssPreview,
+                latestRssPreview = mergeLatestRssPreview(result.latestRssPreview, articles),
                 isInitialLoading = false,
                 lastError = null,
                 isShowingCachedData = result.isCached,
@@ -180,12 +180,7 @@ class FeedViewModel(
             val errorMsg = mapErrorMessage(e)
             val cached = aiFeedRepository.getCachedFeed()
             _uiState.value = if (cached != null) {
-                FeedRefreshUiLogic.applyCachedSnapshot(
-                    _uiState.value,
-                    cached,
-                    errorMessage = errorMsg,
-                    formatCacheAge = ::formatCacheAge,
-                )
+                applyCachedWithLocalPreview(cached, errorMsg)
             } else {
                 FeedRefreshUiLogic.mergeErrorPreservingContent(_uiState.value, errorMsg)
             }
@@ -219,12 +214,7 @@ class FeedViewModel(
                 val errorMsg = mapErrorMessage(e)
                 val cached = aiFeedRepository.getCachedFeed()
                 _uiState.value = if (cached != null) {
-                    FeedRefreshUiLogic.applyCachedSnapshot(
-                        _uiState.value,
-                        cached,
-                        errorMessage = errorMsg,
-                        formatCacheAge = ::formatCacheAge,
-                    )
+                    applyCachedWithLocalPreview(cached, errorMsg)
                 } else {
                     FeedRefreshUiLogic.mergeErrorPreservingContent(_uiState.value, errorMsg)
                 }
@@ -233,6 +223,26 @@ class FeedViewModel(
                 _uiState.value = _uiState.value.copy(isRemoteLoading = false)
             }
         }
+    }
+
+    private fun mergeLatestRssPreview(
+        backendPreview: List<com.haberradari.domain.repository.WatchlistPreviewItem>?,
+        localArticles: List<Article>,
+    ) = LatestRssPreviewUiLogic.mergeWithLocalAndroidIngest(backendPreview, localArticles)
+
+    private fun applyCachedWithLocalPreview(
+        cached: com.haberradari.domain.repository.AiCuratedFeedResult,
+        errorMessage: String?,
+    ): FeedUiState {
+        val base = FeedRefreshUiLogic.applyCachedSnapshot(
+            _uiState.value,
+            cached,
+            errorMessage = errorMessage,
+            formatCacheAge = ::formatCacheAge,
+        )
+        return base.copy(
+            latestRssPreview = mergeLatestRssPreview(cached.latestRssPreview, _uiState.value.articles),
+        )
     }
 
     private fun formatCacheAge(timestamp: Long): String {

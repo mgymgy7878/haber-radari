@@ -23,6 +23,9 @@ import java.util.UUID
  */
 object RssParser {
 
+    /** Global official afet seed — Atom summary/description UI/cache'e taşınmaz. */
+    const val USGS_EARTHQUAKES_SOURCE_ID = "usgs-earthquakes"
+
     /**
      * Ham RSS item — parse sonucu.
      * Henüz legalMode filtresi uygulanmamış durum.
@@ -99,9 +102,12 @@ object RssParser {
             val hash = computeContentHash(item.title, canonicalUrl)
             val publishedAt = parseDate(item.pubDate) ?: now
 
-            // TITLE_LINK_ONLY modunda description saklanmaz
-            val description = when (source.legalMode) {
-                LegalMode.TITLE_LINK_ONLY -> null
+            // TITLE_LINK_ONLY → description yok; USGS (resmi afet) → description her zaman yok
+            val description = when {
+                source.legalMode == LegalMode.TITLE_LINK_ONLY -> null
+                source.id == USGS_EARTHQUAKES_SOURCE_ID -> null
+                source.legalMode == LegalMode.RSS_METADATA_ONLY ->
+                    item.description?.takeUnless { it.contains('<') }
                 else -> item.description
             }
 
@@ -244,13 +250,21 @@ object RssParser {
         null
     }
 
-    private fun parseIso8601Date(dateStr: String): Long? = try {
-        java.text.SimpleDateFormat(
-            "yyyy-MM-dd'T'HH:mm:ssZ",
-            Locale.ENGLISH,
-        ).parse(dateStr)?.time
-    } catch (_: Exception) {
-        null
+    private fun parseIso8601Date(dateStr: String): Long? {
+        val trimmed = dateStr.trim()
+        try {
+            return java.time.Instant.parse(trimmed).toEpochMilli()
+        } catch (_: Exception) {
+            // fallback: offset without fractional seconds
+        }
+        return try {
+            java.text.SimpleDateFormat(
+                "yyyy-MM-dd'T'HH:mm:ssZ",
+                Locale.ENGLISH,
+            ).parse(trimmed)?.time
+        } catch (_: Exception) {
+            null
+        }
     }
 
     /**
