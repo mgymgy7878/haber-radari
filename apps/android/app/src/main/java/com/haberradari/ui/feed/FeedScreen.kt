@@ -542,7 +542,7 @@ private fun LatestRssSectionHeader() {
         )
         Spacer(modifier = Modifier.height(4.dp))
         Text(
-            text = "Bu liste RSS kaynaklarından alınan ham haber özetleridir; haber doğrulama hizmeti değildir.",
+            text = "Bu liste RSS kaynaklarından alınan ham kayıtlardır (başlık-link önizlemesi); kaynak sinyali gösterilir, içerik doğrulama hizmeti değildir. Önemli deprem kayıtları yalnızca M≥5.0 ise burada gösterilir.",
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )

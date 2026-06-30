@@ -147,4 +147,93 @@ class EarthquakeMainFeedGateTest {
         )
         assertEquals(2, result.watchlistPreview?.size)
     }
+
+    private fun latestItem(
+        id: String,
+        title: String,
+        sourceName: String = "NTV",
+        category: String = "genel",
+    ): WatchlistPreviewItem = WatchlistPreviewItem(
+        id = id,
+        title = title,
+        category = category,
+        publishDecision = "LATEST_RSS",
+        publishReason = null,
+        evidenceStatus = "LOW_CONFIDENCE",
+        contentType = "GENERAL",
+        topicQuality = "NORMAL",
+        sourceCount = 1,
+        reasonCode = null,
+        shortDescription = null,
+        originalUrl = "https://example.com/$id",
+        publishedAt = "1000",
+        sourceNames = listOf(sourceName),
+    )
+
+    @Test
+    fun `NTV unknown magnitude deprem removed from Son Haberler`() {
+        val result = EarthquakeMainFeedGate.apply(
+            baseResult(emptyList()).copy(
+                latestRssPreview = listOf(
+                    latestItem("ntv-1", "Son dakika deprem mi oldu?"),
+                ),
+            ),
+        )
+        assertTrue(result.latestRssPreview.isNullOrEmpty())
+        assertEquals(
+            EarthquakeMagnitudePolicy.REASON_MAGNITUDE_UNKNOWN,
+            result.watchlistPreview?.first()?.reasonCode,
+        )
+    }
+
+    @Test
+    fun `USGS M 0_6 removed from Son Haberler`() {
+        val result = EarthquakeMainFeedGate.apply(
+            baseResult(emptyList()).copy(
+                latestRssPreview = listOf(
+                    latestItem(
+                        id = "usgs-low",
+                        title = "M 0.6 - 22 km N of Borrego Springs, CA",
+                        sourceName = "USGS Earthquakes",
+                        category = "afet",
+                    ),
+                ),
+            ),
+        )
+        assertTrue(result.latestRssPreview.isNullOrEmpty())
+        assertEquals(
+            EarthquakeMagnitudePolicy.REASON_MAGNITUDE_BELOW_THRESHOLD,
+            result.watchlistPreview?.first()?.reasonCode,
+        )
+    }
+
+    @Test
+    fun `USGS M 5_0 stays in Son Haberler`() {
+        val result = EarthquakeMainFeedGate.apply(
+            baseResult(emptyList()).copy(
+                latestRssPreview = listOf(
+                    latestItem(
+                        id = "usgs-5",
+                        title = "M 5.0 - Alaska Peninsula",
+                        sourceName = "USGS Earthquakes",
+                        category = "afet",
+                    ),
+                ),
+            ),
+        )
+        assertEquals(1, result.latestRssPreview?.size)
+        assertTrue(result.watchlistPreview.isNullOrEmpty())
+    }
+
+    @Test
+    fun `non earthquake latest item stays in Son Haberler`() {
+        val result = EarthquakeMainFeedGate.apply(
+            baseResult(emptyList()).copy(
+                latestRssPreview = listOf(
+                    latestItem("eco", "Merkez Bankası faiz kararını açıkladı", "Reuters", "ekonomi"),
+                ),
+            ),
+        )
+        assertEquals(1, result.latestRssPreview?.size)
+    }
 }

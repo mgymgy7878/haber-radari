@@ -238,6 +238,7 @@ class FeedViewModel(
     }
 
     private fun applyEarthquakeGate(result: AiCuratedFeedResult): AiCuratedFeedResult =
+        // Local Android ingest → latestRssPreview merge eklendiğinde gate merge SONRASI uygulanmalı.
         EarthquakeMainFeedGate.apply(result)
 
     private fun formatCacheAge(timestamp: Long): String {
