@@ -38,9 +38,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.haberradari.data.model.LegalMode
 import com.haberradari.data.model.SourceStats
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -166,7 +163,8 @@ fun SourceManagementCard(
 ) {
     val source = stat.source
     val toggleAllowed = SourceManagementUiLogic.isUserToggleAllowed(source.legalMode)
-    val isHealthy = stat.health?.consecutiveFailures == 0 && stat.health?.lastSuccessAt != null
+    val healthDetails = SourceManagementUiLogic.buildSourceHealthDetails(stat)
+    val isHealthy = SourceManagementUiLogic.isSourceHealthy(stat.health)
     val healthColor = if (isHealthy) Color(0xFF4CAF50) else MaterialTheme.colorScheme.error
 
     Card(
@@ -232,44 +230,85 @@ fun SourceManagementCard(
 
             Spacer(modifier = Modifier.height(12.dp))
 
+            Surface(
+                color = MaterialTheme.colorScheme.surface.copy(alpha = 0.5f),
+                shape = MaterialTheme.shapes.small,
+            ) {
+                Column(modifier = Modifier.padding(12.dp)) {
+                    Text(
+                        text = healthDetails.statusMessage,
+                        style = MaterialTheme.typography.bodyMedium,
+                        fontWeight = FontWeight.Medium,
+                    )
+                    healthDetails.whyNotInFeed?.let { why ->
+                        Spacer(modifier = Modifier.height(4.dp))
+                        Text(
+                            text = "Akış notu: $why",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        )
+                    }
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Text(
+                        text = healthDetails.articleCountLabel,
+                        style = MaterialTheme.typography.labelMedium,
+                    )
+                    healthDetails.lastSuccessLabel?.let { label ->
+                        Spacer(modifier = Modifier.height(4.dp))
+                        Text(
+                            text = label,
+                            style = MaterialTheme.typography.labelSmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        )
+                    }
+                    healthDetails.lastErrorLabel?.let { label ->
+                        Spacer(modifier = Modifier.height(4.dp))
+                        Text(
+                            text = label,
+                            style = MaterialTheme.typography.labelSmall,
+                            color = MaterialTheme.colorScheme.error,
+                        )
+                    }
+                    healthDetails.lastErrorSummary?.let { summary ->
+                        Spacer(modifier = Modifier.height(2.dp))
+                        Text(
+                            text = "Hata özeti: $summary",
+                            style = MaterialTheme.typography.labelSmall,
+                            color = MaterialTheme.colorScheme.error,
+                        )
+                    }
+                    healthDetails.consecutiveFailuresLabel?.let { label ->
+                        Spacer(modifier = Modifier.height(4.dp))
+                        Text(
+                            text = label,
+                            style = MaterialTheme.typography.labelSmall,
+                            color = MaterialTheme.colorScheme.error,
+                        )
+                    }
+                    Spacer(modifier = Modifier.height(6.dp))
+                    Text(
+                        text = SourceManagementUiLogic.SOURCE_HEALTH_DISCLAIMER,
+                        style = MaterialTheme.typography.labelSmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                }
+            }
+
+            Spacer(modifier = Modifier.height(12.dp))
+
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                Column {
-                    Text(
-                        text = if (source.enabled) "Kaynak açık" else "Kaynak kapalı",
-                        style = MaterialTheme.typography.bodyMedium,
-                    )
-                    Text(
-                        text = "Makale: ${stat.articleCount}",
-                        style = MaterialTheme.typography.labelSmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    )
-                }
+                Text(
+                    text = if (source.enabled) "Kaynak açık" else "Kaynak kapalı",
+                    style = MaterialTheme.typography.bodyMedium,
+                )
                 Switch(
                     checked = source.enabled,
                     onCheckedChange = onEnabledChange,
                     enabled = toggleAllowed,
-                )
-            }
-
-            stat.health?.lastSuccessAt?.let { lastSuccess ->
-                val formatter = SimpleDateFormat("dd MMM HH:mm", Locale.getDefault())
-                Spacer(modifier = Modifier.height(8.dp))
-                Text(
-                    text = "Kaynak sağlığı — son başarılı: ${formatter.format(Date(lastSuccess))}",
-                    style = MaterialTheme.typography.labelSmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                )
-            }
-
-            if (stat.health?.consecutiveFailures != null && stat.health.consecutiveFailures > 0) {
-                Text(
-                    text = "Ardışık hata: ${stat.health.consecutiveFailures}",
-                    style = MaterialTheme.typography.labelSmall,
-                    color = MaterialTheme.colorScheme.error,
                 )
             }
         }
