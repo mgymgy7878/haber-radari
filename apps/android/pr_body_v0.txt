@@ -1,0 +1,29 @@
+## Summary
+
+Add a read-only diagnostics screen to allow operators to inspect source status and gate decisions. Accessible via the Debug Build Chip.
+
+## Status
+
+- **Status**: PASS_READY_FOR_REVIEW
+- **KSP/JVM Blocker**: Resolved (JAVA_HOME set to AS Bundled JBR).
+- **Unit Tests**: PASS (238 tests total, including 3 new for Diagnostics).
+- **Build**: assembleDebug PASS.
+- **Smoke**: Manual device verification required.
+
+## Changes
+
+- New `DiagnosticsScreen` and `DiagnosticsViewModel`.
+- Added `Screen.Diagnostics` navigation in `MainActivity`.
+- Updated `DebugBuildChip` in `FeedScreen` to trigger navigation.
+- Added `DiagnosticsViewModelTest`.
+
+## Acceptance Criteria
+
+- [x] Read-only view of sources and decisions.
+- [x] Strict metadata-only compliance.
+- [x] No forbidden fields exposed.
+- [x] Debug-only access.
+
+## Evidence
+
+- `evidence/android/source-gate-diagnostics-v0.md`
