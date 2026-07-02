@@ -21,6 +21,7 @@ import com.haberradari.ui.feed.FeedScreen
 import com.haberradari.ui.feed.FeedViewModel
 import com.haberradari.ui.feed.SourceManagementScreen
 import com.haberradari.ui.feed.SourceManagementViewModel
+import com.haberradari.ui.feed.DiagnosticsViewModel
 import com.haberradari.config.FeatureConfig
 import com.haberradari.domain.repository.MockAiCuratedFeedRepository
 import com.haberradari.domain.repository.RemoteAiCuratedFeedRepository
@@ -32,6 +33,7 @@ sealed class Screen {
     data class Detail(val article: Article) : Screen()
     data class CuratedDetail(val item: AiCuratedNewsItem) : Screen()
     object Health : Screen()
+    object Diagnostics : Screen()
 }
 
 /**
@@ -44,6 +46,7 @@ class MainActivity : ComponentActivity() {
 
     private lateinit var feedViewModel: FeedViewModel
     private lateinit var sourceManagementViewModel: SourceManagementViewModel
+    private lateinit var diagnosticsViewModel: DiagnosticsViewModel
     private lateinit var articleDetailViewModel: ArticleDetailViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -86,6 +89,7 @@ class MainActivity : ComponentActivity() {
         }
         feedViewModel = FeedViewModel(app.repository, aiRepo)
         sourceManagementViewModel = SourceManagementViewModel(app.repository)
+        diagnosticsViewModel = DiagnosticsViewModel(app.repository, aiRepo)
         articleDetailViewModel = ArticleDetailViewModel(app.aiReaderRepository)
 
         setContent {
@@ -114,6 +118,9 @@ class MainActivity : ComponentActivity() {
                                 },
                                 onOpenHealth = {
                                     currentScreen = Screen.Health
+                                },
+                                onOpenDiagnostics = {
+                                    currentScreen = Screen.Diagnostics
                                 }
                             )
                         }
@@ -142,6 +149,12 @@ class MainActivity : ComponentActivity() {
                             SourceManagementScreen(
                                 viewModel = sourceManagementViewModel,
                                 onBackClick = { currentScreen = Screen.Feed },
+                            )
+                        }
+                        is Screen.Diagnostics -> {
+                            com.haberradari.ui.feed.DiagnosticsScreen(
+                                viewModel = diagnosticsViewModel,
+                                onBackClick = { currentScreen = Screen.Feed }
                             )
                         }
                     }
