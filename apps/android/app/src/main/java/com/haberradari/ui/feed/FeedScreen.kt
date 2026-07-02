@@ -748,14 +748,14 @@ private fun EmptyMainStateContent(
         Text(text = "📡", style = MaterialTheme.typography.headlineMedium)
         Spacer(modifier = Modifier.height(12.dp))
         Text(
-            text = "Şu an ana akışa alınacak güçlü olay yok",
+            text = "Ana akış için yeterli çok-kaynaklı sinyal yok",
             style = MaterialTheme.typography.titleMedium,
             color = MaterialTheme.colorScheme.onSurface,
             textAlign = TextAlign.Center
         )
         Spacer(modifier = Modifier.height(8.dp))
         Text(
-            text = "RSS kaynakları tarandı. Kaynak sinyali, önem ve güvenlik kuralları nedeniyle ana akışa alınacak yeterli olay bulunmadı.",
+            text = "Tek kaynaklı ve gelişen kayıtlar aşağıda izleniyor.",
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             textAlign = TextAlign.Center

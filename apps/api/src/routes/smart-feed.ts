@@ -88,7 +88,7 @@ export async function smartFeedRoute(req: FastifyRequest, reply: FastifyReply) {
     const clusterEvaluations = new Map<string, PublishResult>();
 
     for (const cluster of clusters) {
-      const evaluation = publishGate.evaluate(cluster);
+      const evaluation = publishGate.evaluate(cluster, sourceRegistry.sources);
       clusterEvaluations.set(cluster.id, evaluation);
       
       if (evaluation.decision === PublishDecision.PUBLISH_MAIN) {

@@ -3,7 +3,9 @@ import {
   containsCriticalDisasterSeverity,
   containsDisasterAlertSignal,
   containsSportContext,
+  containsHarmCasualtyToken,
 } from './turkish-text-match.js';
+import { SourceRegistryEntry } from '../source-registry/source-registry-types.js';
 
 export enum EvidenceStatus {
   CONFIRMED = 'CONFIRMED',
@@ -54,7 +56,19 @@ export interface PublishResult {
 
 export class PublishGate {
   
-  public evaluate(cluster: Cluster): PublishResult {
+  private extractEarthquakeMagnitude(text: string): number | null {
+    const match = text.match(/(\d+(?:[,.]\d+)?)\s*(?:büyüklüğünde|magnitüd|ml|mw|md|magnitude|deprem)/i) || 
+                  text.match(/(?:büyüklüğünde|magnitüd|ml|mw|md|magnitude)\s*(\d+(?:[,.]\d+)?)/i) ||
+                  text.match(/m\s*:\s*(\d+(?:[,.]\d+)?)/i) ||
+                  text.match(/m\s*(\d+(?:[,.]\d+)?)\s+deprem/i);
+    if (match) {
+      const val = parseFloat(match[1].replace(',', '.'));
+      if (!isNaN(val)) return val;
+    }
+    return null;
+  }
+
+  public evaluate(cluster: Cluster, registry?: SourceRegistryEntry[]): PublishResult {
     const combinedText = cluster.articles.map(a => a.originalTitle + ' ' + a.shortDescription).join(' ').toLowerCase();
     
     const uniqueSourceCount = new Set(cluster.articles.map(a => a.sourceName)).size;
@@ -68,6 +82,29 @@ export class PublishGate {
     let reason: string | null = null;
     let warningLabel: string | null = null;
     
+    let isOfficialSource = false;
+    if (registry) {
+      const sourceIds = cluster.articles.map(a => a.sourceId);
+      for (const sId of sourceIds) {
+        const sourceEntry = registry.find(s => s.sourceId === sId);
+        if (sourceEntry) {
+          if (
+            sourceEntry.sourceType === 'OFFICIAL' ||
+            sourceEntry.sourceType === 'official_institution' ||
+            sourceEntry.sourceType === 'regulator' ||
+            sourceEntry.sourceType === 'market_data' ||
+            sourceEntry.authorityTier === 'OFFICIAL_PRIMARY'
+          ) {
+            isOfficialSource = true;
+          }
+        }
+      }
+    }
+
+    const isEarthquake = /(deprem|sarsıntı)/i.test(combinedText);
+    const magnitude = isEarthquake ? this.extractEarthquakeMagnitude(combinedText) : null;
+    const isStrongEarthquake = magnitude !== null && magnitude >= 5.0;
+
     if (contentType === ContentType.UNKNOWN && topicQuality === TopicQuality.NOISE) {
       decision = PublishDecision.FILTERED_OUT;
       reason = "Generic SEO veya Evergreen içerik (Son dakika deprem vb.)";
@@ -81,16 +118,32 @@ export class PublishGate {
       if (importance === 'LOW') {
          decision = PublishDecision.FILTERED_OUT;
          reason = "Tek kaynaklı ve düşük öncelikli olay.";
+      } else if (isStrongEarthquake) {
+         decision = PublishDecision.PUBLISH_MAIN;
+         reason = "Ana akışa alınma nedeni: Tek kaynaklı ama kritik olay bildirimi";
+         warningLabel = "Tek Kaynak (Doğrulanmamış)";
+         importance = 'HIGH';
       } else if (
         topicQuality === TopicQuality.CRITICAL &&
         contentType === ContentType.DISASTER_ALERT &&
         !containsSportContext(combinedText) &&
+        (!isEarthquake || containsHarmCasualtyToken(combinedText)) &&
         containsCriticalDisasterSeverity(combinedText)
       ) {
          decision = PublishDecision.PUBLISH_MAIN;
          reason = "Ana akışa alınma nedeni: Tek kaynaklı ama kritik olay bildirimi";
          warningLabel = "Tek Kaynak (Doğrulanmamış)";
          importance = 'MEDIUM'; // Bump importance for critical disaster single source
+      } else if (isOfficialSource && topicQuality !== TopicQuality.NOISE && topicQuality !== TopicQuality.LOW_VALUE) {
+         if (isEarthquake && !isStrongEarthquake && !containsHarmCasualtyToken(combinedText)) {
+            decision = PublishDecision.WATCHLIST_ONLY;
+            reason = "Deprem büyüklüğü eşik değerin (M≥5.0) altında veya bilinmiyor. İzlemeye alındı.";
+         } else {
+            decision = PublishDecision.PUBLISH_MAIN;
+            reason = "Ana akışa alınma nedeni: Resmi kaynaktan tek kaynaklı önemli duyuru";
+            warningLabel = "Tek Kaynak (Resmi Duyuru)";
+            importance = importance === 'LOW' ? 'MEDIUM' : importance;
+         }
       } else if (contentType === ContentType.DISASTER_FOLLOW_UP) {
          decision = PublishDecision.WATCHLIST_ONLY;
          reason = "Afet sonrası takip/yerel dönüşüm haberi. Tek kaynaklı olduğu için ana akışa alınmadı.";
