@@ -3,7 +3,7 @@
 **Date:** 2026-07-02
 **Branch:** `feat/android-source-gate-diagnostics-v0`
 **Base:** `main@a1d3886`
-**HEAD commit (final):** `8a0d758` + 1 uncommitted fix (Room 2.7.0 → committed in fix commit)
+**HEAD commit (final):** `6efe273`
 **PR URL:** https://github.com/mgymgy7878/haber-radari/pull/73
 **Verdict:** **PASS_READY_FOR_REVIEW**
 
@@ -126,14 +126,14 @@ Unit test doğrulaması: `DiagnosticsViewModelTest.kt` → `Diagnostics UI model
 | `adb devices` | **PASS ✅** | Xiaomi Redmi Note 10 Pro (`120d06e1` - Android 13) |
 | `installDebug` | **PASS ✅** | APK target cihaza yüklendi |
 | Cihaz smoke | **PASS ✅** | DebugBuildChip üzerinden giriş yapıldı, kaynak özetleri, limitler, gate kararları ve deprem uyarısı doğrulandı |
-| Screenshot | **PASS ✅** | [Initial Screen](file:///C:/Users/mscor/.gemini/antigravity-ide/brain/4b6d9f90-d03c-4556-9471-801d8ac97156/diagnostics-screen-initial.png) / [Decisions Screen](file:///C:/Users/mscor/.gemini/antigravity-ide/brain/4b6d9f90-d03c-4556-9471-801d8ac97156/diagnostics-screen-decisions.png) |
+| Screenshot | **PASS ✅** | [Initial Screen](evidence/android/diagnostics-screen-initial.png) / [Decisions Screen](evidence/android/diagnostics-screen-decisions.png) |
 | Logcat crash/ANR | **PASS ✅** | Logcat incelendi, herhangi bir crash/ANR tespit edilmedi |
 | Forbidden leak | **PASS ✅** | Loglar ve ekrandaki veriler incelendi, yasaklı alan sızıntısı yok |
 
 ### Görsel Kanıtlar
 
-![Initial Diagnostics Screen](C:\Users\mscor\.gemini\antigravity-ide\brain\4b6d9f90-d03c-4556-9471-801d8ac97156\diagnostics-screen-initial.png)
-![Decisions Diagnostics Screen](C:\Users\mscor\.gemini\antigravity-ide\brain\4b6d9f90-d03c-4556-9471-801d8ac97156\diagnostics-screen-decisions.png)
+![Initial Diagnostics Screen](evidence/android/diagnostics-screen-initial.png)
+![Decisions Diagnostics Screen](evidence/android/diagnostics-screen-decisions.png)
 
 ---
 
