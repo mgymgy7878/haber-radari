@@ -21,14 +21,14 @@ object FeedRefreshUiLogic {
 
     fun cachedContentBannerMessage(cacheAgeText: String?): String {
         val age = cacheAgeText?.takeIf { it.isNotBlank() }?.let { " ($it)" }.orEmpty()
-        return "Son kayıtlı haberler gösteriliyor.$age"
+        return "Kaynaklar güncel; akıllı akış önbellekten gösteriliyor$age"
     }
 
     fun cachedModeBannerTitle(): String = "Önbellek modu"
 
     fun cachedModeBannerDescription(cacheAgeText: String?): String {
         val age = cacheAgeText?.takeIf { it.isNotBlank() }?.let { " ($it)" }.orEmpty()
-        return "Backend bağlantısı alınamadı; son kayıtlı haberler gösteriliyor.$age"
+        return "Akıllı akış önbellekten gösteriliyor$age"
     }
 
     fun cachedModeRetryHint(): String = "Yenile ile tekrar deneyebilirsin."
@@ -91,6 +91,7 @@ object FeedRefreshUiLogic {
         rawPreview = cached.rawPreview,
         noisePreview = cached.noisePreview,
         lastUpdatedAt = cached.generatedAt,
+        lastSmartAnalysisAt = cached.generatedAt,
         refreshOutcome = if (errorMessage != null) {
             RefreshOutcome.FAILED_SHOWING_CACHE
         } else {

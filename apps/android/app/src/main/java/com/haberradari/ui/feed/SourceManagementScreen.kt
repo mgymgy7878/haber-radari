@@ -302,7 +302,7 @@ fun SourceManagementCard(
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 Text(
-                    text = if (source.enabled) "Kaynak açık" else "Kaynak kapalı",
+                    text = if (source.enabled) "Kaynak sinyali açık" else "Kaynak sinyali kapalı",
                     style = MaterialTheme.typography.bodyMedium,
                 )
                 Switch(

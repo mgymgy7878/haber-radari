@@ -313,7 +313,8 @@ private fun FeedStatusBar(
     modifier: Modifier = Modifier,
 ) {
     val connectionStatus = FeedUsabilityUiLogic.resolveConnectionStatus(state, isRefreshing)
-    val lastUpdated = FeedUsabilityUiLogic.formatLastUpdatedText(state.lastUpdatedAt, state.cacheAgeText)
+    val rssTime = FeedUsabilityUiLogic.formatRssLastUpdatedText(state.lastRssIngestAt)
+    val smartTime = FeedUsabilityUiLogic.formatSmartAnalysisLastUpdatedText(state.lastSmartAnalysisAt)
     val sourcesLabel = FeedUsabilityUiLogic.formatActiveSourcesLabel(
         state.enabledSourceCount,
         state.totalSourceCount,
@@ -329,12 +330,19 @@ private fun FeedStatusBar(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                Text(
-                    text = "Son güncelleme: $lastUpdated",
-                    style = MaterialTheme.typography.labelMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    modifier = Modifier.weight(1f),
-                )
+                Column(modifier = Modifier.weight(1f)) {
+                    Text(
+                        text = "Kaynaklar son yenilendi: $rssTime",
+                        style = MaterialTheme.typography.labelMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                    Spacer(modifier = Modifier.height(2.dp))
+                    Text(
+                        text = "Akıllı akış son analizi: $smartTime",
+                        style = MaterialTheme.typography.labelMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                }
                 Text(
                     text = FeedUsabilityUiLogic.formatConnectionStatusLabel(connectionStatus),
                     style = MaterialTheme.typography.labelSmall,

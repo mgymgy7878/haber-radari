@@ -50,6 +50,28 @@ object FeedUsabilityUiLogic {
         return "Henüz güncellenmedi"
     }
 
+    fun formatDurationOffset(epochMillis: Long, nowMillis: Long = System.currentTimeMillis()): String {
+        val diff = nowMillis - epochMillis
+        if (diff < 0) return "Az önce"
+        return when {
+            diff < 60_000 -> "Az önce"
+            diff < 3_600_000 -> "${diff / 60_000} dk önce"
+            diff < 86_400_000 -> "${diff / 3_600_000} saat önce"
+            diff < 604_800_000 -> "${diff / 86_400_000} gün önce"
+            else -> "${diff / 604_800_000} hafta önce"
+        }
+    }
+
+    fun formatRssLastUpdatedText(lastRssIngestAt: Long?, nowMillis: Long = System.currentTimeMillis()): String {
+        lastRssIngestAt?.let { return formatDurationOffset(it, nowMillis) }
+        return "Henüz yenilenmedi"
+    }
+
+    fun formatSmartAnalysisLastUpdatedText(lastSmartAnalysisAt: Long?, nowMillis: Long = System.currentTimeMillis()): String {
+        lastSmartAnalysisAt?.let { return formatDurationOffset(it, nowMillis) }
+        return "Henüz analiz edilmedi"
+    }
+
     fun formatConnectionStatusLabel(status: FeedConnectionStatus): String = when (status) {
         FeedConnectionStatus.LIVE -> "Canlı akış"
         FeedConnectionStatus.CACHED -> "Önbellekten gösteriliyor"

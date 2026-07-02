@@ -94,8 +94,7 @@ class FeedRefreshUiLogicTest {
     fun `cached mode banner title and description`() {
         assertEquals("Önbellek modu", FeedRefreshUiLogic.cachedModeBannerTitle())
         val desc = FeedRefreshUiLogic.cachedModeBannerDescription("3 dk önce güncellendi")
-        assertTrue(desc.contains("Backend bağlantısı alınamadı"))
-        assertTrue(desc.contains("son kayıtlı haberler"))
+        assertTrue(desc.contains("Akıllı akış önbellekten gösteriliyor"))
         assertTrue(desc.contains("3 dk önce"))
         assertEquals("Yenile ile tekrar deneyebilirsin.", FeedRefreshUiLogic.cachedModeRetryHint())
     }
@@ -104,8 +103,7 @@ class FeedRefreshUiLogicTest {
     fun `cached error banner message uses cache mode copy`() {
         val msg = FeedRefreshUiLogic.cachedErrorBannerMessage(null)
         assertTrue(msg.contains("Önbellek modu"))
-        assertTrue(msg.contains("Backend bağlantısı alınamadı"))
-        assertTrue(msg.contains("son kayıtlı haberler"))
+        assertTrue(msg.contains("Akıllı akış önbellekten gösteriliyor"))
     }
 
     @Test
@@ -127,7 +125,7 @@ class FeedRefreshUiLogicTest {
     @Test
     fun `cached banner message includes age when present`() {
         val msg = FeedRefreshUiLogic.cachedContentBannerMessage("2 saat önce güncellendi")
-        assertTrue(msg.contains("Son kayıtlı haberler gösteriliyor"))
+        assertTrue(msg.contains("Kaynaklar güncel; akıllı akış önbellekten gösteriliyor"))
         assertTrue(msg.contains("2 saat önce"))
     }
 

@@ -49,7 +49,7 @@ object SourceManagementUiLogic {
         LegalMode.TITLE_LINK_ONLY ->
             "Başlık + orijinal link modu. Kısa açıklama saklanmaz."
         LegalMode.RSS_METADATA_ONLY ->
-            "RSS metadata modu: başlık, kısa özet, link ve kaynak bilgisi."
+            "RSS metadata modu: başlık, RSS metadata, link ve kaynak bilgisi."
         LegalMode.LICENSED ->
             "Lisanslı kaynak profili. Tam metin saklanmaz."
         LegalMode.NEEDS_REVIEW ->
@@ -78,9 +78,9 @@ object SourceManagementUiLogic {
     }
 
     fun ingestStatusLabel(source: Source): String = when {
-        source.legalMode.blocksProductionIngest() -> "Üretim ingest: kapalı"
-        source.enabled -> "Üretim ingest: açık"
-        else -> "Üretim ingest: kullanıcı kapattı"
+        source.legalMode.blocksProductionIngest() -> "Üretim Ingest Kapalı"
+        source.enabled -> "Üretim Ingest Açık"
+        else -> "Üretim Ingest Kapalı"
     }
 
     fun buildSourceHealthDetails(stat: SourceStats): SourceHealthDetails {

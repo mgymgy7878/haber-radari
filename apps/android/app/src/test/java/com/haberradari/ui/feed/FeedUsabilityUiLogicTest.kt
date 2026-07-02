@@ -67,6 +67,43 @@ class FeedUsabilityUiLogicTest {
     }
 
     @Test
+    fun `formatDurationOffset formats relative offsets correctly`() {
+        val now = 1_000_000L
+        assertEquals("Az önce", FeedUsabilityUiLogic.formatDurationOffset(now - 10_000, now))
+        assertEquals("2 dk önce", FeedUsabilityUiLogic.formatDurationOffset(now - 120_000, now))
+        assertEquals("3 saat önce", FeedUsabilityUiLogic.formatDurationOffset(now - 3 * 3600 * 1000, now))
+        assertEquals("2 gün önce", FeedUsabilityUiLogic.formatDurationOffset(now - 2 * 24 * 3600 * 1000, now))
+    }
+
+    @Test
+    fun `freshness UI model scenarios - source refreshed now and smart cache old`() {
+        val now = System.currentTimeMillis()
+        val state = FeedUiState(
+            lastRssIngestAt = now - 10000, // refreshed now (10s ago)
+            lastSmartAnalysisAt = now - 2 * 24 * 3600 * 1000, // 2 days old cache
+            isShowingCachedData = true
+        )
+        val rssText = FeedUsabilityUiLogic.formatRssLastUpdatedText(state.lastRssIngestAt, now)
+        val smartText = FeedUsabilityUiLogic.formatSmartAnalysisLastUpdatedText(state.lastSmartAnalysisAt, now)
+        assertEquals("Az önce", rssText)
+        assertEquals("2 gün önce", smartText)
+    }
+
+    @Test
+    fun `freshness UI model scenarios - source old and cache old`() {
+        val now = System.currentTimeMillis()
+        val state = FeedUiState(
+            lastRssIngestAt = now - 2 * 24 * 3600 * 1000, // 2 days ago
+            lastSmartAnalysisAt = now - 2 * 24 * 3600 * 1000, // 2 days ago
+            isShowingCachedData = true
+        )
+        val rssText = FeedUsabilityUiLogic.formatRssLastUpdatedText(state.lastRssIngestAt, now)
+        val smartText = FeedUsabilityUiLogic.formatSmartAnalysisLastUpdatedText(state.lastSmartAnalysisAt, now)
+        assertEquals("2 gün önce", rssText)
+        assertEquals("2 gün önce", smartText)
+    }
+
+    @Test
     fun `connection status label for cache mode is neutral`() {
         val label = FeedUsabilityUiLogic.formatConnectionStatusLabel(
             FeedUsabilityUiLogic.FeedConnectionStatus.ERROR_WITH_CACHE,
