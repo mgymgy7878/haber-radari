@@ -91,7 +91,8 @@ dependencies {
     debugImplementation("androidx.compose.ui:ui-test-manifest")
 
     // Room — offline-first SQLite cache
-    val roomVersion = "2.6.1"
+    // v2.7.0: KSP2/Analysis API (KspAATask) desteği eklendi — AGP 9.x + KSP 2.3.x için gerekli
+    val roomVersion = "2.7.0"
     implementation("androidx.room:room-runtime:$roomVersion")
     implementation("androidx.room:room-ktx:$roomVersion")
     ksp("androidx.room:room-compiler:$roomVersion")
