@@ -67,7 +67,8 @@ fun FeedScreen(
     viewModel: FeedViewModel,
     onOpenDetail: (Article) -> Unit,
     onOpenCuratedDetail: (AiCuratedNewsItem) -> Unit,
-    onOpenHealth: () -> Unit
+    onOpenHealth: () -> Unit,
+    onOpenDiagnostics: () -> Unit = {}
 ) {
     val state = viewModel.uiState.collectAsState().value
     val isRefreshing by viewModel.isRefreshing.collectAsState()
@@ -110,7 +111,7 @@ fun FeedScreen(
                 .fillMaxSize()
         ) {
             if (BuildConfig.DEBUG) {
-                DebugBuildChip()
+                DebugBuildChip(onClick = onOpenDiagnostics)
             }
 
             when (phase) {
@@ -148,8 +149,12 @@ fun FeedScreen(
 }
 
 @Composable
-private fun DebugBuildChip(modifier: Modifier = Modifier) {
+private fun DebugBuildChip(
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
     androidx.compose.material3.Surface(
+        onClick = onClick,
         modifier = modifier.fillMaxWidth(),
         color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.6f)
     ) {
