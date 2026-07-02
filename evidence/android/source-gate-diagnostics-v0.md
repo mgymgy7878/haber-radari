@@ -64,7 +64,7 @@ androidx.room.compiler.processing.javac.kotlin.JvmDescriptorUtilsKt.typeNameFrom
 | `DiagnosticsViewModelTest` | **PASS ✅** | 3/3 test geçti |
 | `:app:kspDebugKotlin` | **PASS ✅** | Room 2.7.0 fix sonrası |
 | `:app:assembleDebug` | **PASS ✅** | `app-debug.apk` 12.6 MB üretildi |
-| `installDebug` | **NOT RUN** | Cihaz bağlı değil |
+| `installDebug` | **PASS ✅** | Xiaomi Redmi Note 10 Pro cihazına yüklendi |
 
 **Test Suite Özeti (tam):**
 36 suite × toplam 258 test:
@@ -121,13 +121,19 @@ Unit test doğrulaması: `DiagnosticsViewModelTest.kt` → `Diagnostics UI model
 
 ## Cihaz / Smoke
 
-| Kontrol | Sonuç |
-|---|---|
-| `adb devices` | Cihaz bağlı değil |
-| `installDebug` | NOT RUN |
-| Cihaz smoke | NOT RUN |
-| Screenshot | Yok (cihaz gerekli) |
-| Logcat crash/ANR | NOT RUN |
+| Kontrol | Sonuç | Detay |
+|---|---|---|
+| `adb devices` | **PASS ✅** | Xiaomi Redmi Note 10 Pro (`120d06e1` - Android 13) |
+| `installDebug` | **PASS ✅** | APK target cihaza yüklendi |
+| Cihaz smoke | **PASS ✅** | DebugBuildChip üzerinden giriş yapıldı, kaynak özetleri, limitler, gate kararları ve deprem uyarısı doğrulandı |
+| Screenshot | **PASS ✅** | [Initial Screen](file:///C:/Users/mscor/.gemini/antigravity-ide/brain/4b6d9f90-d03c-4556-9471-801d8ac97156/diagnostics-screen-initial.png) / [Decisions Screen](file:///C:/Users/mscor/.gemini/antigravity-ide/brain/4b6d9f90-d03c-4556-9471-801d8ac97156/diagnostics-screen-decisions.png) |
+| Logcat crash/ANR | **PASS ✅** | Logcat incelendi, herhangi bir crash/ANR tespit edilmedi |
+| Forbidden leak | **PASS ✅** | Loglar ve ekrandaki veriler incelendi, yasaklı alan sızıntısı yok |
+
+### Görsel Kanıtlar
+
+![Initial Diagnostics Screen](C:\Users\mscor\.gemini\antigravity-ide\brain\4b6d9f90-d03c-4556-9471-801d8ac97156\diagnostics-screen-initial.png)
+![Decisions Diagnostics Screen](C:\Users\mscor\.gemini\antigravity-ide\brain\4b6d9f90-d03c-4556-9471-801d8ac97156\diagnostics-screen-decisions.png)
 
 ---
 

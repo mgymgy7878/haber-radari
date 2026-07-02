@@ -58,7 +58,8 @@ Ekranda zorunlu uyarı metinleri mevcuttur:
 | Unit tests | **PASS ✅** | 258 test, 0 failure, 0 error (36 suite) |
 | DiagnosticsViewModelTest | **PASS ✅** | 3/3 test |
 | assembleDebug | **PASS ✅** | app-debug.apk 12.6 MB |
-| installDebug | NOT RUN | Cihaz bağlı değil |
+| installDebug | **PASS ✅** | Xiaomi Redmi Note 10 Pro cihazına yüklendi |
+| Cihaz Smoke | **PASS ✅** | DebugBuildChip üzerinden giriş yapıldı, kaynak özetleri, limitler, gate kararları ve deprem uyarısı doğrulandı |
 | Forbidden field leak (code audit) | **PASS ✅** | |
 | Forbidden field leak (unit test) | **PASS ✅** | reflection test |
 | Debug-only erişim | **PASS ✅** | `if (BuildConfig.DEBUG)` korumalı |
