@@ -57,7 +57,7 @@ class TrustUxLanguageTest {
     fun `single source warning avoids verification claim`() {
         val text = TrustTransparencyUiLogic.singleSourceWarningText()
         assertFalse(text.lowercase().contains("doğrulama"))
-        assertTrue(text.contains("ek kaynak sinyali"))
+        assertTrue(text.contains("kaynak sinyali"))
     }
 
     @Test

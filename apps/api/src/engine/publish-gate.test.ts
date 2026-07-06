@@ -213,7 +213,7 @@ describe('PublishGate', () => {
 
     const result = gate.evaluate(cluster, registry);
     expect(result.decision).toBe(PublishDecision.PUBLISH_MAIN);
-    expect(result.warningLabel).toBe('Tek Kaynak (Resmi Duyuru)');
+    expect(result.warningLabel).toBe('Tek kaynak / kaynak sinyali');
   });
 
   it('publishes strong earthquake M>=5.0 even if single-source', () => {
@@ -253,5 +253,108 @@ describe('PublishGate', () => {
     const result = gate.evaluate(cluster, registry);
     expect(result.decision).toBe(PublishDecision.WATCHLIST_ONLY);
     expect(result.reason).toContain('Deprem büyüklüğü eşik değerin');
+  });
+
+  it('publishes trusted commercial single-source high-value and gets warning label', () => {
+    const cluster: Cluster = {
+      id: 'c14',
+      articles: [
+        mockArticle('22', 'ntv_son_dakika', 'Merkez Bankası faiz kararı duyurusu', 'Faizler sabit tutuldu')
+      ],
+      mainCategory: 'Ekonomi',
+      earliestPublishedAt: Date.now()
+    };
+    const registry = [
+      {
+        sourceId: 'ntv_son_dakika',
+        sourceName: 'NTV Son Dakika',
+        sourceType: 'COMMERCIAL_MEDIA',
+        authorityTier: 'ESTABLISHED_MEDIA',
+        publishEligible: true,
+        legalMode: 'TITLE_LINK_ONLY',
+        licenseStatus: 'none'
+      }
+    ] as any[];
+
+    const result = gate.evaluate(cluster, registry);
+    expect(result.decision).toBe(PublishDecision.PUBLISH_MAIN);
+    expect(result.warningLabel).toBe('Tek kaynak / kaynak sinyali');
+  });
+
+  it('filters out low-value commercial single-source', () => {
+    const cluster: Cluster = {
+      id: 'c15',
+      articles: [
+        mockArticle('23', 'ntv_son_dakika', 'Ünlü oyuncu yakalandı şok detaylar', 'asayiş magazin haberi')
+      ],
+      mainCategory: 'Genel',
+      earliestPublishedAt: Date.now()
+    };
+    const registry = [
+      {
+        sourceId: 'ntv_son_dakika',
+        sourceName: 'NTV Son Dakika',
+        sourceType: 'COMMERCIAL_MEDIA',
+        authorityTier: 'ESTABLISHED_MEDIA',
+        publishEligible: true,
+        legalMode: 'TITLE_LINK_ONLY',
+        licenseStatus: 'none'
+      }
+    ] as any[];
+
+    const result = gate.evaluate(cluster, registry);
+    expect(result.decision).toBe(PublishDecision.FILTERED_OUT);
+  });
+
+  it('filters out clickbait title single-source', () => {
+    const cluster: Cluster = {
+      id: 'c16',
+      articles: [
+        mockArticle('24', 'ntv_son_dakika', 'Öyle bir şey yaptı ki herkes şok oldu! İşte en iyi öneri', 'tıklama tuzağı')
+      ],
+      mainCategory: 'Genel',
+      earliestPublishedAt: Date.now()
+    };
+    const registry = [
+      {
+        sourceId: 'ntv_son_dakika',
+        sourceName: 'NTV Son Dakika',
+        sourceType: 'COMMERCIAL_MEDIA',
+        authorityTier: 'ESTABLISHED_MEDIA',
+        publishEligible: true,
+        legalMode: 'TITLE_LINK_ONLY',
+        licenseStatus: 'none'
+      }
+    ] as any[];
+
+    const result = gate.evaluate(cluster, registry);
+    expect(result.decision).toBe(PublishDecision.FILTERED_OUT);
+    expect(result.reason).toContain('Düşük değerli içerik');
+  });
+
+  it('blocks publication if source is DISABLED or NEEDS_REVIEW', () => {
+    const cluster: Cluster = {
+      id: 'c17',
+      articles: [
+        mockArticle('25', 'trt_haber', 'Kritik dış yardım tamamlandı', 'TRT haber detayı')
+      ],
+      mainCategory: 'Genel',
+      earliestPublishedAt: Date.now()
+    };
+    const registry = [
+      {
+        sourceId: 'trt_haber',
+        sourceName: 'TRT Haber',
+        sourceType: 'news_media',
+        authorityTier: 'PRIMARY_WIRE_OR_AGENCY',
+        publishEligible: false,
+        legalMode: 'NEEDS_REVIEW',
+        licenseStatus: 'none'
+      }
+    ] as any[];
+
+    const result = gate.evaluate(cluster, registry);
+    expect(result.decision).toBe(PublishDecision.FILTERED_OUT);
+    expect(result.reason).toContain('Hukuki engel nedeniyle yayınlanamadı');
   });
 });

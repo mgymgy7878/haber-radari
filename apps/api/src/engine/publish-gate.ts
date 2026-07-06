@@ -83,11 +83,25 @@ export class PublishGate {
     let warningLabel: string | null = null;
     
     let isOfficialSource = false;
+    let isTrustedCommercialSource = false;
+    let hasLegallyBlockedSource = false;
+    let blockedReason: string | null = null;
+
     if (registry) {
       const sourceIds = cluster.articles.map(a => a.sourceId);
       for (const sId of sourceIds) {
         const sourceEntry = registry.find(s => s.sourceId === sId);
         if (sourceEntry) {
+          if (
+            sourceEntry.legalMode === 'DISABLED' ||
+            sourceEntry.legalMode === 'NEEDS_REVIEW' ||
+            !sourceEntry.publishEligible ||
+            (sourceEntry.legalMode === 'LICENSED' && sourceEntry.licenseStatus !== 'active')
+          ) {
+            hasLegallyBlockedSource = true;
+            blockedReason = `Hukuki engel nedeniyle yayınlanamadı: ${sourceEntry.sourceName}`;
+            break;
+          }
           if (
             sourceEntry.sourceType === 'OFFICIAL' ||
             sourceEntry.sourceType === 'official_institution' ||
@@ -96,9 +110,24 @@ export class PublishGate {
             sourceEntry.authorityTier === 'OFFICIAL_PRIMARY'
           ) {
             isOfficialSource = true;
+          } else if (sourceEntry.publishEligible) {
+            isTrustedCommercialSource = true;
           }
         }
       }
+    }
+
+    if (hasLegallyBlockedSource) {
+      return {
+        decision: PublishDecision.FILTERED_OUT,
+        evidenceStatus,
+        topicQuality,
+        contentType,
+        importance,
+        confidence: 0,
+        reason: blockedReason,
+        warningLabel: null
+      };
     }
 
     const isEarthquake = /(deprem|sarsıntı)/i.test(combinedText);
@@ -133,7 +162,7 @@ export class PublishGate {
          decision = PublishDecision.PUBLISH_MAIN;
          reason = "Ana akışa alınma nedeni: Tek kaynaklı ama kritik olay bildirimi";
          warningLabel = "Tek kaynak / kaynak sinyali";
-         importance = 'MEDIUM'; // Bump importance for critical disaster single source
+         importance = 'MEDIUM'; 
       } else if (isOfficialSource) {
          if (isEarthquake && !isStrongEarthquake && !containsHarmCasualtyToken(combinedText)) {
             decision = PublishDecision.WATCHLIST_ONLY;
@@ -141,9 +170,12 @@ export class PublishGate {
          } else {
             decision = PublishDecision.PUBLISH_MAIN;
             reason = "Ana akışa alınma nedeni: Resmi kaynaktan tek kaynaklı önemli duyuru";
-            warningLabel = "Tek Kaynak (Resmi Duyuru)";
-             // Importance is already at least MEDIUM because low-value official sources are filtered out
+            warningLabel = "Tek kaynak / kaynak sinyali";
          }
+      } else if (isTrustedCommercialSource) {
+         decision = PublishDecision.PUBLISH_MAIN;
+         reason = "Ana akışa alınma nedeni: Doğrulanmış ticari kaynaktan tek kaynaklı haber";
+         warningLabel = "Tek kaynak / kaynak sinyali";
       } else if (contentType === ContentType.DISASTER_FOLLOW_UP) {
          decision = PublishDecision.WATCHLIST_ONLY;
          reason = "Afet sonrası takip/yerel dönüşüm haberi. Tek kaynaklı olduğu için ana akışa alınmadı.";
