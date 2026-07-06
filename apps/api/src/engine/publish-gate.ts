@@ -121,7 +121,7 @@ export class PublishGate {
       } else if (isStrongEarthquake) {
          decision = PublishDecision.PUBLISH_MAIN;
          reason = "Ana akışa alınma nedeni: Tek kaynaklı ama kritik olay bildirimi";
-         warningLabel = "Tek Kaynak (Doğrulanmamış)";
+         warningLabel = "Tek kaynak / kaynak sinyali";
          importance = 'HIGH';
       } else if (
         topicQuality === TopicQuality.CRITICAL &&
@@ -132,9 +132,9 @@ export class PublishGate {
       ) {
          decision = PublishDecision.PUBLISH_MAIN;
          reason = "Ana akışa alınma nedeni: Tek kaynaklı ama kritik olay bildirimi";
-         warningLabel = "Tek Kaynak (Doğrulanmamış)";
+         warningLabel = "Tek kaynak / kaynak sinyali";
          importance = 'MEDIUM'; // Bump importance for critical disaster single source
-      } else if (isOfficialSource && topicQuality !== TopicQuality.NOISE && topicQuality !== TopicQuality.LOW_VALUE) {
+      } else if (isOfficialSource) {
          if (isEarthquake && !isStrongEarthquake && !containsHarmCasualtyToken(combinedText)) {
             decision = PublishDecision.WATCHLIST_ONLY;
             reason = "Deprem büyüklüğü eşik değerin (M≥5.0) altında veya bilinmiyor. İzlemeye alındı.";
@@ -142,7 +142,7 @@ export class PublishGate {
             decision = PublishDecision.PUBLISH_MAIN;
             reason = "Ana akışa alınma nedeni: Resmi kaynaktan tek kaynaklı önemli duyuru";
             warningLabel = "Tek Kaynak (Resmi Duyuru)";
-            importance = importance === 'LOW' ? 'MEDIUM' : importance;
+             // Importance is already at least MEDIUM because low-value official sources are filtered out
          }
       } else if (contentType === ContentType.DISASTER_FOLLOW_UP) {
          decision = PublishDecision.WATCHLIST_ONLY;

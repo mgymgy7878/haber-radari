@@ -172,7 +172,7 @@ describe('PublishGate', () => {
     expect(result.topicQuality).toBe(TopicQuality.CRITICAL);
     expect(result.decision).toBe(PublishDecision.PUBLISH_MAIN);
     expect(result.importance).not.toBe('LOW');
-    expect(result.warningLabel).toBe('Tek Kaynak (Doğrulanmamış)');
+    expect(result.warningLabel).toBe('Tek kaynak / kaynak sinyali');
   });
 
   it('never publishes LOW importance events to MAIN', () => {
@@ -228,7 +228,7 @@ describe('PublishGate', () => {
 
     const result = gate.evaluate(cluster);
     expect(result.decision).toBe(PublishDecision.PUBLISH_MAIN);
-    expect(result.warningLabel).toBe('Tek Kaynak (Doğrulanmamış)');
+    expect(result.warningLabel).toBe('Tek kaynak / kaynak sinyali');
   });
 
   it('keeps earthquake M<5.0 in watchlist if official source', () => {
