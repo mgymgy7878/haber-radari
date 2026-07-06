@@ -120,7 +120,7 @@ describe('PublishGate classification fixes', () => {
 
     const result = gate.evaluate(cluster);
     expect(result.contentType).toBe(ContentType.DISASTER_ALERT);
-    expect(result.decision).toBe(PublishDecision.PUBLISH_MAIN);
-    expect(result.reason).toBe('Ana akışa alınma nedeni: Tek kaynaklı ama kritik olay bildirimi');
+    expect(result.decision).toBe(PublishDecision.WATCHLIST_ONLY);
+    expect(result.reason).toBe('Doğrulama bekleniyor (Tek kaynaklı)');
   });
 });

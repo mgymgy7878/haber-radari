@@ -135,10 +135,29 @@ class MockSmartFeedAnalyzer {
                 val contentType = determineContentType(bestTitle)
                 val category = determineCategory(bestTitle, contentType) ?: fingerprint.categoryFallback
                 
+                val combinedText = (bestTitle + " " + fingerprint.baseSummary).lowercase()
+                val isEarthquake = combinedText.contains("deprem") || combinedText.contains("sarsıntı")
+                val magnitude = if (isEarthquake) extractEarthquakeMagnitude(combinedText) else null
+                val isStrongEarthquake = magnitude != null && magnitude >= 5.0
+                val containsCasualties = combinedText.contains("can kaybı") || combinedText.contains("can kaybi") || 
+                                         combinedText.contains("öldü") || combinedText.contains("ölü") || 
+                                         combinedText.contains("yaralı") || combinedText.contains("yaralandı") || 
+                                         combinedText.contains("vefat") || combinedText.contains("hayatını")
+                
+                val isOfficialSource = evidenceArticles.any { 
+                    it.sourceId.lowercase() in listOf("afad", "usgs", "tcmb", "kap", "spk")
+                }
+
                 val topicQuality = determineTopicQuality(category, contentType, sourceCount)
                 val importance = determineImportance(status, topicQuality, bestTitle)
-                val publishDecision = determinePublishDecision(status, importance, category, contentType, topicQuality)
-                val publishReason = determinePublishReason(publishDecision, status, topicQuality, sourceCount)
+                val publishDecision = determinePublishDecision(
+                    status, importance, category, contentType, topicQuality,
+                    isOfficialSource, isStrongEarthquake, containsCasualties, isEarthquake
+                )
+                val publishReason = determinePublishReason(
+                    publishDecision, status, topicQuality, sourceCount,
+                    isOfficialSource, isStrongEarthquake
+                )
 
                 clustered.add(
                     AiCuratedNewsItem(
@@ -155,7 +174,7 @@ class MockSmartFeedAnalyzer {
                         originalArticleIds = evidenceArticles.map { it.id },
                         evidenceStatus = status,
                         clusterReason = "Olay parmak izi eşleşmesi (${fingerprint.keywords.joinToString()})",
-                        warningLabel = getWarningLabel(publishDecision, status, topicQuality),
+                        warningLabel = getWarningLabel(publishDecision, status, topicQuality, isOfficialSource),
                         isDemo = true,
                         filteredSourceCount = noisyArticles.size,
                         publishDecision = publishDecision,
@@ -183,11 +202,32 @@ class MockSmartFeedAnalyzer {
             val contentType = determineContentType(article.title)
             val category = determineCategory(article.title, contentType) ?: "Diğer"
             
+            val combinedText = (article.title + " " + (article.description ?: "")).lowercase()
+            val isEarthquake = combinedText.contains("deprem") || combinedText.contains("sarsıntı")
+            val magnitude = if (isEarthquake) extractEarthquakeMagnitude(combinedText) else null
+            val isStrongEarthquake = magnitude != null && magnitude >= 5.0
+            val containsCasualties = combinedText.contains("can kaybı") || combinedText.contains("can kaybi") || 
+                                     combinedText.contains("öldü") || combinedText.contains("ölü") || 
+                                     combinedText.contains("yaralı") || combinedText.contains("yaralandı") || 
+                                     combinedText.contains("vefat") || combinedText.contains("hayatını")
+            
+            val isOfficialSource = article.sourceId.lowercase() in listOf("afad", "usgs", "tcmb", "kap", "spk")
+
             val topicQuality = determineTopicQuality(category, contentType, 1)
             val importance = determineImportance(status, topicQuality, article.title)
             
-            val publishDecision = if (isNoisy) PublishDecision.FILTERED_OUT else determinePublishDecision(status, importance, category, contentType, topicQuality)
-            val publishReason = determinePublishReason(publishDecision, status, topicQuality, 1)
+            val publishDecision = if (isNoisy) {
+                PublishDecision.FILTERED_OUT
+            } else {
+                determinePublishDecision(
+                    status, importance, category, contentType, topicQuality,
+                    isOfficialSource, isStrongEarthquake, containsCasualties, isEarthquake
+                )
+            }
+            val publishReason = determinePublishReason(
+                publishDecision, status, topicQuality, 1,
+                isOfficialSource, isStrongEarthquake
+            )
             
             clustered.add(
                 AiCuratedNewsItem(
@@ -203,7 +243,7 @@ class MockSmartFeedAnalyzer {
                     originalArticleIds = listOf(article.id),
                     evidenceStatus = status,
                     clusterReason = "Olay eşleşmesi bulunamadı",
-                    warningLabel = getWarningLabel(publishDecision, status, topicQuality),
+                    warningLabel = getWarningLabel(publishDecision, status, topicQuality, isOfficialSource),
                     isDemo = true,
                     filteredSourceCount = 0,
                     publishDecision = publishDecision,
@@ -291,12 +331,44 @@ class MockSmartFeedAnalyzer {
         }
     }
 
+    private fun extractEarthquakeMagnitude(text: String): Double? {
+        val pattern = java.util.regex.Pattern.compile("(\\d+(?:[,.]\\d+)?)\\s*(?:büyüklüğünde|magnitüd|ml|mw|md|magnitude|deprem)", java.util.regex.Pattern.CASE_INSENSITIVE)
+        var matcher = pattern.matcher(text)
+        if (matcher.find()) {
+            val valStr = matcher.group(1)?.replace(',', '.') ?: return null
+            return valStr.toDoubleOrNull()
+        }
+        val pattern2 = java.util.regex.Pattern.compile("(?:büyüklüğünde|magnitüd|ml|mw|md|magnitude)\\s*(\\d+(?:[,.]\\d+)?)", java.util.regex.Pattern.CASE_INSENSITIVE)
+        matcher = pattern2.matcher(text)
+        if (matcher.find()) {
+            val valStr = matcher.group(1)?.replace(',', '.') ?: return null
+            return valStr.toDoubleOrNull()
+        }
+        val pattern3 = java.util.regex.Pattern.compile("m\\s*:\\s*(\\d+(?:[,.]\\d+)?)", java.util.regex.Pattern.CASE_INSENSITIVE)
+        matcher = pattern3.matcher(text)
+        if (matcher.find()) {
+            val valStr = matcher.group(1)?.replace(',', '.') ?: return null
+            return valStr.toDoubleOrNull()
+        }
+        val pattern4 = java.util.regex.Pattern.compile("m\\s*(\\d+(?:[,.]\\d+)?)\\s+deprem", java.util.regex.Pattern.CASE_INSENSITIVE)
+        matcher = pattern4.matcher(text)
+        if (matcher.find()) {
+            val valStr = matcher.group(1)?.replace(',', '.') ?: return null
+            return valStr.toDoubleOrNull()
+        }
+        return null
+    }
+
     private fun determinePublishDecision(
         status: EvidenceStatus,
         importance: Importance,
         category: String?,
         contentType: ContentType,
-        quality: TopicQuality
+        quality: TopicQuality,
+        isOfficialSource: Boolean,
+        isStrongEarthquake: Boolean,
+        containsCasualties: Boolean,
+        isEarthquake: Boolean
     ): PublishDecision {
         
         // 1. Noise ve Low Value kesinlikle ana akışta yok
@@ -324,18 +396,42 @@ class MockSmartFeedAnalyzer {
             return PublishDecision.WATCHLIST_ONLY
         }
         
+        if (isStrongEarthquake) {
+            return PublishDecision.PUBLISH_MAIN
+        }
+        
+        if (isOfficialSource && quality != TopicQuality.NOISE && quality != TopicQuality.LOW_VALUE) {
+            if (isEarthquake && !isStrongEarthquake && !containsCasualties) {
+                return PublishDecision.WATCHLIST_ONLY
+            }
+            return PublishDecision.PUBLISH_MAIN
+        }
+        
         // Sadece CRITICAL olaylar tek kaynakla ana akışa sızabilir
         return if (quality == TopicQuality.CRITICAL) {
-            PublishDecision.PUBLISH_MAIN 
+            if (isEarthquake && !isStrongEarthquake && !containsCasualties) {
+                PublishDecision.WATCHLIST_ONLY
+            } else {
+                PublishDecision.PUBLISH_MAIN
+            }
         } else {
             PublishDecision.WATCHLIST_ONLY
         }
     }
     
-    private fun determinePublishReason(decision: PublishDecision, status: EvidenceStatus, quality: TopicQuality, sourceCount: Int): String? {
+    private fun determinePublishReason(
+        decision: PublishDecision,
+        status: EvidenceStatus,
+        quality: TopicQuality,
+        sourceCount: Int,
+        isOfficialSource: Boolean,
+        isStrongEarthquake: Boolean
+    ): String? {
         if (decision != PublishDecision.PUBLISH_MAIN) return null
         
-        return if (status == EvidenceStatus.SINGLE_SOURCE && quality == TopicQuality.CRITICAL) {
+        return if (isOfficialSource) {
+            "Ana akışa alınma nedeni: Resmi kaynaktan tek kaynaklı önemli duyuru"
+        } else if (status == EvidenceStatus.SINGLE_SOURCE && (quality == TopicQuality.CRITICAL || isStrongEarthquake)) {
             "Ana akışa alınma nedeni: Tek kaynaklı ama kritik olay bildirimi"
         } else if (sourceCount >= 2) {
             "Ana akışa alınma nedeni: Çok kaynaklı kaynak sinyali"
@@ -344,9 +440,14 @@ class MockSmartFeedAnalyzer {
         }
     }
 
-    private fun getWarningLabel(decision: PublishDecision, status: EvidenceStatus, quality: TopicQuality): String? {
-        if (decision == PublishDecision.PUBLISH_MAIN && status == EvidenceStatus.SINGLE_SOURCE && quality == TopicQuality.CRITICAL) {
-            return "Kritik olay (tek kaynaklı): Ek kaynak sinyali bekleniyor."
+    private fun getWarningLabel(
+        decision: PublishDecision,
+        status: EvidenceStatus,
+        quality: TopicQuality,
+        isOfficialSource: Boolean
+    ): String? {
+        if (decision == PublishDecision.PUBLISH_MAIN && status == EvidenceStatus.SINGLE_SOURCE) {
+            return if (isOfficialSource) "Tek Kaynak (Resmi Duyuru)" else "Tek kaynak / kaynak sinyali"
         }
         if (status == EvidenceStatus.LOW_CONFIDENCE) {
             return "Bu haberin başlığı çok genel veya belirsiz ifadeler içeriyor."

@@ -172,7 +172,7 @@ describe('PublishGate', () => {
     expect(result.topicQuality).toBe(TopicQuality.CRITICAL);
     expect(result.decision).toBe(PublishDecision.PUBLISH_MAIN);
     expect(result.importance).not.toBe('LOW');
-    expect(result.warningLabel).toBe('Tek Kaynak (Doğrulanmamış)');
+    expect(result.warningLabel).toBe('Tek kaynak / kaynak sinyali');
   });
 
   it('never publishes LOW importance events to MAIN', () => {
@@ -190,5 +190,68 @@ describe('PublishGate', () => {
     expect(result.topicQuality).toBe(TopicQuality.LOW_VALUE);
     expect(result.importance).toBe('LOW');
     expect(result.decision).not.toBe(PublishDecision.PUBLISH_MAIN);
+  });
+
+  it('publishes official sources single-source if critical or high value', () => {
+    const cluster: Cluster = {
+      id: 'c11',
+      articles: [
+        mockArticle('19', 'AFAD', 'Afet bölgesinde çadır kurulumu tamamlandı', 'AFAD ekipleri bölgede')
+      ],
+      mainCategory: 'Afet',
+      earliestPublishedAt: Date.now()
+    };
+    const registry = [
+      {
+        sourceId: 'afad',
+        sourceName: 'AFAD',
+        sourceType: 'OFFICIAL',
+        authorityTier: 'OFFICIAL_PRIMARY',
+        publishEligible: true
+      }
+    ] as any[];
+
+    const result = gate.evaluate(cluster, registry);
+    expect(result.decision).toBe(PublishDecision.PUBLISH_MAIN);
+    expect(result.warningLabel).toBe('Tek Kaynak (Resmi Duyuru)');
+  });
+
+  it('publishes strong earthquake M>=5.0 even if single-source', () => {
+    const cluster: Cluster = {
+      id: 'c12',
+      articles: [
+        mockArticle('20', 'RANDOM_NEWS', 'Ege Denizi\'nde 5.4 büyüklüğünde deprem meydana geldi', 'sarsıntı hissedildi')
+      ],
+      mainCategory: 'Afet',
+      earliestPublishedAt: Date.now()
+    };
+
+    const result = gate.evaluate(cluster);
+    expect(result.decision).toBe(PublishDecision.PUBLISH_MAIN);
+    expect(result.warningLabel).toBe('Tek kaynak / kaynak sinyali');
+  });
+
+  it('keeps earthquake M<5.0 in watchlist if official source', () => {
+    const cluster: Cluster = {
+      id: 'c13',
+      articles: [
+        mockArticle('21', 'AFAD', 'Muğla\'da 3.2 büyüklüğünde sarsıntı', 'hafif deprem')
+      ],
+      mainCategory: 'Afet',
+      earliestPublishedAt: Date.now()
+    };
+    const registry = [
+      {
+        sourceId: 'afad',
+        sourceName: 'AFAD',
+        sourceType: 'OFFICIAL',
+        authorityTier: 'OFFICIAL_PRIMARY',
+        publishEligible: true
+      }
+    ] as any[];
+
+    const result = gate.evaluate(cluster, registry);
+    expect(result.decision).toBe(PublishDecision.WATCHLIST_ONLY);
+    expect(result.reason).toContain('Deprem büyüklüğü eşik değerin');
   });
 });

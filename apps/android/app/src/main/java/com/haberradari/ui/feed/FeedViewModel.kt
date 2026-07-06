@@ -48,6 +48,10 @@ data class FeedUiState(
     val enabledSourceCount: Int = 0,
     /** Son başarılı feed güncelleme zamanı (epoch ms). */
     val lastUpdatedAt: Long? = null,
+    /** Son başarılı local RSS ingest güncelleme zamanı. */
+    val lastRssIngestAt: Long? = null,
+    /** Son başarılı smart feed analiz güncelleme zamanı. */
+    val lastSmartAnalysisAt: Long? = null,
     /** Son manuel/otomatik yenileme sonucu — UI geri bildirimi. */
     val refreshOutcome: FeedRefreshUiLogic.RefreshOutcome? = null,
 )
@@ -72,13 +76,20 @@ class FeedViewModel(
 
     private fun observeSources() {
         viewModelScope.launch {
-            repository.getSourcesFlow().collect { sources ->
-                val enabledIngest = sources.count { source ->
-                    source.enabled && !source.legalMode.blocksProductionIngest()
+            repository.getSourceStats().collect { stats ->
+                val enabledIngest = stats.count { stat ->
+                    stat.source.enabled && !stat.source.legalMode.blocksProductionIngest()
                 }
+                val lastRssIngest = stats.filter { stat ->
+                    stat.source.enabled && !stat.source.legalMode.blocksProductionIngest()
+                }.mapNotNull { stat ->
+                    stat.health?.lastSuccessAt
+                }.maxOrNull()
+
                 _uiState.value = _uiState.value.copy(
-                    totalSourceCount = sources.size,
+                    totalSourceCount = stats.size,
                     enabledSourceCount = enabledIngest,
+                    lastRssIngestAt = lastRssIngest,
                 )
             }
         }
@@ -112,6 +123,7 @@ class FeedViewModel(
                         rawPreview = cached.rawPreview,
                         noisePreview = cached.noisePreview,
                         lastUpdatedAt = cached.generatedAt,
+                        lastSmartAnalysisAt = cached.generatedAt,
                     )
                 } else {
                     _uiState.value = _uiState.value.copy(isReadingCache = false)
@@ -180,6 +192,7 @@ class FeedViewModel(
                 rawPreview = result.rawPreview,
                 noisePreview = result.noisePreview,
                 lastUpdatedAt = result.generatedAt.takeIf { it > 0 } ?: System.currentTimeMillis(),
+                lastSmartAnalysisAt = result.generatedAt.takeIf { it > 0 } ?: System.currentTimeMillis(),
                 refreshOutcome = FeedRefreshUiLogic.RefreshOutcome.SUCCESS,
             )
         } catch (e: Exception) {

@@ -85,8 +85,8 @@
       },
       "publishGate": {
         "contentType": "DISASTER_ALERT",
-        "decision": "PUBLISH_MAIN",
-        "reason": "Ana akışa alınma nedeni: Tek kaynaklı ama kritik olay bildirimi"
+        "decision": "WATCHLIST_ONLY",
+        "reason": "Doğrulama bekleniyor (Tek kaynaklı)"
       }
     },
     {
