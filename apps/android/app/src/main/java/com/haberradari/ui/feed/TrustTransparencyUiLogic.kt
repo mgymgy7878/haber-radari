@@ -60,6 +60,27 @@ object TrustTransparencyUiLogic {
         .replace("Doğrulama bekleniyor", "Ek kaynak sinyali bekleniyor")
         .replace(Regex("(?i)kanıt:"), "Sinyal:")
 
+    fun mapReasonCodeToSafeUiString(reasonCode: String?): String? {
+        if (reasonCode == null) return null
+        
+        val code = reasonCode.substringAfterLast(": ").trim() // In case it's prefixed
+        
+        return when (code) {
+            "SHOW_MONITORING_THRESHOLD", "SHOW_MONITORING_NOISE_DOWNGRADE" -> "Haber değeri orta seviyede; gelişen kayıt olarak izleniyor."
+            "SHOW_MAIN_THRESHOLD", "SHOW_MAIN_HIGH_VALUE", "SHOW_MAIN_OFFICIAL_OVERRIDE", "SHOW_MAIN_OFFICIAL_CRITICAL", "SHOW_MAIN_PERSONALIZED" -> "Haber değeri yüksek olduğu için öncelikli akışa alındı."
+            "HIDE_LOW_VALUE", "LOW_VALUE_THRESHOLD", "HIDE_LOW_VALUE_DUE_TO_NOISE" -> "Düşük haber değeri nedeniyle ana akıştan çıkarıldı."
+            "HIDE_CLICKBAIT", "NOISE_CLICKBAIT_HARD_HIDE" -> "Clickbait riski nedeniyle ana akıştan çıkarıldı."
+            "HIDE_LEGAL_BLOCKED", "LEGAL_BLOCKED_DISABLED", "LEGAL_BLOCKED_NEEDS_REVIEW", "LEGAL_BLOCKED_UNLICENSED_AGENCY" -> "Kaynak kullanım durumu uygun olmadığı için gösterilmedi."
+            "OFFICIAL_PUBLIC_SOURCE_CRITICAL" -> "Resmi/kurumsal kaynak ve yüksek haber değeri sinyali."
+            "SOURCE_PROFILE_ELIGIBLE_SINGLE_SOURCE" -> "Kaynak profili uygun; tek kaynaklı gelişen kayıt."
+            "ECONOMY_MARKET_SIGNAL" -> "Ekonomi/piyasa etkisi nedeniyle öne çıkarıldı."
+            "MULTI_SOURCE_SIGNAL" -> "Birden fazla kaynakta benzer kayıt var."
+            "LOW_VALUE" -> "Düşük haber değeri nedeniyle izlemeye alındı."
+            "CLICKBAIT_RISK" -> "Clickbait riski nedeniyle ana akıştan çıkarıldı."
+            else -> "Kaynak sinyali ve haber değeri eşiklerine göre izlemeye alındı."
+        }
+    }
+
     data class WhyShownLine(val label: String, val value: String)
 
     fun whyShownLines(item: AiCuratedNewsItem): List<WhyShownLine> {

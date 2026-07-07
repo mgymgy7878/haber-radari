@@ -85,5 +85,14 @@ data class AiCuratedNewsItem(
     val contentType: ContentType = ContentType.GENERAL,
     val publishReason: String? = null,
     val smartDigest: SmartDigest? = null,
-    val sourceSignal: SourceSignal? = null
+    val sourceSignal: SourceSignal? = null,
+    val aiNewsValue: AiNewsValue? = null
+)
+
+data class AiNewsValue(
+    val decision: String,
+    val newsValueScore: Int,
+    val noiseScore: Int,
+    val personalizedScore: Int,
+    val reasonCode: String
 )

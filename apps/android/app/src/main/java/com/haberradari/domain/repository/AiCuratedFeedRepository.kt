@@ -47,7 +47,8 @@ data class WatchlistPreviewItem(
     val shortDescription: String? = null,
     val originalUrl: String? = null,
     val publishedAt: String? = null,
-    val sourceNames: List<String>? = null
+    val sourceNames: List<String>? = null,
+    val aiNewsValue: com.haberradari.data.model.AiNewsValue? = null
 )
 
 interface AiCuratedFeedRepository {

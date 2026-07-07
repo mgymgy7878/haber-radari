@@ -25,7 +25,8 @@ data class WatchlistPreviewDto(
     val shortDescription: String? = null,
     val originalUrl: String? = null,
     val publishedAt: String? = null,
-    val sourceNames: List<String>? = null
+    val sourceNames: List<String>? = null,
+    val aiNewsValue: AiNewsValueDto? = null
 )
 
 data class FeedStatsDto(
@@ -59,7 +60,16 @@ data class AiCuratedNewsItemDto(
     val mediaHints: List<String>?,
     val originalArticleIds: List<String>,
     val smartDigest: SmartDigestDto? = null,
-    val sourceSignal: SourceSignalDto? = null
+    val sourceSignal: SourceSignalDto? = null,
+    val aiNewsValue: AiNewsValueDto? = null
+)
+
+data class AiNewsValueDto(
+    val decision: String,
+    val newsValueScore: Int,
+    val noiseScore: Int,
+    val personalizedScore: Int,
+    val reasonCode: String
 )
 
 data class SmartDigestDto(
