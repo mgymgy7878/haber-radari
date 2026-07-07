@@ -84,7 +84,7 @@ fun ArticleDetailScreen(
             )
             
             Text(
-                text = "Bu metin kaynağın RSS açıklamasından alınmıştır; haber doğrulama veya AI teyidi değildir.",
+                text = "Bu metin kaynağın RSS açıklamasından alınmıştır; kaynak sinyali haberin doğruluğunu tek başına garanti etmez.",
                 style = MaterialTheme.typography.labelSmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
