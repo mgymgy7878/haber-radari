@@ -357,7 +357,7 @@ fun SourceListItemCard(
                     contentDescription = null
                 )
                 Spacer(modifier = Modifier.width(8.dp))
-                Text("Orijinal kaynağa git")
+                Text("Orijinal kaynağa git", letterSpacing = 0.sp)
             }
         }
     }

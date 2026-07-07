@@ -153,6 +153,8 @@ private fun DebugBuildChip(
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    if (!BuildConfig.DEBUG) return
+    
     androidx.compose.material3.Surface(
         onClick = onClick,
         modifier = modifier.fillMaxWidth(),
@@ -212,7 +214,7 @@ private fun FeedContentBody(
         ) {
             LazyColumn(
                 modifier = Modifier.fillMaxSize(),
-                contentPadding = PaddingValues(vertical = 8.dp),
+                contentPadding = PaddingValues(top = 8.dp, bottom = 88.dp),
                 verticalArrangement = Arrangement.spacedBy(4.dp)
             ) {
                 if (state.curatedItems != null) {
@@ -1120,8 +1122,9 @@ fun AiCuratedNewsItemCard(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = "Orijinal kaynağa git →",
+                    text = "Orijinal kaynağa git \u2192",
                     style = MaterialTheme.typography.labelMedium,
+                    letterSpacing = 0.sp,
                     color = MaterialTheme.colorScheme.primary
                 )
             }
@@ -1214,8 +1217,9 @@ fun LatestRssItemCard(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = "Orijinal kaynağa git →",
+                    text = "Orijinal kaynağa git \u2192",
                     style = MaterialTheme.typography.labelMedium,
+                    letterSpacing = 0.sp,
                     color = MaterialTheme.colorScheme.tertiary
                 )
             }
