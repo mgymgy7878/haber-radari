@@ -254,6 +254,79 @@ class MockSmartFeedAnalyzer {
             )
         }
 
+        // 2.5 SMART NEWS VALUE FIXTURES
+        val fixtureItems = listOf(
+            AiCuratedNewsItem(
+                id = UUID.randomUUID().toString(),
+                aiTitle = "Borsa güne düşüşle başladı",
+                aiSummary = "Piyasalarda güne satıcılı bir başlangıç yapıldı.",
+                category = "Ekonomi",
+                importance = Importance.MEDIUM,
+                confidence = 0.8f,
+                sourceCount = 2,
+                sources = emptyList(),
+                mediaHints = null,
+                originalArticleIds = emptyList(),
+                evidenceStatus = EvidenceStatus.CONFIRMED,
+                clusterReason = "Fixture 1",
+                warningLabel = null,
+                publishDecision = PublishDecision.PUBLISH_MAIN,
+                aiNewsValue = com.haberradari.data.model.AiNewsValue("SHOW_MAIN", 60, 0, 0, "SHOW_MONITORING_THRESHOLD")
+            ),
+            AiCuratedNewsItem(
+                id = UUID.randomUUID().toString(),
+                aiTitle = "BIST 100 güne yüzde 0,8 düşüşle 10.656 puandan başladı",
+                aiSummary = "Endeks dünkü kapanışa göre geriledi.",
+                category = "Ekonomi",
+                importance = Importance.HIGH,
+                confidence = 0.9f,
+                sourceCount = 3,
+                sources = emptyList(),
+                mediaHints = null,
+                originalArticleIds = emptyList(),
+                evidenceStatus = EvidenceStatus.CONFIRMED,
+                clusterReason = "Fixture 2",
+                warningLabel = null,
+                publishDecision = PublishDecision.PUBLISH_MAIN,
+                aiNewsValue = com.haberradari.data.model.AiNewsValue("SHOW_MAIN", 85, 0, 0, "SHOW_MAIN_THRESHOLD")
+            ),
+            AiCuratedNewsItem(
+                id = UUID.randomUUID().toString(),
+                aiTitle = "Fed faiz kararını ne zaman açıklayacak?",
+                aiSummary = "Piyasalar karar öncesi dalgalı seyrediyor.",
+                category = "Ekonomi",
+                importance = Importance.MEDIUM,
+                confidence = 0.8f,
+                sourceCount = 2,
+                sources = emptyList(),
+                mediaHints = null,
+                originalArticleIds = emptyList(),
+                evidenceStatus = EvidenceStatus.CONFIRMED,
+                clusterReason = "Fixture 3",
+                warningLabel = null,
+                publishDecision = PublishDecision.PUBLISH_MAIN,
+                aiNewsValue = com.haberradari.data.model.AiNewsValue("SHOW_MAIN", 70, 0, 0, "SHOW_MAIN_THRESHOLD")
+            ),
+            AiCuratedNewsItem(
+                id = UUID.randomUUID().toString(),
+                aiTitle = "Fed faiz kararını Çarşamba TSİ 22.00’de açıklayacak",
+                aiSummary = "Piyasalar karar öncesi dalgalı seyrediyor.",
+                category = "Ekonomi",
+                importance = Importance.HIGH,
+                confidence = 0.9f,
+                sourceCount = 3,
+                sources = emptyList(),
+                mediaHints = null,
+                originalArticleIds = emptyList(),
+                evidenceStatus = EvidenceStatus.CONFIRMED,
+                clusterReason = "Fixture 4",
+                warningLabel = null,
+                publishDecision = PublishDecision.PUBLISH_MAIN,
+                aiNewsValue = com.haberradari.data.model.AiNewsValue("SHOW_MAIN", 88, 0, 0, "SHOW_MAIN_THRESHOLD")
+            )
+        )
+        clustered.addAll(0, fixtureItems)
+
         // Sıralama
         val sortedList = clustered.sortedWith(
             compareBy<AiCuratedNewsItem> { it.evidenceStatus == EvidenceStatus.LOW_CONFIDENCE }

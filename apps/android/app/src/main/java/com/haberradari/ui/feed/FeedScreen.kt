@@ -33,7 +33,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.res.stringResource
+import com.haberradari.domain.usecase.KeyFactStatus
+import com.haberradari.domain.usecase.SmartNewsValueExtractor
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
@@ -1031,6 +1034,57 @@ fun AiCuratedNewsItemCard(
             )
             
             Spacer(modifier = Modifier.height(12.dp))
+
+            // 1.5. Ne oldu / Kilit bilgi
+            val keyFactResult = remember(item.aiTitle, item.aiSummary) {
+                SmartNewsValueExtractor.extractKeyFacts(item.aiTitle, item.aiSummary)
+            }
+            
+            androidx.compose.material3.Surface(
+                color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f),
+                shape = MaterialTheme.shapes.small,
+                modifier = Modifier.fillMaxWidth().padding(bottom = 12.dp)
+            ) {
+                androidx.compose.foundation.layout.Column(
+                    modifier = Modifier.padding(12.dp)
+                ) {
+                    Text(
+                        text = "Ne oldu?",
+                        style = MaterialTheme.typography.labelMedium,
+                        color = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier.padding(bottom = 4.dp)
+                    )
+                    Text(
+                        text = keyFactResult.whatHappened,
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier.padding(bottom = 8.dp)
+                    )
+                    
+                    Text(
+                        text = "Kilit bilgi:",
+                        style = MaterialTheme.typography.labelMedium,
+                        color = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier.padding(bottom = 4.dp)
+                    )
+                    
+                    if (keyFactResult.status == KeyFactStatus.FOUND) {
+                        keyFactResult.factLines.forEach { fact ->
+                            Text(
+                                text = fact,
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
+                    } else {
+                        Text(
+                            text = "Kilit bilgi bulunamadı. Başlık karar zamanı/kaç puan düştüğü bilgisini içermiyor. Orijinal kaynakta kontrol et.",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.outline
+                        )
+                    }
+                }
+            }
 
             // Chips Row: Haber değeri, Akış kararı, Kaynak sinyali
             androidx.compose.foundation.layout.Row(
