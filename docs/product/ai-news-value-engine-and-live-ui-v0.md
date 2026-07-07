@@ -5,82 +5,90 @@ Bu doküman, Haber Radarı'nın "yapay zeka haber değeri motoru" (AI News Value
 ## 1. Executive Verdict
 
 Haber Radarı'nın yeni önceliği; kişisel kullanım deneyimini mükemmelleştirmek, AI haber değeri filtresiyle gürültüyü engellemek, arayüzü zenginleştirmek ve anlık veri panelleri sunmaktır.
-Sistemin kalbinde, clickbait/asayiş haberlerini eleyen ve sadece "kamu, piyasa veya güvenlik etkisi" olan haberleri öne çıkaran metadata tabanlı bir skorlama motoru yatar.
+Sistemin kalbinde, clickbait/asayiş haberlerini eleyen ve sadece "kamu, piyasa veya güvenlik etkisi" olan haberleri öne çıkaran metadata tabanlı deterministic bir skorlama motoru yatar.
 
-## 2. AI Haber Değeri Motoru
+## 2. AI Haber Değeri Motoru (Deterministic Scoring)
 
 Bu motor, aşağıdaki skoring faktörlerini hesaplayıp haberin gösterim stratejisini belirler:
 
-*   **Haber Değeri Skoru:** Haberin genel kamuoyu/toplumsal/ekonomik etkisinin büyüklüğü.
-*   **Clickbait Riski:** Haberin başlık formatı veya eksik bilgisiyle sırf merak uyandırmak için tasarlanmış olma ihtimali.
-*   **Düşük Değer/Gürültü Skoru:** Asayiş, yerel magazin, 3. sayfa türü spesifik ve dar etkili olayların ölçümü.
-*   **Genel Önem Skoru:** Haber değeri skoru yüksek, gürültü ve clickbait skoru düşük olan içeriklerin final notu.
-*   **Kişisel İlgi Skoru:** Kullanıcının (local-first) beyan ettiği ilgi alanlarıyla örtüşme durumu.
-*   **Kaynak Profili Skoru:** Haberin geldiği kaynağın `authorityTier` ve `legalMode` güvenilirlik katsayısı.
-*   **Tek Kaynak / Çok Kaynak Ayrımı:** Olayın birden fazla kaynaktan doğrulanıp doğrulanmadığını belirten katsayı.
+**Skorlar:**
+*   `newsValueScore`: 0-100 (Haber değeri skoru)
+*   `noiseScore`: 0-100 (Clickbait / Gürültü skoru)
+*   `personalPriorityBoost`: 0-30 (Kişisel ilgi yükseltmesi)
+*   `personalizedScore`: `min(100, newsValueScore + personalPriorityBoost)`
 
-## 3. Metadata-only AI Input Contract
+**Legal Order (Öncelik 1):**
+Önce legal eligibility çalışır. `DISABLED` / `NEEDS_REVIEW` veya "lisanssız ajans" kaynakları `HIDE_LEGAL_BLOCKED` olarak etiketlenir. Bu kaynaklar skorla veya kişisel ayarla kurtarılamaz.
 
-Sistem, yapay zekaya (LLM) **asla** haberin tamamını göndermez. Sadece metadata-only sınırlarında kalır.
+**Kaynak Bonusları:**
+*   `OFFICIAL_PUBLIC_SOURCE`: +40 (Örnek: AFAD, TCMB, KAP, SPK, TÜİK, USGS)
+*   `SOURCE_PROFILE_STRONG` / `REPUTABLE`: +20
+*   *Özel Ajans Notu:* AA, DHA, İHA, Reuters, AP, AFP gibi ajanslar, legal olarak lisans yoksa veya sözleşme geçerli değilse pozitif skor alamaz; legal blocker önce işler.
+
+**Kategori Bonusları:**
+*   Afet / kamu güvenliği: +40
+*   Ekonomi / piyasa / TCMB / KAP / SPK: +30
+*   Resmi kurum duyurusu: +30
+*   Uluslararası kriz / savaş / diplomasi: +25
+*   Teknoloji / AI kritik gelişme: +20
+
+**Başlık / Metadata Keyword Bonusları:**
+*   Etki Sinyalleri ("karar", "açıklandı", "faiz", "atama", "deprem M≥5", "düzenleme", "soruşturma", "yaptırım", "bilanço"): +10 ile +20 arası.
+*   Tüm `newsValueScore` hesaplamaları 100 ile sınırlandırılır (cap edilir).
+
+**Noise Score (Clickbait / Gürültü):**
+*   Soru oltası: "...mi oldu?", "nerede oldu?", "ne zaman?" => +50
+*   Clickbait kalıpları: "şoke eden", "işte o detay", "görenleri şaşırt...", "korkutan", "son dakika deprem mi oldu?" => +40/+60
+*   Magazin / düşük değerli yerel asayiş / 3. sayfa: +60
+*   SEO evergreen deprem başlıkları: +70
+
+## 3. Decision Thresholds (Karar Eşikleri)
+
+Sistem aşağıdaki kurallara göre haberleri yönlendirir:
+
+1.  `noiseScore > 50` => `HIDE_CLICKBAIT` veya `HIDE_LOW_VALUE`
+2.  `baseNewsValueScore >= 85` => `SHOW_MAIN` (Global critical override - kişisel tercih ve filtreleri ezer)
+3.  `personalizedScore >= 75` => `SHOW_MAIN`
+4.  `personalizedScore` 40-74 => `SHOW_MONITORING`
+5.  `personalizedScore < 40` => `HIDE_LOW_VALUE`
+
+**Global vs. Personal (Kişisel ve Genel Denge):**
+*   Kritik afet, kamu güvenliği veya çok önemli resmi duyurular (`newsValueScore >= 85`) kullanıcı tercihlerinden bağımsız olarak her zaman gösterilir.
+*   Kişisel ilgi yalnızca destek (boost) verir. Örneğin, kullanıcı Ekonomi/Piyasa seçtiyse ilgili haberlere `+30 personalPriorityBoost` verilir. Fakat legal blocker veya yüksek `noiseScore` aşılamaz.
+*   Kullanıcı spor veya magazin konularını kapatsa dahi, bu alandaki global kritik haberler (eğer olursa ve `noiseScore` düşükse) gösterilebilir.
+
+## 4. Metadata-only AI Input Contract
+
+Sistem, değerlendirmeleri yaparken sadece metadata tabanlı çalışır:
 
 **Kullanılabilir Alanlar:**
-*   `title` (Başlık)
-*   `sourceName` (Kaynak Adı)
-*   `publishedAt` (Yayın Zamanı)
-*   `category/section` (Kategori)
-*   `canonicalUrl/originalLink` (Orijinal URL)
-*   `source profile / authorityTier / legalMode` (Kaynak Yasal ve Yetki Profili)
-*   `sourceCount / cluster signal` (Küme / Kaynak Sayısı Sinyali)
-*   `publishReason / warningLabel` (Yayınlanma Nedeni)
-*   `user-selected local interests` (Kullanıcı Profil Tercihleri)
+*   `title`, `sourceName`, `publishedAt`, `category/section`, `canonicalUrl/originalLink`, `source profile / authorityTier / legalMode`, `sourceCount / cluster signal`, `publishReason / warningLabel`, `user-selected local interests`.
 
 **Kesinlikle Yasaklı Alanlar:**
-Haber tam içeriği (body), html, image, caption, video/audio transcript, OCR veya kazınmış herhangi bir detay (scraped details). LLM analizleri lokal metadata üzerinde çalışmalı ve gerçek bir LLM API pilotu kullanıcı onayı olmadan bağlanmamalıdır.
+Haber makale icerigi, html, image, caption, video/audio transcript, OCR veya kazınmış herhangi bir detay. Mobilde API/LLM key barındırılması ve kullanıcı onayı olmadan gerçek bir LLM çağrısı yapılması yasaktır.
 
-## 4. Sınıflandırma Kararları (Output Enum)
+## 5. UI Önerisi ve Karşılıkları
 
-AI motoru aşağıdaki mantıksal kararlardan birini üretir:
+**SHOW_MAIN (Öncelikli Akış):**
+*   Ana ekranda üst sıralarda yer alır.
+*   Büyük kart tasarımı kullanılır.
+*   Haber değeri etiketi ve "Neden gösterildi?" açıklaması yer alır.
 
-*   `SHOW_MAIN`: Öncelikli akışta gösterilecek kadar önemli ve/veya çok kaynaklı haber.
-*   `SHOW_MONITORING`: İzleme listesine alınacak, henüz gelişmekte olan veya kişisel ilgi alanına giren haber.
-*   `HIDE_LOW_VALUE`: 3. sayfa, magazin veya dar etkili asayiş haberi (gizlenir).
-*   `HIDE_CLICKBAIT`: SEO oltası veya merak tuzağı (gizlenir).
-*   `HIDE_LEGAL_BLOCKED`: `DISABLED` veya `NEEDS_REVIEW` statüsündeki yasal engelli kaynak (gizlenir).
-*   `SHOW_CRITICAL_SINGLE_SOURCE`: Tek kaynaklı ama etkisi yüksek (örn. AFAD deprem) olduğu için ana akışta "uyarı etiketiyle" gösterilecek kayıt.
-*   `SHOW_GENERAL_IMPORTANT`: Kişisel öncelik olmasa da herkesin bilmesi gereken ana başlık.
+**SHOW_MONITORING (Gelişen Kayıtlar):**
+*   İzlemeye alınan haberleri temsil eder.
+*   Daha kompakt bir liste/kart tasarımı kullanılır.
+*   Tek kaynak / kaynak sinyali veya düşük/orta sinyal etiketi belirgindir.
 
-## 5. Haber Değeri Kuralları
+**HIDE_CLICKBAIT / HIDE_LOW_VALUE:**
+*   Ana akışta ve izleme listesinde gösterilmez (gizlenir).
+*   Gerekirse hata ayıklama (debug/evidence) ekranlarında `reasonCode` ile görüntülenir.
 
-**Yüksek Değer:**
-*   Afet / deprem / kamu güvenliği anonsları
-*   Ekonomi / piyasa etkisi yaratacak regülasyonlar (TCMB, KAP, BIST)
-*   Resmi kurum duyuruları (Bakanlıklar, Valilikler vb.)
-*   Geniş toplumsal etki yaratan makro olaylar
-*   Uluslararası kriz / savaş / diplomasi gelişmeleri
-*   Teknoloji / AI alanında sektörü dönüştüren kritik gelişmeler
+**Anlık Radar (Paneller):**
+*   Son büyük depremler (M≥5), TCMB / KAP duyuruları, piyasa göstergeleri.
+*   Kaynak sağlık durumu ve son yenileme detayları.
+*   RSS Metadata Önizlemesi (Geliştirici/şeffaflık alanı).
 
-**Düşük Değer / Gürültü:**
-*   Magazin ve popüler kültür dedikoduları
-*   3. sayfa ve sadece bireyleri ilgilendiren asayiş olayları
-*   Soru işaretiyle biten merak tuzağı başlıkları ("...deprem mi oldu?")
-*   Gizem yaratan başlıklar ("...bunu gören şaştı", "...işte o detay")
-*   Salt SEO amacıyla tekrarlanan jenerik içerikler
-
-## 6. UI Önerisi
-
-Uygulama arayüzü artık sadece bir "liste" değil, bir "kontrol paneli" (dashboard) hissiyatı vermelidir.
-
-**Ana Ekran Panelleri:**
-*   Öncelikli Akış (Yüksek değerli gelişmeler)
-*   Gelişen Kayıtlar (İzlemeye alınanlar)
-*   Anlık Radar (Saniyeler içinde düşen son veriler)
-*   Deprem / Afet Modülü
-*   Piyasa / Ekonomi Özeti
-*   Resmi Duyurular Köşesi
-*   Kaynak Sağlığı (Bağlantı ve entegrasyon durumları)
-*   RSS Metadata Önizlemesi (Geliştirici/şeffaflık logu)
-
-## 7. Haber Kartı Önerisi
+## 6. Haber Kartı Önerisi
 
 Klasik bir haber resmi/özeti yerine, analitik bir kart tasarımı kullanılmalıdır:
 
@@ -97,32 +105,31 @@ Uyarı: Bu sinyal haberin doğruluğunu tek başına garanti etmez.
 [ Orijinal kaynağa git ]
 ```
 
-## 8. Anlık Veri Panelleri
+## 7. Legal ve Güvenli Dil Kuralları
 
-Haber akışının dışında, statik verilerin takip edilebileceği modüller:
+**Kullanılacak Güvenli Dil:**
+*   Haber değeri
+*   Kaynak sinyali
+*   Akış değerlendirmesi
+*   Tek kaynak / kaynak sinyali
+*   Çok-kaynaklı sinyal
+*   Düşük haber değeri
+*   Clickbait riski
+*   Orijinal kaynağa git
+*   "Bu sinyal haberin doğruluğunu tek başına garanti etmez."
 
-*   Son büyük depremler (M≥4.0 liste)
-*   M≥5 deprem radar alarmı
-*   TCMB / KAP / SPK / TÜİK anlık duyuru sayacı
-*   Piyasa göstergeleri (BIST, USD/TRY, EUR/TRY, Altın, BTC)
-*   Kaynak sağlık durumu (Hangi ajanstan en son ne zaman veri geldi)
-*   Haber yoğunluğu / Filtrelenen gürültü sayısı istatistiği
+**Kullanılmayacak (Yasaklı) Dil:**
+*   Teyit edildi, mutlak gercek, uydurma icerik yakalar, yapay zeka üzerinden teyit veya yargı belirten çıkarımlar (örn: yapay zeka teyidi vb.), ham makale icerigi. 
+*(Not: Bu metinde sadece kullanım dışı kuralları listelemek amacıyla kelimeler örneklenmiştir.)*
 
-## 9. Kişisel Ayarlar
-
-*   **Benim önceliklerim:** Kritik haberler her zaman göster, Ekonomi/piyasa göster, AI/teknoloji göster. Spor/magazin kapalı.
-*   **Filtreler:** Clickbait filtresi (Normal / Sıkı), Tek kaynak davranışı (Göster / İzleme / Gizle).
-*   **Deprem Eşiği:** M≥4.0, M≥5.0 vb. ayarlanabilir.
-*   **Bildirim Yoğunluğu:** Sessiz / Dengeli / Kritik.
-
-## 10. Roadmap
+## 8. Roadmap
 
 Geliştirme süreci tamamen bu stratejiye dayalı ilerleyecektir:
 
 1.  **A.** PR #76 (ui-rss-feel-v0) device smoke testini bekler.
 2.  **B.** AI News Value Engine v0 plan (Bu doküman) review edilir.
 3.  **C.** Metadata-only scoring engine backend implementasyonuna başlanır.
-4.  **D.** UI kart ve panel yapıları (React Native/Expo tarafında) iyileştirilir.
+4.  **D.** UI kart ve panel yapıları iyileştirilir.
 5.  **E.** Local-first kişiselleştirme ayarları eklenir.
 6.  **F.** Anlık veri panelleri (Deprem, BIST vb.) bağlanır.
 7.  **G.** Gerçek LLM pilotu en son, sadece kullanıcı izniyle test edilir.
