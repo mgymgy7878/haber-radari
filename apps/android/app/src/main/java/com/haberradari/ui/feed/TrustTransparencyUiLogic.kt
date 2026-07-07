@@ -40,7 +40,7 @@ object TrustTransparencyUiLogic {
         uniqueSourceCount <= 1 || evidenceStatus == EvidenceStatus.SINGLE_SOURCE
 
     fun singleSourceWarningText(): String =
-        "Tek kaynak — ek kaynak sinyali yok; orijinal haberi kontrol edin."
+        "Tek kaynak / kaynak sinyali"
 
     /** API/mock gibi kaynaklardan gelen metinleri güvenli ürün diline çevirir (davranış değişmez). */
     fun sanitizeTrustDisplayText(text: String): String = text

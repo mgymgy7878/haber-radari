@@ -447,7 +447,7 @@ class MockSmartFeedAnalyzer {
         isOfficialSource: Boolean
     ): String? {
         if (decision == PublishDecision.PUBLISH_MAIN && status == EvidenceStatus.SINGLE_SOURCE) {
-            return if (isOfficialSource) "Tek Kaynak (Resmi Duyuru)" else "Tek kaynak / kaynak sinyali"
+            return "Tek kaynak / kaynak sinyali"
         }
         if (status == EvidenceStatus.LOW_CONFIDENCE) {
             return "Bu haberin başlığı çok genel veya belirsiz ifadeler içeriyor."

@@ -763,7 +763,7 @@ private fun EmptyMainStateContent(
         )
         Spacer(modifier = Modifier.height(8.dp))
         Text(
-            text = "Tek kaynaklı ve gelişen kayıtlar aşağıda izleniyor.",
+            text = "Güvenli gösterilecek haber bulunamadı. Tek kaynaklı kayıtlar ve elenen içerikler izleme listesinde.",
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             textAlign = TextAlign.Center
