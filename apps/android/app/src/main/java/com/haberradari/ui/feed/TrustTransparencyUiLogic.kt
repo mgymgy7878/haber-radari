@@ -60,6 +60,19 @@ object TrustTransparencyUiLogic {
         .replace("Doğrulama bekleniyor", "Ek kaynak sinyali bekleniyor")
         .replace(Regex("(?i)kanıt:"), "Sinyal:")
 
+    fun mapReasonCodeToSafeUiString(reasonCode: String?): String? {
+        if (reasonCode == null) return null
+        return when (reasonCode) {
+            "OFFICIAL_PUBLIC_SOURCE_CRITICAL" -> "Resmi/kurumsal kaynak ve yüksek haber değeri sinyali."
+            "SOURCE_PROFILE_ELIGIBLE_SINGLE_SOURCE" -> "Kaynak profili uygun; tek kaynaklı gelişen kayıt."
+            "ECONOMY_MARKET_SIGNAL" -> "Ekonomi/piyasa etkisi nedeniyle öne çıkarıldı."
+            "MULTI_SOURCE_SIGNAL" -> "Birden fazla kaynakta benzer kayıt var."
+            "LOW_VALUE" -> "Düşük haber değeri nedeniyle izlemeye alındı."
+            "CLICKBAIT_RISK" -> "Clickbait riski nedeniyle ana akıştan çıkarıldı."
+            else -> sanitizeTrustDisplayText(reasonCode) // fallback for raw strings
+        }
+    }
+
     data class WhyShownLine(val label: String, val value: String)
 
     fun whyShownLines(item: AiCuratedNewsItem): List<WhyShownLine> {

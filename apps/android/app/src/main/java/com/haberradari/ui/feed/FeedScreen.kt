@@ -861,8 +861,9 @@ private fun WatchlistModal(
                                 }
                             }
                             Spacer(modifier = Modifier.height(4.dp))
+                            val safeWatchlistReason = TrustTransparencyUiLogic.mapReasonCodeToSafeUiString(item.reasonCode ?: item.publishReason) ?: "Bilinmiyor"
                             Text(
-                                text = "Neden: ${TrustTransparencyUiLogic.sanitizeTrustDisplayText(item.reasonCode ?: item.publishReason ?: "Bilinmiyor")}",
+                                text = "Neden: $safeWatchlistReason",
                                 style = MaterialTheme.typography.bodySmall,
                                 color = MaterialTheme.colorScheme.error
                             )
@@ -1093,9 +1094,10 @@ fun AiCuratedNewsItemCard(
             Spacer(modifier = Modifier.height(12.dp))
 
             // 6. Neden gösterildi?
-            val reason = item.aiNewsValue?.reasonCode ?: item.publishReason ?: "Haber değeri algoritması tarafından seçildi."
+            val rawReason = item.aiNewsValue?.reasonCode ?: item.publishReason
+            val safeReason = TrustTransparencyUiLogic.mapReasonCodeToSafeUiString(rawReason) ?: "Haber değeri algoritması tarafından seçildi."
             Text(
-                text = "Neden gösterildi?\n$reason",
+                text = "Neden gösterildi?\n$safeReason",
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
