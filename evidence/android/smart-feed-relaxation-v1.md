@@ -69,7 +69,7 @@ BUILD SUCCESSFUL in 1m 5s
 ### B. Görsel Kanıt (Screenshot)
 Gevşetilmiş filtre ve güncellenmiş boş arayüz açıklaması arayüzde canlı olarak test edilmiştir.
 
-![Relaxed Smart Feed Screenshot](file:///C:/Users/mscor/.gemini/antigravity-ide/brain/4b6d9f90-d03c-4556-9471-801d8ac97156/screenshot_relaxation.png)
+![Relaxed Smart Feed Screenshot](screenshot_relaxation.png)
 
 ### C. Doğrulama Bulguları
 - **Tek Kaynak Etiketi:** Ana akışa kabul edilen tek kaynaklı haberlerde `"Tek kaynak / kaynak sinyali"` uyarı metni gösterilmektedir.
