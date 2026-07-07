@@ -20,7 +20,8 @@ object SmartNewsValueExtractor {
     
     // Regex for time: "TSİ 22.00", "saat 14:30", "22:00'de", "Türkiye saatiyle 22.00"
     // Requires a context clue (TSİ, saat, 'de suffix, or colon) to avoid false positives like "10.65"
-    private val timeRegex = Regex("(?i)(?:(?:TSİ|saat|Türkiye saatiyle)\\s+(\\d{1,2}[:.]\\d{2}))|(\\d{1,2}:\\d{2})|(\\d{1,2}\\.\\d{2})(?:'de|'da|'te|'ta)")
+    // Also strictly enforces valid hours (0-23) and valid minutes (00-59)
+    private val timeRegex = Regex("(?i)(?:(?:TSİ|saat|Türkiye saatiyle)\\s+((?:[01]?\\d|2[0-3])[:.][0-5]\\d))|((?:[01]?\\d|2[0-3]):[0-5]\\d)|((?:[01]?\\d|2[0-3])\\.[0-5]\\d)(?:'de|'da|'te|'ta)")
 
     fun extractKeyFacts(title: String, summary: String? = null): KeyFactResult {
         val textToSearch = "$title ${summary ?: ""}"

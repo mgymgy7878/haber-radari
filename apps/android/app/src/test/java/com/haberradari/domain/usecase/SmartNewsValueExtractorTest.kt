@@ -74,6 +74,24 @@ class SmartNewsValueExtractorTest {
     }
 
     @Test
+    fun `fixture 8 - Fed karari saat 29 90 da aciklanacak - invalid hour and minute`() {
+        val title = "Fed kararı saat 29:90'da açıklanacak"
+        val result = SmartNewsValueExtractor.extractKeyFacts(title)
+
+        assertEquals(KeyFactStatus.MISSING, result.status)
+        assertFalse("Should not extract invalid time 29:90", result.factLines.any { it.contains("Zaman/Saat") })
+    }
+
+    @Test
+    fun `fixture 9 - Fed karari saat 10 65 te aciklanacak - invalid minute`() {
+        val title = "Fed kararı saat 10:65'te açıklanacak"
+        val result = SmartNewsValueExtractor.extractKeyFacts(title)
+
+        assertEquals(KeyFactStatus.MISSING, result.status)
+        assertFalse("Should not extract invalid time 10:65", result.factLines.any { it.contains("Zaman/Saat") })
+    }
+
+    @Test
     fun `raw code leak test - SHOW_MONITORING_THRESHOLD does not show up in key facts`() {
         val title = "Normal title"
         val summary = "Some summary with SHOW_MONITORING_THRESHOLD"
