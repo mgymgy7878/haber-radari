@@ -79,7 +79,7 @@ export class AiNewsValueEngine {
     // 4. Keyword Bonuses (Title)
     const titleLower = input.title.toLowerCase();
     let keywordBonus = 0;
-    if (titleLower.match(/(karar|açıklandı|faiz|atama|deprem\s*m[>=]?5|düzenleme|soruşturma|yaptırım|bilanço)/i)) {
+    if (titleLower.match(/(karar|açıklandı|faiz|atama|deprem\s*m\s*[>=]?\s*5|düzenleme|soruşturma|yaptırım|bilanço)/i)) {
       keywordBonus += 20;
     } else if (titleLower.match(/(açıklama|beklenti|uyarı)/i)) {
       keywordBonus += 10;
@@ -111,27 +111,42 @@ export class AiNewsValueEngine {
     let decision: AiNewsValueDecision;
     let reasonCode = '';
 
-    if (noiseScore > 50) {
-      // Official/Public Source exemption:
-      if (input.authorityTier === 'OFFICIAL_PUBLIC_SOURCE' && newsValueScore >= 70) {
+    if (noiseScore >= 70) {
+      if (input.authorityTier === 'OFFICIAL_PUBLIC_SOURCE' && newsValueScore >= 85) {
         decision = AiNewsValueDecision.SHOW_MAIN;
         reasonCode = 'SHOW_MAIN_OFFICIAL_OVERRIDE';
       } else {
-        decision = categoryLower.match(/(magazin|asayiş)/i) ? AiNewsValueDecision.HIDE_LOW_VALUE : AiNewsValueDecision.HIDE_CLICKBAIT;
-        reasonCode = decision === AiNewsValueDecision.HIDE_CLICKBAIT ? 'NOISE_CLICKBAIT' : 'NOISE_LOW_VALUE';
+        decision = AiNewsValueDecision.HIDE_CLICKBAIT;
+        reasonCode = 'NOISE_CLICKBAIT_HARD_HIDE';
       }
-    } else if (newsValueScore >= 85) {
-      decision = AiNewsValueDecision.SHOW_MAIN;
-      reasonCode = 'SHOW_MAIN_GLOBAL_CRITICAL';
-    } else if (personalizedScore >= 75) {
-      decision = AiNewsValueDecision.SHOW_MAIN;
-      reasonCode = 'SHOW_MAIN_PERSONALIZED';
-    } else if (personalizedScore >= 40) {
-      decision = AiNewsValueDecision.SHOW_MONITORING;
-      reasonCode = 'SHOW_MONITORING_THRESHOLD';
+    } else if (noiseScore >= 51) {
+      if (input.authorityTier === 'OFFICIAL_PUBLIC_SOURCE' && newsValueScore >= 85) {
+        decision = AiNewsValueDecision.SHOW_MAIN;
+        reasonCode = 'SHOW_MAIN_OFFICIAL_OVERRIDE';
+      } else if (newsValueScore >= 75 || personalizedScore >= 75) {
+        decision = AiNewsValueDecision.SHOW_MONITORING;
+        reasonCode = 'SHOW_MONITORING_NOISE_DOWNGRADE';
+      } else {
+        decision = AiNewsValueDecision.HIDE_LOW_VALUE;
+        reasonCode = 'HIDE_LOW_VALUE_DUE_TO_NOISE';
+      }
     } else {
-      decision = AiNewsValueDecision.HIDE_LOW_VALUE;
-      reasonCode = 'LOW_VALUE_THRESHOLD';
+      if (newsValueScore >= 85 && input.authorityTier === 'OFFICIAL_PUBLIC_SOURCE') {
+        decision = AiNewsValueDecision.SHOW_MAIN;
+        reasonCode = 'SHOW_MAIN_OFFICIAL_CRITICAL';
+      } else if (newsValueScore >= 75) {
+        decision = AiNewsValueDecision.SHOW_MAIN;
+        reasonCode = 'SHOW_MAIN_HIGH_VALUE';
+      } else if (personalizedScore >= 75) {
+        decision = AiNewsValueDecision.SHOW_MAIN;
+        reasonCode = 'SHOW_MAIN_PERSONALIZED';
+      } else if (personalizedScore >= 40) {
+        decision = AiNewsValueDecision.SHOW_MONITORING;
+        reasonCode = 'SHOW_MONITORING_THRESHOLD';
+      } else {
+        decision = AiNewsValueDecision.HIDE_LOW_VALUE;
+        reasonCode = 'LOW_VALUE_THRESHOLD';
+      }
     }
 
     return {

@@ -108,10 +108,14 @@ export async function smartFeedRoute(req: FastifyRequest, reply: FastifyReply) {
       clusterAiScores.set(cluster.id, aiNewsValue);
 
       if (aiNewsValue.decision === AiNewsValueDecision.HIDE_CLICKBAIT ||
-          aiNewsValue.decision === AiNewsValueDecision.HIDE_LOW_VALUE ||
           aiNewsValue.decision === AiNewsValueDecision.HIDE_LEGAL_BLOCKED) {
          evaluation.decision = PublishDecision.FILTERED_OUT;
          evaluation.reason = `Blocked by AI Engine: ${aiNewsValue.reasonCode}`;
+      } else if (aiNewsValue.decision === AiNewsValueDecision.HIDE_LOW_VALUE) {
+         if (evaluation.decision === PublishDecision.PUBLISH_MAIN) {
+             evaluation.decision = PublishDecision.WATCHLIST_ONLY;
+             evaluation.reason = `Downgraded by AI Engine: ${aiNewsValue.reasonCode}`;
+         }
       } else if (aiNewsValue.decision === AiNewsValueDecision.SHOW_MAIN && evaluation.decision !== PublishDecision.PUBLISH_MAIN) {
          evaluation.decision = PublishDecision.PUBLISH_MAIN;
          evaluation.reason = `Elevated by AI Engine: ${aiNewsValue.reasonCode}`;
