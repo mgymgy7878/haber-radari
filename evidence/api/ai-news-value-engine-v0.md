@@ -18,11 +18,11 @@ Yasaklı alanlar (`body`, `fullText`, vb.) kesinlikle girdi olarak verilmez. Ayr
 
 ## 3. Decision Thresholds ve Hard Filtering Policy
 Ürün kararlarına istinaden katı gizleme (hard filtering) çok sınırlı tutulmuştur. Motor 5 ana karar döner:
-- **`HIDE_LEGAL_BLOCKED`**: Hard filter (Kesin gizle). Kaynağın izni yoksa (`DISABLED`, `NEEDS_REVIEW`) veya lisanssız bir ajans ise.
-- **`HIDE_CLICKBAIT`**: Hard filter (Kesin gizle). Başlık, belirlenen clickbait şablonlarına kesin uyuyorsa ve `noiseScore >= 70` ise. (Örn. "şoke eden, işte o detay", SEO "hangi ilde deprem oldu")
-- **`HIDE_LOW_VALUE`**: Akıştan gizlenir (Watchlist'e düşebilir), ama Hard filter değildir. `newsValueScore < 40` (ve `noiseScore` yüksek değilse).
-- **`SHOW_MONITORING`**: Düşük-orta seviye skorlar (`40-74`) veya `noiseScore 51-69` aralığına girip yine de bilgi değeri olan durumlar.
-- **`SHOW_MAIN`**: Yüksek öneme sahip skorlar (`newsValueScore >= 75` veya `personalizedScore >= 75`) ile Resmi/Kritik anonslar (Örn. AFAD deprem).
+- **`HIDE_LEGAL_BLOCKED`**: Hard block (Kesin gizle). Kaynağın izni yoksa (`DISABLED`, `NEEDS_REVIEW`) veya lisanssız bir ajans ise.
+- **`HIDE_CLICKBAIT`**: Hard hide (Kesin gizle). Başlık, belirlenen clickbait şablonlarına kesin uyuyorsa ve `noiseScore >= 70` ise. (Örn. "şoke eden, işte o detay", SEO "hangi ilde deprem oldu")
+- **`HIDE_LOW_VALUE`**: Ana akıştan çıkarma; tamamen silinmez (hard hide değildir), izleme/evidence tarafında (Watchlist) reasonCode ile kalabilir.
+- **`SHOW_MONITORING`**: Düşük-orta seviye skorlar (`40-74`) veya `noiseScore 51-69` (monitoring/downgrade, hard hide değil) aralığına girip yine de bilgi değeri olan durumlar.
+- **`SHOW_MAIN`**: Yüksek öneme sahip skorlar (`newsValueScore >= 75` veya `personalizedScore >= 75`) ile Resmi/Kritik anonslar (Örn. AFAD deprem). Kişisel boost legal blocker veya yüksek noise’u aşamaz.
 
 `smart-feed.ts` entegrasyonu incelendiğinde; `AiNewsValueDecision.HIDE_CLICKBAIT` ve `AiNewsValueDecision.HIDE_LEGAL_BLOCKED` kararları doğrudan `PublishDecision.FILTERED_OUT` sonucunu doğurur. `HIDE_LOW_VALUE` ise `PUBLISH_MAIN` olan bir öğeyi `WATCHLIST_ONLY` konumuna düşürür (Pasif Filtreleme).
 
