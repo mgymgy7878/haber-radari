@@ -29,12 +29,12 @@ class TrustTransparencyUiLogicTest {
 
     @Test
     fun `digest status chip labels`() {
-        assertEquals("AI özeti: kapalı", TrustTransparencyUiLogic.digestStatusChipLabel(null))
-        assertEquals("AI özeti: kapalı", TrustTransparencyUiLogic.digestStatusChipLabel(digest(SmartDigestStatus.DISABLED)))
-        assertEquals("AI özeti: test", TrustTransparencyUiLogic.digestStatusChipLabel(digest(SmartDigestStatus.MOCKED)))
-        assertEquals("AI özeti: önbellekten", TrustTransparencyUiLogic.digestStatusChipLabel(digest(SmartDigestStatus.CACHED)))
-        assertEquals("AI özeti", TrustTransparencyUiLogic.digestStatusChipLabel(digest(SmartDigestStatus.GENERATED)))
-        assertEquals("AI özeti: alınamadı", TrustTransparencyUiLogic.digestStatusChipLabel(digest(SmartDigestStatus.FAILED)))
+        assertEquals("Akış değerlendirmesi: kapalı", TrustTransparencyUiLogic.digestStatusChipLabel(null))
+        assertEquals("Akış değerlendirmesi: kapalı", TrustTransparencyUiLogic.digestStatusChipLabel(digest(SmartDigestStatus.DISABLED)))
+        assertEquals("Akış değerlendirmesi: test", TrustTransparencyUiLogic.digestStatusChipLabel(digest(SmartDigestStatus.MOCKED)))
+        assertEquals("Akış değerlendirmesi: önbellekten", TrustTransparencyUiLogic.digestStatusChipLabel(digest(SmartDigestStatus.CACHED)))
+        assertEquals("Akış değerlendirmesi", TrustTransparencyUiLogic.digestStatusChipLabel(digest(SmartDigestStatus.GENERATED)))
+        assertEquals("Akış değerlendirmesi: alınamadı", TrustTransparencyUiLogic.digestStatusChipLabel(digest(SmartDigestStatus.FAILED)))
     }
 
     @Test
