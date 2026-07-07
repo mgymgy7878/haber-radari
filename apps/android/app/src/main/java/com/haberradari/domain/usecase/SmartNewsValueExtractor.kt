@@ -18,8 +18,9 @@ object SmartNewsValueExtractor {
     // Regex for points/level: "10.656 puandan", "10656 puan"
     private val pointsRegex = Regex("(?i)(\\d{1,3}(?:[.,]\\d{3})*(?:[.,]\\d+)?)\\s*puan")
     
-    // Regex for time: "TSİ 22.00", "saat 14:30"
-    private val timeRegex = Regex("(?i)(?:TSİ\\s*)?(\\d{1,2}[:.]\\d{2})")
+    // Regex for time: "TSİ 22.00", "saat 14:30", "22:00'de", "Türkiye saatiyle 22.00"
+    // Requires a context clue (TSİ, saat, 'de suffix, or colon) to avoid false positives like "10.65"
+    private val timeRegex = Regex("(?i)(?:(?:TSİ|saat|Türkiye saatiyle)\\s+(\\d{1,2}[:.]\\d{2}))|(\\d{1,2}:\\d{2})|(\\d{1,2}\\.\\d{2})(?:'de|'da|'te|'ta)")
 
     fun extractKeyFacts(title: String, summary: String? = null): KeyFactResult {
         val textToSearch = "$title ${summary ?: ""}"
@@ -42,7 +43,10 @@ object SmartNewsValueExtractor {
         // 3. Check for time (TSİ)
         val timeMatch = timeRegex.find(textToSearch)
         if (timeMatch != null) {
-            val value = timeMatch.groupValues[1]
+            val value = timeMatch.groupValues[1].takeIf { it.isNotEmpty() } 
+                ?: timeMatch.groupValues[2].takeIf { it.isNotEmpty() }
+                ?: timeMatch.groupValues[3]
+            
             val prefix = if (textToSearch.contains("TSİ", ignoreCase = true)) "TSİ " else ""
             factLines.add("Zaman/Saat: $prefix$value")
         }
