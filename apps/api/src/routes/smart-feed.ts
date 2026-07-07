@@ -14,6 +14,7 @@ import { buildLegalContentGuardrailDryRun } from '../source-registry/legal-conte
 import { buildTitleLinkOnlySummaryPolicyAudit } from '../source-registry/title-link-only-summary-policy-audit.js';
 import { loadSourceRegistryV0 } from '../source-registry/source-registry-loader.js';
 import { suppressUserVisibleSummaryForSource } from '../source-registry/title-link-only-payload-policy.js';
+import { AiNewsValueEngine, AiNewsValueDecision, NewsValueInput } from '../services/ai-news-value-engine.js';
 
 let cachedFeed: any = null;
 let cacheTimestamp = 0;
@@ -84,11 +85,42 @@ export async function smartFeedRoute(req: FastifyRequest, reply: FastifyReply) {
     const watchlistPreview: any[] = [];
     const rawPreview: any[] = [];
     const noisePreview: any[] = [];
+    const clusterAiScores = new Map<string, any>();
 
     const clusterEvaluations = new Map<string, PublishResult>();
 
     for (const cluster of clusters) {
       const evaluation = publishGate.evaluate(cluster, sourceRegistry.sources);
+      
+      const sortedArticles = sortClusterArticles(cluster.articles);
+      const leadArticle = sortedArticles[0];
+      const sourceMeta = sourceRegistry.sources.find((s: any) => s.id === leadArticle.sourceId);
+
+      const aiInput: NewsValueInput = {
+         title: leadArticle.originalTitle,
+         sourceName: leadArticle.sourceName,
+         category: cluster.mainCategory,
+         legalMode: (sourceMeta?.legalMode as any) ?? 'ENABLED',
+         authorityTier: (sourceMeta?.authorityTier as any) ?? 'STANDARD',
+         hasLicensedContent: sourceMeta?.hasLicensedContent ?? false,
+      };
+      const aiNewsValue = AiNewsValueEngine.evaluate(aiInput);
+      clusterAiScores.set(cluster.id, aiNewsValue);
+
+      if (aiNewsValue.decision === AiNewsValueDecision.HIDE_CLICKBAIT ||
+          aiNewsValue.decision === AiNewsValueDecision.HIDE_LEGAL_BLOCKED) {
+         evaluation.decision = PublishDecision.FILTERED_OUT;
+         evaluation.reason = `Blocked by AI Engine: ${aiNewsValue.reasonCode}`;
+      } else if (aiNewsValue.decision === AiNewsValueDecision.HIDE_LOW_VALUE) {
+         if (evaluation.decision === PublishDecision.PUBLISH_MAIN) {
+             evaluation.decision = PublishDecision.WATCHLIST_ONLY;
+             evaluation.reason = `Downgraded by AI Engine: ${aiNewsValue.reasonCode}`;
+         }
+      } else if (aiNewsValue.decision === AiNewsValueDecision.SHOW_MAIN && evaluation.decision !== PublishDecision.PUBLISH_MAIN) {
+         evaluation.decision = PublishDecision.PUBLISH_MAIN;
+         evaluation.reason = `Elevated by AI Engine: ${aiNewsValue.reasonCode}`;
+      }
+
       clusterEvaluations.set(cluster.id, evaluation);
       
       if (evaluation.decision === PublishDecision.PUBLISH_MAIN) {
@@ -121,6 +153,7 @@ export async function smartFeedRoute(req: FastifyRequest, reply: FastifyReply) {
           contentType: evaluation.contentType,
           publishDecision: evaluation.decision,
           publishReason: evaluation.reason,
+          aiNewsValue: clusterAiScores.get(cluster.id),
           warningLabel: evaluation.warningLabel,
           sourceCount: cluster.articles.length,
           uniqueSourceCount: clusterUniqueSourceCount,
@@ -139,6 +172,7 @@ export async function smartFeedRoute(req: FastifyRequest, reply: FastifyReply) {
               category: cluster.mainCategory,
               publishDecision: evaluation.decision,
               publishReason: evaluation.reason,
+              aiNewsValue: clusterAiScores.get(cluster.id),
               evidenceStatus: evaluation.evidenceStatus,
               contentType: evaluation.contentType,
               topicQuality: evaluation.topicQuality,
@@ -155,6 +189,7 @@ export async function smartFeedRoute(req: FastifyRequest, reply: FastifyReply) {
               category: cluster.mainCategory,
               publishDecision: evaluation.decision,
               publishReason: evaluation.reason,
+              aiNewsValue: clusterAiScores.get(cluster.id),
               evidenceStatus: evaluation.evidenceStatus,
               contentType: evaluation.contentType,
               topicQuality: evaluation.topicQuality,
@@ -179,6 +214,7 @@ export async function smartFeedRoute(req: FastifyRequest, reply: FastifyReply) {
               category: cluster.mainCategory,
               publishDecision: evaluation.decision,
               publishReason: evaluation.reason,
+              aiNewsValue: clusterAiScores.get(cluster.id),
               evidenceStatus: evaluation.evidenceStatus,
               contentType: evaluation.contentType,
               topicQuality: evaluation.topicQuality,

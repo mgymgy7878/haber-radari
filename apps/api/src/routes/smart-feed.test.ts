@@ -65,6 +65,47 @@ vi.mock('../engine/publish-gate.js', () => {
   };
 });
 
+vi.mock('../services/ai-news-value-engine.js', () => {
+  return {
+    AiNewsValueDecision: {
+      SHOW_MAIN: 'SHOW_MAIN',
+      SHOW_MONITORING: 'SHOW_MONITORING',
+      HIDE_CLICKBAIT: 'HIDE_CLICKBAIT',
+      HIDE_LOW_VALUE: 'HIDE_LOW_VALUE',
+      HIDE_LEGAL_BLOCKED: 'HIDE_LEGAL_BLOCKED',
+    },
+    AiNewsValueEngine: class {
+      static evaluate(input: any) {
+        if (input.title.includes('Deprem')) {
+          return {
+            decision: 'SHOW_MAIN',
+            newsValueScore: 100,
+            noiseScore: 0,
+            personalizedScore: 100,
+            reasonCode: 'MOCK_OK',
+          };
+        } else if (input.title.includes('15') || input.title.includes('16')) {
+          return {
+            decision: 'HIDE_LOW_VALUE',
+            newsValueScore: 10,
+            noiseScore: 60,
+            personalizedScore: 10,
+            reasonCode: 'MOCK_HIDE',
+          };
+        } else {
+          return {
+            decision: 'SHOW_MONITORING',
+            newsValueScore: 50,
+            noiseScore: 10,
+            personalizedScore: 50,
+            reasonCode: 'MOCK_MONITOR',
+          };
+        }
+      }
+    },
+  };
+});
+
 describe('Smart Feed Route', () => {
   let cacheDir: string;
   const originalEnv = { ...process.env };
@@ -241,6 +282,15 @@ describe('Smart Feed Route', () => {
       reason: 'Force Watchlist',
     });
 
+    const originalAiEvaluate = (await import('../services/ai-news-value-engine.js')).AiNewsValueEngine.evaluate;
+    (await import('../services/ai-news-value-engine.js')).AiNewsValueEngine.evaluate = vi.fn().mockReturnValue({
+      decision: 'HIDE_LOW_VALUE',
+      reasonCode: 'Force Hide',
+      newsValueScore: 10,
+      noiseScore: 60,
+      personalizedScore: 10
+    });
+
     const mockReq = {
       query: { bypassCache: '1', includeLatest: '1' },
       log: { error: vi.fn() },
@@ -254,6 +304,7 @@ describe('Smart Feed Route', () => {
     expect(response.latestRssPreview.length).toBeGreaterThan(0);
 
     (await import('../engine/publish-gate.js')).PublishGate.prototype.evaluate = originalEvaluate;
+    (await import('../services/ai-news-value-engine.js')).AiNewsValueEngine.evaluate = originalAiEvaluate;
   });
 
   it('debugStats.sourceScoreShadow read-only shadow katmanı ekler; publish sayısı değişmez', async () => {
