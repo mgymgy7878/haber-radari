@@ -174,7 +174,7 @@ export class PublishGate {
          }
       } else if (isTrustedCommercialSource) {
          decision = PublishDecision.PUBLISH_MAIN;
-         reason = "Ana akışa alınma nedeni: Doğrulanmış ticari kaynaktan tek kaynaklı haber";
+         reason = "Ana akışa alınma nedeni: Kaynak profili uygun ticari kaynaktan tek kaynaklı haber";
          warningLabel = "Tek kaynak / kaynak sinyali";
       } else if (contentType === ContentType.DISASTER_FOLLOW_UP) {
          decision = PublishDecision.WATCHLIST_ONLY;
