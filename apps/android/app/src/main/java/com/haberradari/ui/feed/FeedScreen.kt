@@ -997,100 +997,130 @@ fun AiCuratedNewsItemCard(
             .fillMaxWidth()
             .padding(horizontal = 16.dp, vertical = 4.dp),
         colors = androidx.compose.material3.CardDefaults.elevatedCardColors(
-            containerColor = if (item.evidenceStatus == EvidenceStatus.LOW_CONFIDENCE) MaterialTheme.colorScheme.surfaceVariant else MaterialTheme.colorScheme.surface
+            containerColor = MaterialTheme.colorScheme.surface
         )
     ) {
         Column(
             modifier = Modifier.padding(16.dp)
         ) {
-            // Header Row: Category & Importance & Demo Tag
-            androidx.compose.foundation.layout.Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                androidx.compose.foundation.layout.Row(verticalAlignment = Alignment.CenterVertically) {
-                    androidx.compose.material3.SuggestionChip(
-                        onClick = { },
-                        label = { Text(item.category, style = MaterialTheme.typography.labelSmall) }
-                    )
-                    
-                    val cardLabel = when (source) {
-                        com.haberradari.domain.repository.FeedSource.REMOTE_BACKEND_RSS,
-                        com.haberradari.domain.repository.FeedSource.REMOTE_BACKEND_RSS_WITH_WATCHLIST -> "RSS Analiz"
-                        com.haberradari.domain.repository.FeedSource.FALLBACK_MOCK -> "Yerel Demo"
-                        com.haberradari.domain.repository.FeedSource.LOCAL_MOCK -> "Demo Analiz"
-                        else -> if (item.isDemo) "Demo Analiz" else "RSS Analiz"
-                    }
-                    
-                    androidx.compose.material3.Surface(
-                        color = if (source == com.haberradari.domain.repository.FeedSource.LOCAL_MOCK || source == com.haberradari.domain.repository.FeedSource.FALLBACK_MOCK) MaterialTheme.colorScheme.tertiaryContainer else MaterialTheme.colorScheme.secondaryContainer,
-                        shape = MaterialTheme.shapes.small
-                    ) {
-                        Text(
-                            text = cardLabel,
-                            modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp),
-                            style = MaterialTheme.typography.labelSmall,
-                            color = if (source == com.haberradari.domain.repository.FeedSource.LOCAL_MOCK || source == com.haberradari.domain.repository.FeedSource.FALLBACK_MOCK) MaterialTheme.colorScheme.onTertiaryContainer else MaterialTheme.colorScheme.onSecondaryContainer
-                        )
-                    }
-                }
-                
-                val importanceColor = when (item.importance) {
-                    Importance.HIGH -> MaterialTheme.colorScheme.error
-                    Importance.MEDIUM -> MaterialTheme.colorScheme.primary
-                    Importance.LOW -> MaterialTheme.colorScheme.onSurfaceVariant
-                }
-                
-                Text(
-                    text = "${item.importance.name} ÖNEM",
-                    style = MaterialTheme.typography.labelSmall,
-                    color = importanceColor
-                )
-            }
+            // 2. Kaynak adı · yayın zamanı
+            val sourceName = item.sources.firstOrNull()?.sourceName ?: "Bilinmeyen Kaynak"
+            val publishedAt = item.sources.firstOrNull()?.publishedAt?.let { 
+                FeedUsabilityUiLogic.formatPublishedAtLabel(it.toString()) 
+            } ?: "—"
             
-            Spacer(modifier = Modifier.height(8.dp))
+            Text(
+                text = "$sourceName · $publishedAt",
+                style = MaterialTheme.typography.labelMedium,
+                color = MaterialTheme.colorScheme.primary
+            )
             
+            Spacer(modifier = Modifier.height(4.dp))
+
+            // 1. Başlık
             Text(
                 text = item.aiTitle,
                 style = MaterialTheme.typography.titleMedium,
                 color = MaterialTheme.colorScheme.onSurface
             )
             
-            AiSummaryUiLogic.safeSummaryOrNull(item.aiSummary)?.let { summary ->
-                Spacer(modifier = Modifier.height(4.dp))
-                Text(
-                    text = summary,
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    maxLines = 3,
-                    overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis
-                )
-            }
+            Spacer(modifier = Modifier.height(12.dp))
 
-            if (TrustTransparencyUiLogic.shouldShowSmartDigestBlock(item.publishDecision)) {
-                SmartDigestSection(
-                    digest = item.smartDigest,
-                    variant = SmartDigestUiVariant.CARD,
-                    modifier = Modifier.padding(top = 12.dp),
-                    showStatusChip = false
-                )
-                Spacer(modifier = Modifier.height(12.dp))
-            }
+            // Chips Row: Haber değeri, Akış kararı, Kaynak sinyali
+            androidx.compose.foundation.layout.Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                // 3. Haber değeri chip
+                val newsValueLabel = item.aiNewsValue?.let {
+                    when {
+                        it.newsValueScore >= 75 -> "Haber değeri: Yüksek"
+                        it.newsValueScore >= 40 -> "Haber değeri: Orta"
+                        else -> "Haber değeri: Düşük"
+                    }
+                } ?: "Haber değeri: Bilinmiyor"
+                
+                androidx.compose.material3.Surface(
+                    color = MaterialTheme.colorScheme.secondaryContainer,
+                    shape = MaterialTheme.shapes.small
+                ) {
+                    Text(
+                        text = newsValueLabel,
+                        modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp),
+                        style = MaterialTheme.typography.labelSmall,
+                        color = MaterialTheme.colorScheme.onSecondaryContainer
+                    )
+                }
 
-            TrustEvidenceRow(item = item)
+                // 4. Akış kararı chip
+                val decisionLabel = item.aiNewsValue?.let {
+                    when (it.decision) {
+                        "SHOW_MAIN" -> "Öncelikli Akış"
+                        "SHOW_MONITORING" -> "Gelişen Kayıt"
+                        "HIDE_LOW_VALUE" -> "İzleme"
+                        else -> "İzleme"
+                    }
+                } ?: if (item.publishDecision == PublishDecision.PUBLISH_MAIN) "Öncelikli Akış" else "İzleme"
+
+                androidx.compose.material3.Surface(
+                    color = MaterialTheme.colorScheme.tertiaryContainer,
+                    shape = MaterialTheme.shapes.small
+                ) {
+                    Text(
+                        text = decisionLabel,
+                        modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp),
+                        style = MaterialTheme.typography.labelSmall,
+                        color = MaterialTheme.colorScheme.onTertiaryContainer
+                    )
+                }
+                
+                // 5. Kaynak sinyali
+                val sourceSignalLabel = if (item.uniqueSourceCount > 1) "Çok-kaynaklı sinyal" else "Tek kaynak sinyali"
+                androidx.compose.material3.Surface(
+                    color = MaterialTheme.colorScheme.surfaceVariant,
+                    shape = MaterialTheme.shapes.small
+                ) {
+                    Text(
+                        text = sourceSignalLabel,
+                        modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp),
+                        style = MaterialTheme.typography.labelSmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
+            }
 
             Spacer(modifier = Modifier.height(12.dp))
 
+            // 6. Neden gösterildi?
+            val reason = item.aiNewsValue?.reasonCode ?: item.publishReason ?: "Haber değeri algoritması tarafından seçildi."
+            Text(
+                text = "Neden gösterildi?\n$reason",
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            // 7. Uyarı
+            Text(
+                text = "Uyarı: Bu sinyal haberin doğruluğunu tek başına garanti etmez.",
+                style = MaterialTheme.typography.labelSmall,
+                color = MaterialTheme.colorScheme.outline
+            )
+
+            Spacer(modifier = Modifier.height(12.dp))
+
+            // 8. Orijinal kaynağa git
             androidx.compose.foundation.layout.Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.End,
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = "Kaynak profilini incele →",
+                    text = "Orijinal kaynağa git →",
                     style = MaterialTheme.typography.labelMedium,
-                    color = MaterialTheme.colorScheme.tertiary
+                    color = MaterialTheme.colorScheme.primary
                 )
             }
         }

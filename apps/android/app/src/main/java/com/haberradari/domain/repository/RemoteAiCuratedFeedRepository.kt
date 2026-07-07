@@ -149,7 +149,16 @@ class RemoteAiCuratedFeedRepository(
                 originalArticleIds = itemDto.originalArticleIds,
                 isDemo = dto.isDemo,
                 smartDigest = SmartDigestMapper.fromDto(itemDto.smartDigest),
-                sourceSignal = SourceSignalMapper.fromDto(itemDto.sourceSignal)
+                sourceSignal = SourceSignalMapper.fromDto(itemDto.sourceSignal),
+                aiNewsValue = itemDto.aiNewsValue?.let {
+                    com.haberradari.data.model.AiNewsValue(
+                        decision = it.decision,
+                        newsValueScore = it.newsValueScore,
+                        noiseScore = it.noiseScore,
+                        personalizedScore = it.personalizedScore,
+                        reasonCode = it.reasonCode
+                    )
+                }
             )
         }
         
@@ -194,7 +203,16 @@ class RemoteAiCuratedFeedRepository(
             shortDescription = dto.shortDescription,
             originalUrl = dto.originalUrl,
             publishedAt = dto.publishedAt,
-            sourceNames = dto.sourceNames
+            sourceNames = dto.sourceNames,
+            aiNewsValue = dto.aiNewsValue?.let {
+                com.haberradari.data.model.AiNewsValue(
+                    decision = it.decision,
+                    newsValueScore = it.newsValueScore,
+                    noiseScore = it.noiseScore,
+                    personalizedScore = it.personalizedScore,
+                    reasonCode = it.reasonCode
+                )
+            }
         )
     }
 
