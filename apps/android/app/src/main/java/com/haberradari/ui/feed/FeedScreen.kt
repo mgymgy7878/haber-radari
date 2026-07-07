@@ -555,7 +555,7 @@ private fun LatestRssSectionHeader() {
         )
         Spacer(modifier = Modifier.height(4.dp))
         Text(
-            text = "Bu liste RSS kaynaklarından alınan ham kayıtlardır (başlık-link önizlemesi); kaynak sinyali gösterilir, içerik doğrulama hizmeti değildir.",
+            text = "RSS metadata önizlemesi. Bu liste ham kayıtları gösterir; kaynak sinyali haberin doğruluğunu tek başına garanti etmez.",
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )

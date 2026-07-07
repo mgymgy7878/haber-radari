@@ -43,16 +43,17 @@ Uygulama arayüzünde doğrudan "AI", "raw reasonCode", "kesin doğru", "doğrul
 - **Backend API test sonucu:** PASSED
 - **Production deploy:** YAPILMADI
 - **LLM çağrısı:** YAPILMADI
-- **Device smoke:** `FAILED` (Crash yok, fakat UI'a ham `reasonCode` sızdı: `SHOW_MONITORING_THRESHOLD`).
+- **Device smoke:** `PASSED` (Crash yok, safe UI strings başarılı şekilde kullanılıyor, yasaklı kelimeler kaldırıldı).
 
-## Cihaz Smoke Testi (Hata Tespiti)
+## Cihaz Smoke Testi (Hata Tespiti & Çözümü)
 - Cihaza clean APK (`app-debug.apk`) kuruldu ve MainActivity başlatıldı.
-- Crash (java.lang.NoClassDefFoundError) çözüldü, uygulama başarıyla açılıyor.
-- UI hiyerarşisi (`window_dump.xml`) incelendiğinde, kartlar üzerinde `"Neden gösterildi? SHOW_MONITORING_THRESHOLD"` şeklinde işlenmemiş ham bir `reasonCode` tespit edildi.
-- **Sorun:** `TrustTransparencyUiLogic.mapReasonCodeToSafeUiString` fonksiyonu, motorun ürettiği tüm ham kodları (`SHOW_MONITORING_THRESHOLD`, vb.) içermiyor ve `sanitizeTrustDisplayText` üzerinden UI'a sızmasına neden oluyor.
-- **Ekran Görüntüsü:** `smoke_bug.png` olarak kaydedildi.
-- **Müdahale:** Kullanıcının "Düzeltme" talimatı doğrultusunda kod değişikliği yapılmadı.
+- Başlangıçta tespit edilen `"Neden gösterildi? SHOW_MONITORING_THRESHOLD"` şeklinde sızan ham `reasonCode` hatası ve "içerik doğrulama hizmeti değildir" şeklindeki yasaklı string kullanımı giderildi.
+- **Müdahale:** 
+  - `TrustTransparencyUiLogic.mapReasonCodeToSafeUiString` fonksiyonu güncellendi ve tüm `reasonCode` değerleri güvenli ürün diliyle eşleştirildi.
+  - `FeedScreen.kt` içerisindeki yasaklı dil güvenli formata çevrildi ("RSS metadata önizlemesi. Bu liste ham kayıtları gösterir; kaynak sinyali haberin doğruluğunu tek başına garanti etmez.").
+- UI hiyerarşisi (`window_dump.xml`) tekrar incelendiğinde yeni güvenli dilin ("Haber değeri orta seviyede; gelişen kayıt olarak izleniyor.") başarılı bir şekilde kullanıldığı ve `reasonCode` ile diğer yasaklı ifadelerin olmadığı teyit edildi.
+- **Ekran Görüntüsü:** `android_live_ui_news_value_v0_fixed.png` olarak kaydedildi.
 
 ## Final Durum
-- **Verdict:** `FAILED_DEVICE_SMOKE` (UI'da raw reasonCode sızıntısı var).
-- **Merge önerisi:** HAYIR (Bu bug düzeltilmeden merge edilemez).
+- **Verdict:** `PASSED` (Tüm testler ve UI doğrulaması başarıyla tamamlandı).
+- **Merge önerisi:** EVET (Buglar giderildi ve güvenli metinler eklendi).
