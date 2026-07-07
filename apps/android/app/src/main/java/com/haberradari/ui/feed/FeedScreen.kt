@@ -555,7 +555,7 @@ private fun LatestRssSectionHeader() {
         )
         Spacer(modifier = Modifier.height(4.dp))
         Text(
-            text = "Bu liste RSS kaynaklarından alınan ham kayıtlardır (başlık-link önizlemesi); kaynak sinyali gösterilir, içerik doğrulama hizmeti değildir.",
+            text = "RSS metadata önizlemesi. Bu liste ham kayıtları gösterir; kaynak sinyali haberin doğruluğunu tek başına garanti etmez.",
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
@@ -1057,15 +1057,29 @@ fun AiCuratedNewsItemCard(
                 color = MaterialTheme.colorScheme.onSurface
             )
             
-            AiSummaryUiLogic.safeSummaryOrNull(item.aiSummary)?.let { summary ->
-                Spacer(modifier = Modifier.height(4.dp))
-                Text(
-                    text = summary,
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    maxLines = 3,
-                    overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis
-                )
+            if (!item.publishReason.isNullOrBlank()) {
+                Spacer(modifier = Modifier.height(6.dp))
+                androidx.compose.material3.Surface(
+                    color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f),
+                    shape = MaterialTheme.shapes.small,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Column(modifier = Modifier.padding(8.dp)) {
+                        Text(
+                            text = "Akış değerlendirmesi",
+                            style = MaterialTheme.typography.labelSmall,
+                            color = MaterialTheme.colorScheme.primary
+                        )
+                        Spacer(modifier = Modifier.height(2.dp))
+                        Text(
+                            text = item.publishReason ?: "",
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            maxLines = 3,
+                            overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis
+                        )
+                    }
+                }
             }
 
             if (TrustTransparencyUiLogic.shouldShowSmartDigestBlock(item.publishDecision)) {
@@ -1162,18 +1176,6 @@ fun LatestRssItemCard(
                 style = MaterialTheme.typography.titleMedium,
                 color = MaterialTheme.colorScheme.onSurface
             )
-            
-            if (!item.shortDescription.isNullOrEmpty()) {
-                Spacer(modifier = Modifier.height(4.dp))
-                Text(
-                    text = item.shortDescription,
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    maxLines = 2,
-                    overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis
-                )
-            }
-            
             Spacer(modifier = Modifier.height(12.dp))
             
             androidx.compose.foundation.layout.Row(

@@ -19,17 +19,17 @@ object TrustTransparencyUiLogic {
         publishDecision == PublishDecision.PUBLISH_MAIN
 
     fun digestStatusChipLabel(digest: SmartDigest?): String = when (digest?.status) {
-        null -> "AI özeti: kapalı"
-        SmartDigestStatus.DISABLED -> "AI özeti: kapalı"
-        SmartDigestStatus.MOCKED -> "AI özeti: test"
-        SmartDigestStatus.CACHED -> "AI özeti: önbellekten"
-        SmartDigestStatus.GENERATED -> "AI özeti"
-        SmartDigestStatus.FAILED -> "AI özeti: alınamadı"
+        null -> "Akış değerlendirmesi: kapalı"
+        SmartDigestStatus.DISABLED -> "Akış değerlendirmesi: kapalı"
+        SmartDigestStatus.MOCKED -> "Akış değerlendirmesi: test"
+        SmartDigestStatus.CACHED -> "Akış değerlendirmesi: önbellekten"
+        SmartDigestStatus.GENERATED -> "Akış değerlendirmesi"
+        SmartDigestStatus.FAILED -> "Akış değerlendirmesi: alınamadı"
     }
 
     fun digestStatusShortNote(digest: SmartDigest?): String? = when (digest?.status) {
-        SmartDigestStatus.FAILED -> "Özet şu an üretilemedi; haber kartı ve kaynaklar görüntülenmeye devam eder."
-        SmartDigestStatus.DISABLED -> "AI özeti bu yapılandırmada kapalı."
+        SmartDigestStatus.FAILED -> "Değerlendirme şu an üretilemedi; haber kartı ve kaynaklar görüntülenmeye devam eder."
+        SmartDigestStatus.DISABLED -> "Akış değerlendirmesi bu yapılandırmada kapalı."
         else -> null
     }
 
